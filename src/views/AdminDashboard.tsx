@@ -85,85 +85,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-6 auto-rows-fr">
-        <Card
-          title="Estadísticas Rápidas"
-          className="h-full hover:shadow-lg transition-all duration-200 bg-primary/5 dark:bg-slate-800/80 dark:border-primary/30 border-primary/20"
-        >
-          {loading ? (
-            <div className="flex justify-center p-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                  Clientes Totales
-                </span>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">
-                  {stats.clients}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                  Suscripciones
-                </span>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">
-                  {stats.subscriptions}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                  Ingresos Mensuales
-                </span>
-                <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {formatCurrency(stats.revenue)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-t border-primary/10 dark:border-primary/20 pt-3 mt-2">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Mensajes sin leer
-                </span>
-                <span
-                  className={`text-sm font-bold px-2 py-0.5 rounded-full ${stats.unread > 0 ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800" : "bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-600"}`}
-                >
-                  {stats.unread}
-                </span>
-              </div>
-            </div>
-          )}
-        </Card>
-
-        <Card
-          title="Gestión de Clientes"
-          className="h-full hover:shadow-lg transition-all duration-200"
-        >
-          <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
-            Administra la base de datos de usuarios, sus datos de contacto y
-            estado.
-          </p>
-
-          <div className="flex justify-end mt-auto">
-            <Link to="/admin/clients" className="w-full">
-              <Button className="w-full justify-between group">
-                <span>Ver Clientes</span>
-                <svg
-                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
-              </Button>
-            </Link>
-          </div>
-        </Card>
-
+        
         <Card
           title="Suscripciones"
           className="h-full md:col-span-2 2xl:col-span-2 hover:shadow-lg transition-all duration-200"
@@ -298,6 +220,85 @@ export default function AdminDashboard() {
             </Link>
           </div>
         </Card>
+        <Card
+          title="Estadísticas Rápidas"
+          className="h-full hover:shadow-lg transition-all duration-200 bg-primary/5 dark:bg-slate-800/80 dark:border-primary/30 border-primary/20"
+        >
+          {loading ? (
+            <div className="flex justify-center p-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  Clientes Totales
+                </span>
+                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                  {stats.clients}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  Suscripciones
+                </span>
+                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                  {stats.subscriptions}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  Ingresos Mensuales
+                </span>
+                <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                  {formatCurrency(stats.revenue)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-t border-primary/10 dark:border-primary/20 pt-3 mt-2">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Mensajes sin leer
+                </span>
+                <span
+                  className={`text-sm font-bold px-2 py-0.5 rounded-full ${stats.unread > 0 ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800" : "bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-600"}`}
+                >
+                  {stats.unread}
+                </span>
+              </div>
+            </div>
+          )}
+        </Card>
+
+        <Card
+          title="Gestión de Clientes"
+          className="h-full hover:shadow-lg transition-all duration-200"
+        >
+          <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+            Administra la base de datos de usuarios, sus datos de contacto y
+            estado.
+          </p>
+
+          <div className="flex justify-end mt-auto">
+            <Link to="/admin/clients" className="w-full">
+              <Button className="w-full justify-between group">
+                <span>Ver Clientes</span>
+                <svg
+                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
+                </svg>
+              </Button>
+            </Link>
+          </div>
+        </Card>
+
       </div>
     </div>
   );
