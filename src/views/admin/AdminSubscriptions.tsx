@@ -353,187 +353,71 @@ export default function AdminSubscriptions() {
       {/* Lista */}
       <Card title={`Historial de Suscripciones (${items.length})`} className="h-full">
         {loading ? (
-            <div className="flex justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="flex justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : items.length === 0 ? (
+          <div className="text-center p-12">
+            <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
+              <CreditCard size={32} className="text-gray-400 dark:text-gray-500" />
             </div>
-         ) : items.length === 0 ? (
-            <div className="text-center p-12">
-               <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
-                 <CreditCard size={32} className="text-gray-400 dark:text-gray-500" />
-               </div>
-               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No hay suscripciones activas</h3>
-               <p className="text-gray-500 dark:text-gray-400 mb-6">Crea una nueva suscripción para comenzar.</p>
-               <Button onClick={() => setIsFormOpen(true)}>
-                 Crear primera suscripción
-               </Button>
-            </div>
-         ) : (
-            <div className="-mx-4 sm:mx-0 overflow-x-hidden">
-              {/* Mobile View (Cards) */}
-              <div className="sm:hidden space-y-4 px-4 pb-4">
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                  {items.map((sub: any) => {
-                      const client = clients.find(c => c.uid === sub.clientId || c.id === sub.clientId)
-                      return (
-                        <div key={sub.id ?? sub._id} className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4 shadow-sm space-y-3 relative overflow-hidden">
-                           <div className="absolute top-0 right-0 p-2 opacity-5 dark:opacity-10 dark:text-white">
-                              <CreditCard size={64} />
-                           </div>
-                           
-                           <div>
-                              <div className="text-sm font-bold text-gray-900 dark:text-white pr-8">{client?.name || 'Cliente desconocido'}</div>
-                              <div className="flex flex-col gap-1 mt-1">
-                                {sub.clientEmail && (
-                                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                       <span className="truncate max-w-50">{sub.clientEmail}</span>
-                                       <button onClick={() => handleCopy(sub.clientEmail!)} className="hover:text-primary transition-colors p-1" title="Copiar email">
-                                         {copiedValue === sub.clientEmail ? <CheckCircle size={12} className="text-green-500" /> : <Copy size={12} />}
-                                       </button>
-                                    </div>
-                                )}
-                                {sub.passwordSub && (
-                                    <div className="flex items-center gap-2 text-xs">
-                                       <span className="font-mono font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-slate-700/80 px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-600 select-all">
-                                         {sub.passwordSub}
-                                       </span>
-                                       <button onClick={() => handleCopy(sub.passwordSub!)} className="text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary transition-colors p-1" title="Copiar contraseña">
-                                         {copiedValue === sub.passwordSub ? <CheckCircle size={12} className="text-green-500" /> : <Copy size={12} />}
-                                       </button>
-                                    </div>
-                                )}
-                                {sub.country && (
-                                  <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-300 mt-1">
-                                    <span>País:</span>
-                                    <span className="font-semibold">{sub.country}</span>
-                                  </div>
-                                )}
-                              </div>
-                           </div>
-
-                           <div className="flex justify-between items-end border-t border-b border-gray-50 dark:border-slate-700/50 py-2">
-                              <div>
-                                 <div className="text-xs text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wider mb-0.5">Plan</div>
-                                 <div className="text-sm text-gray-800 dark:text-gray-200 font-medium">{PLAN_LABELS[sub.plan] || sub.plan}</div>
-                              </div>
-                              <div className="text-right">
-                                 <div className="text-sm font-bold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-lg border border-green-100 dark:border-green-900/30">
-                                   {sub.amount}
-                                 </div>
-                              </div>
-                           </div>
-                           
-                           <div className="grid grid-cols-2 gap-4 text-xs">
-                              <div className="bg-gray-50 dark:bg-slate-700/50 p-2 rounded">
-                                 <span className="block text-gray-400 dark:text-gray-500 font-semibold uppercase text-[10px]">Inicio</span>
-                                 <span className="font-medium text-gray-700 dark:text-gray-300">{sub.startDate}</span>
-                              </div>
-                              <div className="bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded">
-                                 <span className="block text-indigo-300 dark:text-indigo-400 font-semibold uppercase text-[10px]">Corte</span>
-                                 <span className="font-medium text-indigo-900 dark:text-indigo-300">{sub.cutDate}</span>
-                              </div>
-                           </div>
-                           
-                           <div className="flex gap-2 pt-1">
-                              <button 
-                                onClick={() => handleEdit(sub)}
-                                className="flex-1 flex items-center justify-center gap-2 text-primary dark:text-white bg-primary/10 dark:bg-primary/50 hover:bg-primary/10 dark:hover:bg-primary/30 py-2 rounded-lg text-xs font-medium transition-colors border border-primary/10 dark:border-primary/20 cursor-pointer"
-                              >
-                                Editar
-                              </button>
-                              <button 
-                                onClick={() => handleDelete(sub.id ?? sub._id)}
-                                className="flex-1 flex items-center justify-center gap-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/40 py-2 rounded-lg text-xs font-medium transition-colors border border-red-100 dark:border-red-900/30 cursor-pointer"
-                              >
-                                Eliminar
-                              </button>
-                           </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No hay suscripciones activas</h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">Crea una nueva suscripción para comenzar.</p>
+            <Button onClick={() => setIsFormOpen(true)}>Crear primera suscripción</Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2 py-4">
+            {items.map((sub: any) => {
+              const client = clients.find(c => c.uid === sub.clientId || c.id === sub.clientId)
+              return (
+                <div key={sub.id ?? sub._id} className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-5 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/30 flex items-center justify-center">
+                          <CreditCard size={20} className="text-primary dark:text-secondary" />
                         </div>
-                      )
-                  })}
-              </div>
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white">{client?.name || 'Cliente desconocido'}</div>
+                          {sub.clientEmail && <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{sub.clientEmail}</div>}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-green-700 dark:text-green-400">{sub.amount}</div>
+                        <div className="text-xs text-blue-600 dark:text-blue-300">{sub.country || '-'}</div>
+                      </div>
+                    </div>
 
-              {/* Desktop View (Table) */}
-              <div className="hidden sm:block overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
-                  <thead className="bg-gray-50/50 dark:bg-slate-900/50">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cliente</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Plan / Monto</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">País</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fechas</th>
-                      <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    {items.map((sub: any) => (
-                      <tr key={sub.id ?? sub._id} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-semibold px-1.5 text-gray-900 dark:text-white mb-1">
-                            {clients.find(c => (c.uid === sub.clientId || c.id === sub.clientId))?.name || 'Cliente desconocido'}
-                          </div>
-                          <div className="flex flex-col gap-1">
-                              {sub.clientEmail && (
-                                <div className="flex items-center justify-around gap-2 group bg-slate-100 dark:bg-slate-700/80 px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-600">
-                                   <span className="text-xs text-gray-700 dark:text-slate-400">{sub.clientEmail}</span>
-                                   <button onClick={() => handleCopy(sub.clientEmail!)} className="text-gray-900 hover:text-primary dark:text-slate-500 dark:hover:text-primary transition-all p-0.5 cursor-pointer" title="Copiar email">
-                                   {copiedValue === sub.clientEmail ? <CheckCircle size={12} className="text-green-500" /> : <Copy size={12} />}
-                                   </button>
-                                </div>
-                              )}
-                              {sub.passwordSub && (
-                                <div className="flex items-center justify-around gap-2 mt-0.5 group bg-slate-100 dark:bg-slate-700/80 px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-600">
-                                   <span className="text-xs font-mono font-medium px-1.5 py-0.5 rounded text-gray-700 dark:text-slate-400 dark:border-slate-600 select-all">
-                                     {sub.passwordSub}
-                                   </span>
-                                   <button onClick={() => handleCopy(sub.passwordSub!)} className=" text-gray-900 hover:text-primary dark:text-slate-500 dark:hover:text-primary transition-all p-0.5 cursor-pointer" title="Copiar contraseña">
-                                     {copiedValue === sub.passwordSub ? <CheckCircle size={12} className="text-green-500" /> : <Copy size={12} />}
-                                   </button>
-                                </div>
-                              )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 dark:text-gray-300 font-medium">{PLAN_LABELS[sub.plan] || sub.plan}</div>
-                          <div className="text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-full inline-block mt-1 font-medium border border-green-100 dark:border-green-900/30">
-                             {sub.amount}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">{sub.country || '-'}</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                           <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                              <div><span className="font-medium text-gray-700 dark:text-gray-300">Inicio:</span> {sub.startDate}</div>
-                              <div><span className="font-medium text-gray-700 dark:text-gray-300">Corte:</span> {sub.cutDate}</div>
-                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex justify-end gap-2">
-                            <button 
-                              onClick={() => handleEdit(sub)}
-                              className="text-primary hover:text-primary-700 dark:text-slate-400 dark:hover:text-slate-300 font-medium text-xs bg-primary/10 dark:bg-primary/50 p-2 rounded-md hover:bg-primary/20 dark:hover:bg-primary/60 transition-colors cursor-pointer"
-                              title="Editar"
-                            >
-                              <Pencil size={16} />
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(sub.id ?? sub._id)}
-                              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium text-xs bg-red-50 dark:bg-red-900/30 p-2 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors cursor-pointer"
-                              title="Eliminar"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {/* End of Desktop View */}
-            </div>
-         )}
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                      <div className="p-2 bg-gray-50 dark:bg-slate-700/50 rounded">
+                        <div className="uppercase text-[10px] text-gray-400">Inicio</div>
+                        <div className="font-medium text-gray-700 dark:text-gray-300">{sub.startDate}</div>
+                      </div>
+                      <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded">
+                        <div className="uppercase text-[10px] text-indigo-300">Corte</div>
+                        <div className="font-medium text-indigo-900 dark:text-indigo-300">{sub.cutDate}</div>
+                      </div>
+                    </div>
+
+                    {sub.passwordSub && (
+                      <div className="mt-3 flex items-center gap-2 text-xs">
+                        <div className="font-mono font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-slate-700/80 px-2 py-1 rounded border border-gray-200 dark:border-slate-600 select-all">{sub.passwordSub}</div>
+                        <button onClick={() => handleCopy(sub.passwordSub!)} className="text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary transition-colors p-1" title="Copiar contraseña">
+                          {copiedValue === sub.passwordSub ? <CheckCircle size={14} className="text-green-500" /> : <Copy size={14} />}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex gap-2">
+                    <Button variant="outline" onClick={() => handleEdit(sub)} className="flex-1">Editar</Button>
+                    <Button variant="outline" onClick={() => handleDelete(sub.id ?? sub._id)} className="flex-1 text-red-600 border-red-200">Eliminar</Button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </Card>
     </div>
   )
