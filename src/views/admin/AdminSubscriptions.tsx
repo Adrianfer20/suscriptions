@@ -15,6 +15,7 @@ type SubscriptionForm = {
   status?: string
   plan?: string
   passwordSub?: string
+  country?: string
 }
 
 export default function AdminSubscriptions() {
@@ -111,6 +112,7 @@ export default function AdminSubscriptions() {
       amount: item.amount,
       startDate: item.startDate,
       cutDate: item.cutDate,
+      country: item.country || ''
     })
   }
 
@@ -153,6 +155,7 @@ export default function AdminSubscriptions() {
         startDate: formatDate(form.startDate) ?? form.startDate ?? '',
         cutDate: formatDate(form.cutDate) ?? form.cutDate ?? '',
         amount: normalizeAmount(form.amount),
+        country: form.country || ''
       }
       
       if (form.passwordSub) {
@@ -285,6 +288,21 @@ export default function AdminSubscriptions() {
                       <option value="Itinerante Limitado">Itinerante Limitado</option>
                    </select>
                  </div>
+                 <div>
+                   <label className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 block">País</label>
+                   <select
+                     className="flex h-11 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
+                     value={form.country || ''}
+                     onChange={e => setForm({ ...form, country: e.target.value })}
+                     required
+                   >
+                     <option value="">Selecciona país</option>
+                     <option value="BR">Brasil</option>
+                     <option value="VES">Venezuela</option>
+                     <option value="COL">Colombia</option>
+                     <option value="AR">Argentina</option>
+                   </select>
+                 </div>
 
                  <Input 
                     label="Contraseña del Servicio" 
@@ -383,6 +401,12 @@ export default function AdminSubscriptions() {
                                        </button>
                                     </div>
                                 )}
+                                {sub.country && (
+                                  <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-300 mt-1">
+                                    <span>País:</span>
+                                    <span className="font-semibold">{sub.country}</span>
+                                  </div>
+                                )}
                               </div>
                            </div>
 
@@ -435,6 +459,7 @@ export default function AdminSubscriptions() {
                     <tr>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cliente</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Plan / Monto</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">País</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fechas</th>
                       <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Acciones</th>
                     </tr>
@@ -473,6 +498,9 @@ export default function AdminSubscriptions() {
                           <div className="text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-full inline-block mt-1 font-medium border border-green-100 dark:border-green-900/30">
                              {sub.amount}
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">{sub.country || '-'}</span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                            <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">

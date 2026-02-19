@@ -179,10 +179,12 @@ export default function ClientSubscription() {
                 <div>
                   <div className="font-bold text-xl text-gray-900 dark:text-gray-200">{subscription.plan}</div>
                   <div className="text-3xl font-bold text-primary dark:text-secondary mt-2">{subscription.amount}<span className="text-sm font-normal text-gray-500 dark:text-gray-300">/mes</span></div>
+                  {subscription.country && (
+                    <div className="mt-2 text-sm text-blue-600 dark:text-blue-300 font-semibold">País: {subscription.country}</div>
+                  )}
                 </div>
                 <CreditCard className="w-12 h-12 text-gray-300 dark:text-gray-600" />
               </div>
-              
               {/* Contraseña del servicio */}
               {subscription.passwordSub && (
                 <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">

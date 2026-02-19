@@ -54,6 +54,7 @@ export interface Subscription {
   cutDate: string // YYYY-MM-DD
   plan: string
   amount: string
+  country: string // Nuevo atributo: país de la suscripción
   passwordSub?: string
   status?: 'active' | 'inactive' | 'past_due' | 'cancelled'
 }
@@ -138,6 +139,16 @@ export const clientsApi = {
 
 // 3. Subscriptions
 export const subscriptionsApi = {
+  // POST /subscriptions
+  // Body:
+  // {
+  //   clientId: string,
+  //   startDate: string,
+  //   cutDate: string,
+  //   plan: string,
+  //   amount: string,
+  //   country: string // Nuevo atributo
+  // }
   create: async (data: Subscription) => {
     return api.post<ApiResponse<Subscription>>('/subscriptions', data)
   },
@@ -153,6 +164,8 @@ export const subscriptionsApi = {
   delete: async (id: string) => {
     return api.delete<ApiResponse<any>>(`/subscriptions/${id}`)
   },
+  // PATCH /subscriptions/:id
+  // Body: Campos a actualizar (startDate, cutDate, plan, amount, country)
   update: async (id: string, data: Partial<Subscription>) => {
     return api.patch<ApiResponse<Subscription>>(`/subscriptions/${id}`, data)
   }
