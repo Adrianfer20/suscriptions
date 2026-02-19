@@ -8,7 +8,7 @@ import './styles.css'
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/suscriptions">
       <AuthProvider>
         <ThemeProvider>
           <App />

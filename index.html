@@ -10,6 +10,15 @@
   </head>
   <body class="h-full antialiased font-sans text-gray-900">
     <div id="root" class="h-full"></div>
+    <script>
+      // Maneja la redirección SPA desde 404.html
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      if (redirect) {
+        const newUrl = '/suscriptions/' + redirect;
+        history.replaceState(null, '', newUrl);
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

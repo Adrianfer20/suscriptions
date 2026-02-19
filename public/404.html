@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      // Obtiene la ruta solicitada
+      var path = location.pathname.replace(/^\/suscriptions\//, "");
+      // Redirige a index.html manteniendo la ruta
+      location.replace("/suscriptions/index.html?redirect=" + encodeURIComponent(path + location.search + location.hash));
+    </script>
+  </head>
+  <body>
+    <p>Redirigiendo...</p>
+  </body>
+</html>
