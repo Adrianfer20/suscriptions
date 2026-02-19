@@ -114,7 +114,8 @@ export default function AdminSubscriptions() {
       amount: item.amount,
       startDate: item.startDate,
       cutDate: item.cutDate,
-      country: item.country || ''
+      country: item.country || '',
+      passwordSub: item.passwordSub || ''
     })
   }
 
