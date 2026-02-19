@@ -142,7 +142,7 @@ export default function AdminDashboard() {
                     const now = new Date();
                     const diff = Math.ceil((cut.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
                     return (
-                      <div key={sub.id ?? sub._id} className="flex items-center gap-4 p-3 rounded-xl border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/40 shadow-sm">
+                      <div key={sub.id ?? sub.clientId} className="flex items-center gap-4 p-3 rounded-xl border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/40 shadow-sm">
                         <div className="flex flex-col min-w-32">
                           <span className="font-bold text-gray-900 dark:text-yellow-200 text-sm">{client?.name || 'Cliente desconocido'}</span>
                           <span className="text-xs text-gray-700 dark:text-yellow-300">{client?.email}</span>

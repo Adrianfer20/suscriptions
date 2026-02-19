@@ -4,6 +4,8 @@ import { subscriptionsApi, clientsApi, authApi, Subscription, Client } from '../
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import SubscriptionCard from './components/SubscriptionCard'
+import SubscriptionForm from './components/SubscriptionForm'
 
 type SubscriptionWithEmail = Subscription & { clientEmail?: string }
 
@@ -245,109 +247,15 @@ export default function AdminSubscriptions() {
       </div>
 
       {isFormOpen && (
-        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden transition-all duration-300 ease-in-out">
-          <div className="p-6 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-100 dark:border-slate-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{editingId ? "Editar Suscripción" : "Registrar Nueva Suscripción"}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Configura los detalles del plan para el cliente seleccionado.</p>
-          </div>
-          <div className="p-6">
-             <form onSubmit={handleCreate} className="space-y-6">
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <div className="md:col-span-2">
-                    <label className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 block">Cliente</label>
-                    <select 
-                      className="flex h-11 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
-                      value={form.clientId} 
-                      onChange={(e) => setForm({ ...form, clientId: e.target.value })} 
-                      required
-                      disabled={!!editingId}
-                    >
-                      <option value="">Selecciona un cliente</option>
-                      {clients.map((c) => {
-                        const val = c.uid || c.id || ''
-                        const label = c.name || c.email || val
-                        return (
-                          <option key={val} value={val}>
-                            {label} {c.email ? `(${c.email})` : ''}
-                          </option>
-                        )
-                      })}
-                    </select>
-                 </div>
-
-                 <div>
-                   <label className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 block">Plan</label>
-                   <select 
-                      className="flex h-11 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
-                      value={form.plan} 
-                      onChange={(e) => setForm({ ...form, plan: e.target.value })} 
-                      required
-                   >
-                      <option value="">Selecciona un plan</option>
-                      <option value="Itinerante Ilimitado">Itinerante Ilimitado</option>
-                      <option value="Itinerante Limitado">Itinerante Limitado</option>
-                   </select>
-                 </div>
-                 <div>
-                   <label className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 block">País</label>
-                   <select
-                     className="flex h-11 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
-                     value={form.country || ''}
-                     onChange={e => setForm({ ...form, country: e.target.value })}
-                     required
-                   >
-                     <option value="">Selecciona país</option>
-                     <option value="BR">Brasil</option>
-                     <option value="VES">Venezuela</option>
-                     <option value="COL">Colombia</option>
-                     <option value="AR">Argentina</option>
-                   </select>
-                 </div>
-
-                 <Input 
-                    label="Contraseña del Servicio" 
-                    value={form.passwordSub || ''} 
-                    onChange={(e) => setForm({ ...form, passwordSub: e.target.value })} 
-                    placeholder="Contraseña del servicio"
-                    required={!editingId}
-                 />
-
-                 <Input 
-                    label="Monto ($)" 
-                    value={form.amount} 
-                    onChange={(e) => setForm({ ...form, amount: e.target.value })} 
-                    placeholder="$50.000"
-                    required
-                 />
-
-                 <Input 
-                    label="Fecha de Inicio" 
-                    type="date"
-                    value={form.startDate} 
-                    onChange={(e) => setForm({ ...form, startDate: e.target.value })} 
-                    required
-                  />
-                  
-                  <Input 
-                    label="Fecha de Corte" 
-                    type="date"
-                    value={form.cutDate} 
-                    onChange={(e) => setForm({ ...form, cutDate: e.target.value })} 
-                    required
-                  />
-               </div>
-
-               <div className="flex justify-end gap-3 pt-2">
-                 <Button type="button" variant="outline" onClick={handleCancelEdit} disabled={creating}>
-                    Cancelar
-                 </Button>
-                 <Button type="submit" disabled={creating} className="min-w-30">
-                   {creating ? 'Procesando...' : (editingId ? 'Actualizar' : 'Crear Suscripción')}
-                 </Button>
-               </div>
-             </form>
-          </div>
-        </div>
+        <SubscriptionForm
+          form={form}
+          setForm={setForm}
+          clients={clients}
+          onCancel={handleCancelEdit}
+          onSubmit={handleCreate}
+          creating={creating}
+          editingId={editingId}
+        />
       )}
 
       {/* Lista */}
@@ -371,85 +279,17 @@ export default function AdminSubscriptions() {
             <div className="-mx-4 sm:mx-0 overflow-x-hidden">
               {/* Mobile View (Cards) */}
               <div className="sm:hidden space-y-4 px-4 pb-4">
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                  {items.map((sub: any) => {
-                      const client = clients.find(c => c.uid === sub.clientId || c.id === sub.clientId)
-                      return (
-                        <div key={sub.id ?? sub._id} className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4 shadow-sm space-y-3 relative overflow-hidden">
-                           <div className="absolute top-0 right-0 p-2 opacity-5 dark:opacity-10 dark:text-white">
-                              <CreditCard size={64} />
-                           </div>
-                           
-                           <div>
-                              <div className="text-sm font-bold text-gray-900 dark:text-white pr-8">{client?.name || 'Cliente desconocido'}</div>
-                              <div className="flex flex-col gap-1 mt-1">
-                                {sub.clientEmail && (
-                                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                       <span className="truncate max-w-50">{sub.clientEmail}</span>
-                                       <button onClick={() => handleCopy(sub.clientEmail!)} className="hover:text-primary transition-colors p-1" title="Copiar email">
-                                         {copiedValue === sub.clientEmail ? <CheckCircle size={12} className="text-green-500" /> : <Copy size={12} />}
-                                       </button>
-                                    </div>
-                                )}
-                                {sub.passwordSub && (
-                                    <div className="flex items-center gap-2 text-xs">
-                                       <span className="font-mono font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-slate-700/80 px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-600 select-all">
-                                         {sub.passwordSub}
-                                       </span>
-                                       <button onClick={() => handleCopy(sub.passwordSub!)} className="text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary transition-colors p-1" title="Copiar contraseña">
-                                         {copiedValue === sub.passwordSub ? <CheckCircle size={12} className="text-green-500" /> : <Copy size={12} />}
-                                       </button>
-                                    </div>
-                                )}
-                                {sub.country && (
-                                  <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-300 mt-1">
-                                    <span>País:</span>
-                                    <span className="font-semibold">{sub.country}</span>
-                                  </div>
-                                )}
-                              </div>
-                           </div>
-
-                           <div className="flex justify-between items-end border-t border-b border-gray-50 dark:border-slate-700/50 py-2">
-                              <div>
-                                 <div className="text-xs text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wider mb-0.5">Plan</div>
-                                 <div className="text-sm text-gray-800 dark:text-gray-200 font-medium">{PLAN_LABELS[sub.plan] || sub.plan}</div>
-                              </div>
-                              <div className="text-right">
-                                 <div className="text-sm font-bold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-lg border border-green-100 dark:border-green-900/30">
-                                   {sub.amount}
-                                 </div>
-                              </div>
-                           </div>
-                           
-                           <div className="grid grid-cols-2 gap-4 text-xs">
-                              <div className="bg-gray-50 dark:bg-slate-700/50 p-2 rounded">
-                                 <span className="block text-gray-400 dark:text-gray-500 font-semibold uppercase text-[10px]">Inicio</span>
-                                 <span className="font-medium text-gray-700 dark:text-gray-300">{sub.startDate}</span>
-                              </div>
-                              <div className="bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded">
-                                 <span className="block text-indigo-300 dark:text-indigo-400 font-semibold uppercase text-[10px]">Corte</span>
-                                 <span className="font-medium text-indigo-900 dark:text-indigo-300">{sub.cutDate}</span>
-                              </div>
-                           </div>
-                           
-                           <div className="flex gap-2 pt-1">
-                              <button 
-                                onClick={() => handleEdit(sub)}
-                                className="flex-1 flex items-center justify-center gap-2 text-primary dark:text-white bg-primary/10 dark:bg-primary/50 hover:bg-primary/10 dark:hover:bg-primary/30 py-2 rounded-lg text-xs font-medium transition-colors border border-primary/10 dark:border-primary/20 cursor-pointer"
-                              >
-                                Editar
-                              </button>
-                              <button 
-                                onClick={() => handleDelete(sub.id ?? sub._id)}
-                                className="flex-1 flex items-center justify-center gap-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/40 py-2 rounded-lg text-xs font-medium transition-colors border border-red-100 dark:border-red-900/30 cursor-pointer"
-                              >
-                                Eliminar
-                              </button>
-                           </div>
-                        </div>
-                      )
-                  })}
+                {items.map((sub: any) => (
+                  <SubscriptionCard
+                    key={sub.id ?? sub.clientId}
+                    sub={sub}
+                    client={clients.find(c => c.uid === sub.clientId || c.id === sub.clientId)}
+                    onEdit={handleEdit}
+                    onDelete={(id) => handleDelete(id)}
+                    copiedValue={copiedValue}
+                    onCopy={handleCopy}
+                  />
+                ))}
               </div>
 
               {/* Desktop View (Table) */}
@@ -467,7 +307,7 @@ export default function AdminSubscriptions() {
                   <tbody className="dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {items.map((sub: any) => (
-                      <tr key={sub.id ?? sub._id} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors">
+                      <tr key={sub.id ?? sub.clientId} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-semibold px-1.5 text-gray-900 dark:text-white mb-1">
                             {clients.find(c => (c.uid === sub.clientId || c.id === sub.clientId))?.name || 'Cliente desconocido'}
@@ -518,7 +358,7 @@ export default function AdminSubscriptions() {
                               <Pencil size={16} />
                             </button>
                             <button 
-                              onClick={() => handleDelete(sub.id ?? sub._id)}
+                              onClick={() => handleDelete(sub.id ?? sub.clientId)}
                               className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium text-xs bg-red-50 dark:bg-red-900/30 p-2 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors cursor-pointer"
                               title="Eliminar"
                             >

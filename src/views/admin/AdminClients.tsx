@@ -137,7 +137,7 @@ export default function AdminClients() {
     if (!confirm('¿Eliminar este cliente? Esta acción es irreversible.')) return
     try {
       await clientsApi.delete(id)
-      setClients(prev => prev.filter(c => ((c.id ?? (c as any)._id) !== id && (c.uid ?? (c as any).uid) !== id)))
+      setClients(prev => prev.filter(c => (c.id !== id && c.uid !== id)))
     } catch (err: any) {
       console.error('Error deleting client:', err)
       if (err.response?.status === 404) {
@@ -285,7 +285,7 @@ export default function AdminClients() {
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {clients.map((c: any) => (
                 <div
-                  key={c.id ?? c._id}
+                  key={c.uid || c.id}
                   className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4 shadow-sm space-y-3"
                 >
                   <div className="flex items-center justify-between">
@@ -325,7 +325,7 @@ export default function AdminClients() {
                     </div>
                   </div>
                   <div className="flex justify-end gap-2 pt-2">
-                    <Button variant="destructive" onClick={() => handleDelete(c.uid || c.id || (c as any)._id)}>Eliminar</Button>
+                    <Button variant="destructive" onClick={() => handleDelete(c.uid || c.id)}>Eliminar</Button>
                   </div>
                 </div>
               ))}
@@ -359,7 +359,7 @@ export default function AdminClients() {
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {clients.map((c: any) => (
                   <tr
-                    key={c.id ?? c._id}
+                    key={c.uid || c.id}
                     className="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -405,7 +405,7 @@ export default function AdminClients() {
                         Ver detalles
                       </Link>
                       <button
-                        onClick={() => handleDelete(c.uid || c.id || (c as any)._id)}
+                        onClick={() => handleDelete(c.uid || c.id)}
                         className="ml-2 inline-flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 px-3 py-2 rounded-lg text-sm"
                       >
                         Eliminar
