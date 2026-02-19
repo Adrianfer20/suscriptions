@@ -1,0 +1,72 @@
+﻿@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Colors */
+  --color-primary: var(--app-primary);
+  --color-primary-600: var(--app-primary-600);
+  --color-secondary: var(--app-secondary);
+  
+  /* Alias for used classes like bg-brand */
+  --color-brand: var(--app-primary); 
+  --color-brand-10: color-mix(in srgb, var(--app-primary) 10%, transparent); /* bg-brand/10 */
+
+  /* Neutral colors overrides if needed */
+  --color-neutral-50: #f9fafb;
+
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-700: #374151;
+
+  /* Border radius */
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  /* Font */
+  --font-sans: "Inter", ui-sans-serif, system-ui;
+}
+
+
+@layer base {
+  :root {
+    /* Define CSS variables for theme usage */
+    --app-primary: #22325C; /* Dark Blue */
+    --app-primary-600: #1a264a;
+    --app-secondary: #F1D00A; /* Yellow/Gold */
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    
+    /* Other vars */
+    --bg: #f8fafc;
+    --text: #1e293b;
+  }
+
+html, body, #root {
+height: 100%;
+}
+body {
+font-family: var(--font-sans);
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+background-color: var(--bg);
+color: var(--text);
+}
+}
+
+/* Utilities manually safelisted or custom */
+@utility container {
+  max-width: 640px; 
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem; /* px-4 */
+  padding-right: 1rem;
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
