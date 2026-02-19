@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0; url=/suscriptions/" />
     <script>
-      // Redirige cualquier ruta a index.html para SPA
-      window.location.replace('/suscriptions/');
+      // Obtiene la ruta solicitada
+      var path = location.pathname.replace(/^\/suscriptions\//, "");
+      // Redirige a index.html manteniendo la ruta
+      location.replace("/suscriptions/index.html?redirect=" + encodeURIComponent(path + location.search + location.hash));
     </script>
   </head>
   <body>
