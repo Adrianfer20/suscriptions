@@ -137,7 +137,7 @@ export default function AppLayout({
               .then(registration => {
                 registration.showNotification('A|R System', {
                   body: `Tienes ${total} mensajes sin leer`,
-                  icon: '/vite.svg',
+                  icon: '/suscriptions/vite.svg',
                   // @ts-ignore
                   vibrate: [200, 100, 200]
                 });
@@ -145,12 +145,12 @@ export default function AppLayout({
               .catch(() => {
                 new Notification('A|R System', {
                   body: `Tienes ${total} mensajes sin leer`,
-                  icon: '/vite.svg'
+                  icon: '/suscriptions/vite.svg'
                 });
               });
           }
           try {
-            const audio = new Audio('/notification.mp3');
+            const audio = new Audio('/suscriptions/notification.mp3');
             audio.play().catch(e => console.log('Audio play failed', e));
           } catch (e) {
             // ignore
