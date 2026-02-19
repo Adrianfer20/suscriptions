@@ -11,6 +11,15 @@
     <link rel="stylesheet" crossorigin href="/suscriptions/assets/index-DP3TL_8s.css">
   <link rel="manifest" href="/suscriptions/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/suscriptions/registerSW.js"></script></head>
   <body class="h-full antialiased font-sans text-gray-900">
-    <div id="root" class="h-full"></div>
+    <div id="root" class="h-full"></div>
+    <script>
+      // Maneja la redirección SPA desde 404.html
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      if (redirect) {
+        const newUrl = '/suscriptions/' + redirect;
+        history.replaceState(null, '', newUrl);
+      }
+    </script>
   </body>
 </html>
