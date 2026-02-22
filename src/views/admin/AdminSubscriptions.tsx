@@ -14,6 +14,7 @@ import {
   authApi,
   Subscription,
   Client,
+  paymentsApi,
 } from "../../api";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
@@ -249,6 +250,30 @@ export default function AdminSubscriptions() {
       alert(msg);
     } finally {
       setCreating(false);
+    }
+  }
+
+  async function handleCreatePayment(paymentData: {
+    subscriptionId: string;
+    amount: number;
+    currency?: string;
+    method: "free" | "binance" | "zinli" | "pago_movil";
+    reference?: string;
+    payerEmail?: string;
+    payerPhone?: string;
+    payerIdNumber?: string;
+    bank?: string;
+  }) {
+    try {
+      const response = await paymentsApi.create(paymentData);
+      alert("Pago registrado exitosamente");
+      console.log("Payment Response:", response.data);
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Error al registrar el pago";
+      alert(errorMessage);
     }
   }
 

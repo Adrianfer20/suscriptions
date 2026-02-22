@@ -3,6 +3,8 @@ import { getAuthInstance } from './firebase'
 
 // En desarrollo prioriza localhost:3000, en producción usa la variable de entorno
 const baseURL = import.meta.env.VITE_API_BASE
+// const baseURL = 'http://localhost:3000' // Cambia a tu URL de backend en producción
+
 
 export const api = axios.create({ baseURL })
 
@@ -22,6 +24,43 @@ api.interceptors.request.use(async (config) => {
 })
 
 // --- Interfaces ---
+
+export interface Payment {
+  id: string
+  subscriptionId: string
+  amount: number
+  currency: string
+  date: string
+  method: 'free' | 'binance' | 'zinli' | 'pago_movil'
+  status: 'pending' | 'verified' | 'rejected'
+  reference?: string
+  payerEmail?: string
+  payerPhone?: string
+  payerIdNumber?: string
+  bank?: string
+  receiptUrl?: string
+  free?: boolean
+  createdAt: string
+  createdBy: string
+  verifiedAt?: string
+  verifiedBy?: string
+  notes?: string
+}
+
+export interface PaymentStats {
+  total: number
+  pending: number
+  verified: number
+  rejected: number
+  totalAmount: number
+}
+
+export interface Pagination {
+  total: number
+  page: number
+  limit: number
+  hasMore: boolean
+}
 
 export interface ApiResponse<T = any> {
   ok: boolean
@@ -218,6 +257,54 @@ export const healthApi = {
     return api.get<{ status: string; firebaseClient: string; firebaseAdmin: string; twilio: string }>('/')
   }
 }
+
+// 7. Payments
+export const paymentsApi = {
+  create: async (data: {
+    subscriptionId: string;
+    amount: number;
+    currency?: string;
+    date?: string;
+    method: 'free' | 'binance' | 'zinli' | 'pago_movil';
+    reference?: string;
+    payerEmail?: string;
+    payerPhone?: string;
+    payerIdNumber?: string;
+    bank?: string;
+    receiptUrl?: string;
+    free?: boolean;
+  }) => {
+    return api.post<ApiResponse<{ id: string }>>('/payments', data);
+  },
+  list: async (params?: {
+    subscriptionId?: string;
+    status?: 'pending' | 'verified' | 'rejected';
+    method?: 'free' | 'binance' | 'zinli' | 'pago_movil';
+    createdBy?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    return api.get<ApiResponse<Payment[]> & { pagination: Pagination }>('/payments', { params });
+  },
+  get: async (id: string) => {
+    return api.get<ApiResponse<Payment>>(`/payments/${id}`);
+  },
+  getBySubscription: async (subscriptionId: string) => {
+    return api.get<ApiResponse<Payment[]>>(`/payments/subscription/${subscriptionId}`);
+  },
+  verify: async (id: string, notes?: string) => {
+    return api.patch<ApiResponse<Payment>>(`/payments/${id}/verify`, { notes: notes || undefined });
+  },
+  reject: async (id: string, notes?: string) => {
+    return api.patch<ApiResponse<Payment>>(`/payments/${id}/reject`, { notes: notes || undefined });
+  },
+  retry: async (id: string) => {
+    return api.patch<ApiResponse<Payment>>(`/payments/${id}/retry`);
+  },
+  getStats: async (params?: { startDate?: string; endDate?: string }) => {
+    return api.get<ApiResponse<PaymentStats>>('/payments/stats', { params });
+  },
+};
 
 export default api
 

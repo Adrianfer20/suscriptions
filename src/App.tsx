@@ -11,6 +11,7 @@ import AdminCommunication from './views/admin/AdminCommunication'
 import AdminAutomation from './views/admin/AdminAutomation'
 import AdminProfile from './views/admin/AdminProfile'
 import AdminUsers from './views/admin/AdminUsers'
+import AdminPayments from './views/admin/AdminPayments'
 import ClientDashboard from './views/client/ClientDashboard'
 import ClientSubscription from './views/client/ClientSubscription'
 import ClientPayments from './views/client/ClientPayments'
@@ -54,6 +55,7 @@ export default function App() {
         <Route path="communication" element={<AdminCommunication />} />
         <Route path="automation" element={<AdminAutomation />} />
         <Route path="users" element={<AdminUsers />} />
+        <Route path="payments" element={<AdminPayments />} />
         <Route path="me" element={<AdminProfile />} />
       </Route>
 
