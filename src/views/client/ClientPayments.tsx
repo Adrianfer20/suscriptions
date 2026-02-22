@@ -213,7 +213,7 @@ export default function ClientPayments() {
       case 'pago_movil':
         return 'Pago Móvil'
       case 'free':
-        return 'Promocional'
+        return 'Promocional (Gratis)'
       default:
         return method
     }
@@ -517,7 +517,7 @@ export default function ClientPayments() {
           {/* Status Filter Buttons */}
           <button
             onClick={() => setFilter('all')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex-shrink-0 ${
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors shrink-0 ${
               filter === 'all'
                 ? 'bg-primary text-white'
                 : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
@@ -527,7 +527,7 @@ export default function ClientPayments() {
           </button>
           <button
             onClick={() => setFilter('verified')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex-shrink-0 ${
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors shrink-0 ${
               filter === 'verified'
                 ? 'bg-green-600 text-white'
                 : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
@@ -538,7 +538,7 @@ export default function ClientPayments() {
           </button>
           <button
             onClick={() => setFilter('pending')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex-shrink-0 ${
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors shrink-0 ${
               filter === 'pending'
                 ? 'bg-yellow-600 text-white'
                 : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
@@ -549,7 +549,7 @@ export default function ClientPayments() {
           </button>
           <button
             onClick={() => setFilter('rejected')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex-shrink-0 ${
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors shrink-0 ${
               filter === 'rejected'
                 ? 'bg-red-600 text-white'
                 : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
@@ -572,7 +572,7 @@ export default function ClientPayments() {
                 setFilter('all')
                 setMonthFilter(new Date().toISOString().slice(0, 7))
               }}
-              className="flex items-center gap-1 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0"
+              className="flex items-center gap-1 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors shrink-0"
             >
               <X className="w-4 h-4" />
               <span>Limpiar</span>
