@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
+import PageHeader from '../../components/layout/PageHeader'
 import { clientsApi, subscriptionsApi, communicationsApi } from "../../services/api";
 
 export default function AdminDashboard() {
@@ -73,16 +74,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray dark:text-white tracking-tight">
-            Panel de Control
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Resumen y accesos directos.
-          </p>
-        </div>
-      </div>
+      <PageHeader title="Panel de Control" subtitle="Resumen y accesos directos." />
 
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-6 md:auto-rows-fr">
         <Card

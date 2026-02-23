@@ -14,10 +14,11 @@ import {
   UserCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import api, { Subscription, Client, User as AuthUser } from '../../services/api'
+import api, { Subscription, User as AuthUser } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import useClientDashboard from '../../hooks/useClientDashboard'
 import { formatDate } from '../../utils/date'
+import PageHeader from '../../components/layout/PageHeader'
 
 interface SubscriptionWithClient extends Subscription {
   clientName?: string;
@@ -61,16 +62,10 @@ export default function ClientDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary tracking-tight">
-            Dashboard Cliente
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-300">
-            Bienvenido{user?.displayName ? `, ${user.displayName}` : ""}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Dashboard Cliente"
+        subtitle={user?.displayName ? `Bienvenido, ${user.displayName}` : 'Bienvenido'}
+      />
 
       {error && (
         <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-yellow-600 dark:text-yellow-400 text-sm">

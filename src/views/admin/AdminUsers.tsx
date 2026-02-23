@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { authApi, User } from '../../services/api'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
+import PageHeader from '../../components/layout/PageHeader'
 import { Input } from '../../components/ui/Input'
 import { Shield, Edit, Check, X, UserPlus, Trash, Save, User as UserIcon, Lock, Mail, MoreHorizontal } from 'lucide-react'
 
@@ -114,31 +115,28 @@ export default function AdminUsers() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-        <div className="flex items-center gap-3">
-           <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
-             <Shield size={24} />
-           </div>
-           <div>
-             <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Gestión de Usuarios</h2>
-             <p className="text-sm text-slate-500 dark:text-slate-400">Administra el staff y accesos administrativos</p>
-           </div>
-        </div>
-        <Button 
-            onClick={() => {
-                if(isFormOpen) {
-                    setIsFormOpen(false)
-                } else {
-                    setIsFormOpen(true)
-                }
-            }}
+      <PageHeader
+        className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700"
+        title={
+          <span className="flex items-center gap-3">
+            <span className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
+              <Shield size={24} />
+            </span>
+            <span>Gestión de Usuarios</span>
+          </span>
+        }
+        subtitle="Administra el staff y accesos administrativos"
+        action={
+          <Button
+            onClick={() => setIsFormOpen(!isFormOpen)}
             className="w-full sm:w-auto flex items-center justify-center gap-2"
             variant={isFormOpen ? "outline" : "primary"}
-        >
+          >
             {isFormOpen ? <X size={18} /> : <UserPlus size={18} />}
             {isFormOpen ? 'Cancelar' : 'Nuevo Usuario'}
-        </Button>
-      </div>
+          </Button>
+        }
+      />
 
        {/* Formulario Collapsible */}
        {isFormOpen && (

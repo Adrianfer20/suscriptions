@@ -4,6 +4,7 @@ import { Plus, ChevronDown, ChevronUp, UserPlus } from "lucide-react";
 import { clientsApi, authApi, Client } from "../../services/api";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
+import PageHeader from '../../components/layout/PageHeader'
 import { Input } from "../../components/ui/Input";
 
 type ClientWithEmail = Client & { email?: string };
@@ -150,24 +151,20 @@ export default function AdminClients() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-            Gestión de Clientes
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Administra los usuarios y sus credenciales de acceso
-          </p>
-        </div>
-        <Button
-          onClick={() => setIsFormOpen(!isFormOpen)}
-          className="flex items-center gap-2"
-          variant={isFormOpen ? "outline" : "primary"}
-        >
-          {isFormOpen ? <ChevronUp size={18} /> : <UserPlus size={18} />}
-          {isFormOpen ? "Cancelar" : "Nuevo Cliente"}
-        </Button>
-      </div>
+      <PageHeader
+        title="Gestión de Clientes"
+        subtitle="Administra los usuarios y sus credenciales de acceso"
+        action={
+          <Button
+            onClick={() => setIsFormOpen(!isFormOpen)}
+            className="flex items-center gap-2"
+            variant={isFormOpen ? "outline" : "primary"}
+          >
+            {isFormOpen ? <ChevronUp size={18} /> : <UserPlus size={18} />}
+            {isFormOpen ? "Cancelar" : "Nuevo Cliente"}
+          </Button>
+        }
+      />
 
       {/* Formulario Collapsible */}
       {isFormOpen && (
