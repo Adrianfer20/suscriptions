@@ -164,9 +164,6 @@ export default function AdminDashboard() {
                             <span className="font-bold text-gray dark:text-primary text-sm px-2 py-1 rounded bg-secondary dark:bg-secondary uppercase">
                               {client?.name || "Cliente desconocido"}
                             </span>
-                            <span className="text-xs text-gray-700 dark:text-primary">
-                              {client?.email}
-                            </span>
                           </div>
                           <div className="flex-1 text-center">
                             <span className="inline-block text-xs font-semibold px-2 py-1 rounded bg-secondary dark:bg-secondary text-primary dark:text-primary">
@@ -182,11 +179,6 @@ export default function AdminDashboard() {
                                   <b>{formatDate(sub.cutDate)}</b>
                                 </span>
                               )}
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <span className="text-xs font-medium text-primary dark:text-slate-200">
-                              {sub.plan}
                             </span>
                           </div>
                         </div>
