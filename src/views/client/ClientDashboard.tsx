@@ -1,194 +1,48 @@
 import { getDaysUntilCut } from '../../utils/date'
-import { useEffect, useState } from "react";
-import { Card } from "../../components/ui/Card";
-import { Button } from "../../components/ui/Button";
-import {
-  CreditCard,
-  Receipt,
-  User,
-  Calendar,
-  CheckCircle,
-  AlertCircle,
-  Clock,
-  Loader2,
-  UserCircle,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import api, { Subscription, User as AuthUser } from '../../services/api'
-import { useAuth } from '../../context/AuthContext'
-import useClientDashboard from '../../hooks/useClientDashboard'
-import { formatDate } from '../../utils/date'
+import { useEffect } from 'react'
 import PageHeader from '../../components/layout/PageHeader'
-
-interface SubscriptionWithClient extends Subscription {
-  clientName?: string;
-  clientEmail?: string;
-}
+import { useNavigate } from 'react-router-dom'
+import { Card } from '../../components/ui/Card'
+import toast from 'react-hot-toast'
+import LoadingSpinner from '../../components/LoadingSpinner'
+import useClientDashboard from '../../hooks/useClientDashboard'
+import { useAuth } from '../../context/AuthContext'
+import type { Subscription } from '../../services/api'
+import PlanCard from './components/PlanCard'
+import QuickAccessGrid from './components/QuickAccessGrid'
 
 export default function ClientDashboard() {
   const { user } = useAuth()
-  const { loading, subscription, clientData, error } = useClientDashboard(user?.id)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const { loading, subscription, error, clearError } = useClientDashboard(user?.id)
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+      clearError()
+    }
+  }, [error, clearError])
+
+
+  if (loading) return <LoadingSpinner message="Cargando..." />
   
 
-  // Data fetching moved to `useClientDashboard` hook
-
-  // formatDate moved to utils
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "text-green-600 bg-green-50 dark:bg-green-900/20";
-      case "inactive":
-        return "text-gray-600 bg-gray-50 dark:bg-gray-900/20";
-      case "past_due":
-        return "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20";
-      case "cancelled":
-        return "text-red-600 bg-red-50 dark:bg-red-900/20";
-      default:
-        return "text-gray-600 bg-gray-50 dark:bg-gray-900/20";
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  const daysUntil = subscription ? getDaysUntilCut(subscription.cutDate) : '-';
+  const daysUntil = subscription ? getDaysUntilCut(subscription.cutDate) : '-'
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Dashboard Cliente"
-        subtitle={user?.displayName ? `Bienvenido, ${user.displayName}` : 'Bienvenido'}
+        subtitle={
+          user?.displayName ? `Bienvenido, ${user.displayName}` : "Bienvenido"
+        }
       />
 
-      {error && (
-        <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-yellow-600 dark:text-yellow-400 text-sm">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      <PlanCard subscription={subscription as Subscription | null} daysUntil={daysUntil} onDetails={() => navigate('/client/subscription')} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Tu Plan Actual */}
-        <Card className="border-l-4 border-l-primary/70">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 dark:text-secondary">
-              Tu Plan Actual
-            </h3>
-            {subscription?.status && (
-              <span
-                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(subscription.status)}`}
-              >
-                {subscription.status === "active" ? (
-                  <CheckCircle className="w-3 h-3" />
-                ) : (
-                  <Clock className="w-3 h-3" />
-                )}
-                {subscription.status === "active"
-                  ? "Activo"
-                  : subscription.status}
-              </span>
-            )}
-          </div>
-
-          {subscription ? (
-            <>
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <div className="font-bold text-lg text-gray-900 dark:text-gray-200">
-                    {subscription.plan}
-                  </div>
-                  <div className="text-2xl font-bold text-primary mt-1 dark:text-secondary">
-                    {subscription.amount}
-                    <span className="text-sm font-normal text-gray-500 dark:text-gray-300">
-                      /mes
-                    </span>
-                  </div>
-                </div>
-                <CreditCard className="w-10 h-10 text-gray-300 dark:text-gray-600" />
-              </div>
-              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between text-sm">
-                <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4" />
-                  Próximo corte:
-                </span>
-                <span className="font-medium text-gray-900 dark:text-gray-200">
-                  {formatDate(subscription.cutDate)}
-                </span>
-              </div>
-              <div className="mt-2 flex items-center gap-2 text-sm text-primary dark:text-secondary font-semibold">
-                {typeof daysUntil === "number" && daysUntil >= 0 ? (
-                  <>
-                    <Clock className="w-4 h-4" />
-                    Faltan {daysUntil} días para el
-                    cobro
-                  </>
-                ) : (
-                  <span>No se pudo calcular los días restantes</span>
-                )}
-              </div>
-              <div className="mt-3">
-                <Button
-                  variant="primary"
-                  className="w-full font-bold shadow-md shadow-primary/20"
-                  onClick={() => navigate("/client/subscription")}
-                >
-                  Ver detalles
-                </Button>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <CreditCard className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-3" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                No tienes suscripción activa
-              </p>
-              <Button variant="secondary" size="sm" className="mt-3">
-                Contactar soporte
-              </Button>
-            </div>
-          )}
+        <Card>
+          <QuickAccessGrid />
         </Card>
-      </div>
-
-      {/* Acceso rápido */}
-      <Card>
-        <h3 className="font-semibold text-gray-900 dark:text-secondary mb-4">
-          Accesos rápidos
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex-col gap-2 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300"
-            onClick={() => navigate("/client/subscription")}
-          >
-            <CreditCard className="w-6 h-6" />
-            <span>Mi Suscripción</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex-col gap-2 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300"
-            onClick={() => navigate("/client/payments")}
-          >
-            <Receipt className="w-6 h-6" />
-            <span>Mis Pagos</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex-col gap-2 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300"
-            onClick={() => navigate("/client/profile")}
-          >
-            <User className="w-6 h-6" />
-            <span>Mi Perfil</span>
-          </Button>
-        </div>
-      </Card>
     </div>
   );
 }

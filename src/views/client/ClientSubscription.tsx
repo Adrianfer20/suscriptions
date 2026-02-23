@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { CreditCard, Calendar, AlertCircle, CheckCircle, Clock, Loader2, KeyRound } from 'lucide-react'
@@ -55,7 +56,7 @@ export default function ClientSubscription() {
         const active = userSubscriptions.find((sub) => sub.status === 'active')
         setSubscription(active || null)
         
-      } catch (err: any) {
+        } catch (err: any) {
         console.error('Error fetching subscription:', err)
         if (mounted) setError('No se pudo cargar la información de tu suscripción')
       } finally {
@@ -70,6 +71,13 @@ export default function ClientSubscription() {
     }
   }, [user])
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+      setError(null)
+    }
+  }, [error])
+
   const handleRenew = async () => {
     if (!subscription?.id) return
     
@@ -80,7 +88,7 @@ export default function ClientSubscription() {
       // Recargar datos
       window.location.reload()
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Error al renovar suscripción')
+      toast.error(err.response?.data?.message || 'Error al renovar suscripción')
     } finally {
       setRenewing(false)
     }
@@ -137,12 +145,7 @@ export default function ClientSubscription() {
         <p className="text-sm text-gray-500 dark:text-gray-300">Gestiona tu plan de suscripción</p>
       </div>
 
-      {error && (
-        <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-yellow-600 dark:text-yellow-400 text-sm">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      {/* Errors are shown via toast notifications */}
 
       {!subscription && !error && (
         <Card>

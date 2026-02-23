@@ -1,5 +1,6 @@
 // ...existing code...
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -50,6 +51,20 @@ export default function ClientProfile() {
       mounted = false;
     };
   }, [user]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+      setError(null)
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (success) {
+      toast.success(success)
+      setSuccess(null)
+    }
+  }, [success])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -119,18 +134,7 @@ export default function ClientProfile() {
               <Edit className="w-5 h-5" /> Editar información personal
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{error}</span>
-                </div>
-              )}
-              {success && (
-                <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 text-sm">
-                  <CheckCircle className="w-4 h-4 shrink-0" />
-                  <span>{success}</span>
-                </div>
-              )}
+              {/* errors/success are shown via toast */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Teléfono"

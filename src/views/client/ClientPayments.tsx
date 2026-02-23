@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -257,6 +258,27 @@ export default function ClientPayments() {
 
   // Filter payments
   const [monthFilter, setMonthFilter] = useState<string>(new Date().toISOString().slice(0, 7))
+
+  useEffect(() => {
+    if (formSuccess) {
+      toast.success(formSuccess)
+      setFormSuccess(null)
+    }
+  }, [formSuccess])
+
+  useEffect(() => {
+    if (actionSuccess) {
+      toast.success(actionSuccess)
+      setActionSuccess(null)
+    }
+  }, [actionSuccess])
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+      setError(null)
+    }
+  }, [error])
   
   const filteredPayments = payments.filter(payment => {
     // Filter by status
@@ -314,26 +336,7 @@ export default function ClientPayments() {
         </Button>
       </div>
 
-      {formSuccess && (
-        <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 text-sm">
-          <CheckCircle className="w-4 h-4 shrink-0" />
-          <span>{formSuccess}</span>
-        </div>
-      )}
-
-      {actionSuccess && !formSuccess && (
-        <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 text-sm">
-          <CheckCircle className="w-4 h-4 shrink-0" />
-          <span>{actionSuccess}</span>
-        </div>
-      )}
-
-      {error && (
-        <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-yellow-600 dark:text-yellow-400 text-sm">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      {/* formSuccess/actionSuccess/error are displayed via toast notifications */}
 
       {/* Payment Form */}
       {showForm && (

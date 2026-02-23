@@ -68,5 +68,7 @@ export default function useClientDashboard(userId?: string | null) {
     }
   }, [userId])
 
-  return { loading, subscription, clientData, error }
+  const clearError = () => setError(null)
+
+  return { loading, subscription, clientData, error, clearError }
 }
