@@ -84,7 +84,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-6 auto-rows-fr">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-6 md:auto-rows-fr">
         <Card
           title="Suscripciones"
           className="h-full md:col-span-2 2xl:col-span-2 hover:shadow-lg transition-all duration-200"
