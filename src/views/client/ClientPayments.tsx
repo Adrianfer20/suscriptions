@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
-import { Receipt, Download, Calendar, CheckCircle, Clock, XCircle, Loader2, AlertCircle, Plus, CreditCard, Wallet, Smartphone, Gift, Filter, X } from 'lucide-react'
+import { Receipt, Download, Calendar, CheckCircle, Clock, XCircle, Loader2, AlertCircle, Plus, CreditCard, Wallet, Smartphone, Gift, Filter, X, Search, ChevronDown } from 'lucide-react'
 import { MonthFilterSelect } from '../../components/ui/MonthFilterSelect'
 import api, { paymentsApi, Payment, Subscription } from '../../api'
 import { useAuth } from '../../auth'
@@ -14,9 +14,11 @@ export default function ClientPayments() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null)
   
   // Form state
   const [selectedSubscription, setSelectedSubscription] = useState('')
@@ -269,6 +271,16 @@ export default function ClientPayments() {
         return false
       }
     }
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      return (
+        payment.reference?.toLowerCase().includes(query) ||
+        payment.payerEmail?.toLowerCase().includes(query) ||
+        payment.subscriptionId.toLowerCase().includes(query) ||
+        payment.bank?.toLowerCase().includes(query)
+      )
+    }
     return true
   })
 
@@ -306,6 +318,13 @@ export default function ClientPayments() {
         <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 text-sm">
           <CheckCircle className="w-4 h-4 shrink-0" />
           <span>{formSuccess}</span>
+        </div>
+      )}
+
+      {actionSuccess && !formSuccess && (
+        <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 text-sm">
+          <CheckCircle className="w-4 h-4 shrink-0" />
+          <span>{actionSuccess}</span>
         </div>
       )}
 
@@ -369,6 +388,7 @@ export default function ClientPayments() {
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="50.00"
                   required={method !== 'free'}
+                  disabled={method === 'free'}
                 />
               </div>
 
@@ -512,73 +532,68 @@ export default function ClientPayments() {
 
       {/* Filters - Mobile First */}
       <Card className="p-3 sm:p-4">
-        {/* Filters Row - Horizontal scroll on mobile */}
-        <div className="flex flex-nowrap sm:flex-wrap gap-2 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 -mx-2 px-2 sm:mx-0 sm:px-0">
-          {/* Status Filter Buttons */}
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors shrink-0 ${
-              filter === 'all'
-                ? 'bg-primary text-white'
-                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
-            }`}
-          >
-            Todos
-          </button>
-          <button
-            onClick={() => setFilter('verified')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors shrink-0 ${
-              filter === 'verified'
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
-            }`}
-          >
-            <CheckCircle className="w-4 h-4 inline mr-1" />
-            Aprobados
-          </button>
-          <button
-            onClick={() => setFilter('pending')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors shrink-0 ${
-              filter === 'pending'
-                ? 'bg-yellow-600 text-white'
-                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
-            }`}
-          >
-            <Clock className="w-4 h-4 inline mr-1" />
-            Pendientes
-          </button>
-          <button
-            onClick={() => setFilter('rejected')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors shrink-0 ${
-              filter === 'rejected'
-                ? 'bg-red-600 text-white'
-                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
-            }`}
-          >
-            <XCircle className="w-4 h-4 inline mr-1" />
-            Rechazados
-          </button>
-          
-          {/* Month Filter */}
-          <MonthFilterSelect
-            value={monthFilter}
-            onChange={setMonthFilter}
+        {/* Search Bar */}
+        <div className="relative mb-3">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 z-10 text-gray-900 dark:text-gray-200" />
+          <Input
+            type="text"
+            placeholder="Buscar pagos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 w-full"
           />
-          
-          {/* Clear Filters */}
-          {(filter !== 'all' || monthFilter !== new Date().toISOString().slice(0, 7)) && (
+        </div>
+
+        {/* Filter Section - Mobile First */}
+        <div className="flex flex-wrap gap-2 items-center justify-between">
+          {/* Status Filter */}
+          <div className="relative shrink-0">
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="appearance-none pl-3 pr-8 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white cursor-pointer hover:border-primary transition-colors min-w-32.5 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="all">Todos</option>
+              <option value="pending">Pendiente</option>
+              <option value="verified">Aprobado</option>
+              <option value="rejected">Rechazado</option>
+            </select>
+            <Filter className="w-4 h-4 absolute right-7 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          </div>
+
+          {/* Month Filter */}
+          <div className="shrink-0">
+            <MonthFilterSelect
+              value={monthFilter}
+              onChange={setMonthFilter}
+            />
+          </div>
+
+          {/* Active Filters */}
+          {(filter !== 'all' || monthFilter !== new Date().toISOString().slice(0, 7) || searchQuery) && (
             <button
               onClick={() => {
                 setFilter('all')
                 setMonthFilter(new Date().toISOString().slice(0, 7))
+                setSearchQuery('')
               }}
-              className="flex items-center gap-1 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors shrink-0"
+              className="shrink-0 flex items-center gap-1.5 text-center text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors px-3 py-2"
             >
               <X className="w-4 h-4" />
               <span>Limpiar</span>
             </button>
           )}
         </div>
+
+        {/* Active Filters Count */}
+        {filteredPayments.length > 0 && (
+          <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+            {filteredPayments.length} pago
+            {filteredPayments.length !== 1 ? "s" : ""} encontrado
+            {filteredPayments.length !== 1 ? "s" : ""}
+          </div>
+        )}
       </Card>
 
       {/* Payments List */}

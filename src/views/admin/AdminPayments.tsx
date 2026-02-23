@@ -708,7 +708,7 @@ export default function AdminPayments() {
       <Card className="p-3 sm:p-4">
         {/* Search Bar */}
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 z-10 text-slate-900 dark:text-slate-200" />
           <Input
             type="text"
             placeholder="Buscar pagos..."
@@ -719,7 +719,7 @@ export default function AdminPayments() {
         </div>
 
         {/* Filter Section - Mobile First */}
-        <div className="flex flex-nowrap sm:flex-wrap gap-2 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 -mx-2 px-2 sm:mx-0 sm:px-0">
+        <div className="flex flex-wrap gap-2 items-center justify-between">
           {/* Status Filter */}
           <div className="relative shrink-0">
             <select
@@ -775,7 +775,7 @@ export default function AdminPayments() {
                 setMonthFilter(new Date().toISOString().slice(0, 7));
                 setSearchQuery("");
               }}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors shrink-0"
+              className="shrink-0 flex items-center gap-1.5 text-center text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors px-3 py-2"
             >
               <X className="w-4 h-4" />
               <span>Limpiar</span>
