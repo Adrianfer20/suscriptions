@@ -75,7 +75,7 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+          <h2 className="text-2xl font-bold text-gray dark:text-white tracking-tight">
             Panel de Control
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -84,8 +84,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-6 auto-rows-fr">
-        
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-6 md:auto-rows-fr">
         <Card
           title="Suscripciones"
           className="h-full md:col-span-2 2xl:col-span-2 hover:shadow-lg transition-all duration-200"
@@ -129,7 +128,7 @@ export default function AdminDashboard() {
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-2">
                     <svg
-                      className="w-5 h-5 text-yellow-500 animate-pulse"
+                      className="w-5 h-5 text-primary dark:text-slate-200 animate-pulse"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -141,10 +140,11 @@ export default function AdminDashboard() {
                         d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <span className="font-semibold text-yellow-700 dark:text-yellow-300">
+                    <span className="font-semibold text-primary dark:text-slate-200">
                       Suscripciones por vencer esta semana
                     </span>
                   </div>
+
                   <div className="flex flex-col gap-3">
                     {upcomingSubs.map((sub) => {
                       const client = clientsList.find(
@@ -158,35 +158,27 @@ export default function AdminDashboard() {
                       return (
                         <div
                           key={sub.id ?? sub.clientId}
-                          className="flex items-center gap-4 p-3 rounded-xl border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/40 shadow-sm"
+                          className="flex items-center gap-2 md:gap-4 p-3 rounded-xl border border-secondary dark:border-secondary bg-secondary/50 dark:bg-secondary/40 shadow-sm"
                         >
-                          <div className="flex flex-col min-w-32">
-                            <span className="font-bold text-gray-900 dark:text-yellow-200 text-sm">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-gray dark:text-primary text-sm px-2 py-1 rounded bg-secondary dark:bg-secondary uppercase">
                               {client?.name || "Cliente desconocido"}
-                            </span>
-                            <span className="text-xs text-gray-700 dark:text-yellow-300">
-                              {client?.email}
                             </span>
                           </div>
                           <div className="flex-1 text-center">
-                            <span className="inline-block text-xs font-semibold px-2 py-1 rounded bg-yellow-200 dark:bg-yellow-700 text-yellow-900 dark:text-yellow-100">
+                            <span className="inline-block text-xs font-semibold px-2 py-1 rounded bg-secondary dark:bg-secondary text-primary dark:text-primary">
                               {diff === 0 ? (
                                 <span>¡Vence hoy!</span>
                               ) : (
                                 <span>
                                   Faltan{" "}
-                                  <b className="text-yellow-700 dark:text-yellow-200">
+                                  <b className="text-primary dark:text-primary">
                                     {diff}
                                   </b>{" "}
                                   día{diff > 1 ? "s" : ""} para vencer el{" "}
                                   <b>{formatDate(sub.cutDate)}</b>
                                 </span>
                               )}
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <span className="text-xs font-medium text-yellow-700 dark:text-yellow-200">
-                              {sub.plan}
                             </span>
                           </div>
                         </div>
@@ -220,9 +212,10 @@ export default function AdminDashboard() {
             </Link>
           </div>
         </Card>
+
         <Card
           title="Estadísticas Rápidas"
-          className="h-full hover:shadow-lg transition-all duration-200 bg-primary/5 dark:bg-slate-800/80 dark:border-primary/30 border-primary/20"
+          className="h-full hover:shadow-lg transition-all duration bg-primary/5 dark:bg-slate-800/80 dark:border-primary/30 border-primary/20"
         >
           {loading ? (
             <div className="flex justify-center p-4">
@@ -234,7 +227,7 @@ export default function AdminDashboard() {
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   Clientes Totales
                 </span>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                <span className="text-xl font-bold text-gray dark:text-white">
                   {stats.clients}
                 </span>
               </div>
@@ -242,7 +235,7 @@ export default function AdminDashboard() {
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   Suscripciones
                 </span>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                <span className="text-xl font-bold text-gray dark:text-white">
                   {stats.subscriptions}
                 </span>
               </div>
@@ -259,7 +252,7 @@ export default function AdminDashboard() {
                   Mensajes sin leer
                 </span>
                 <span
-                  className={`text-sm font-bold px-2 py-0.5 rounded-full ${stats.unread > 0 ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800" : "bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-600"}`}
+                  className={`text-sm font-bold px-2 py-0.5 rounded-full ${stats.unread > 0 ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red dark:border-red-800" : "bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 border border-gray dark:border-slate-600"}`}
                 >
                   {stats.unread}
                 </span>
@@ -298,7 +291,6 @@ export default function AdminDashboard() {
             </Link>
           </div>
         </Card>
-
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ import {
   Moon,
   Sun,
   Receipt,
+  DollarSign,
 } from "lucide-react";
 import { communicationsApi } from "../api";
 import { useTheme } from "../context/ThemeContext";
@@ -39,6 +40,11 @@ const MENU_CONFIG: Record<
       label: "Suscripciones",
       to: "/admin/subscriptions",
       icon: <CreditCard className="w-5 h-5" />,
+    },
+    {
+      label: "Pagos",
+      to: "/admin/payments",
+      icon: <DollarSign className="w-5 h-5" />,
     },
     {
       label: "Comunicación",

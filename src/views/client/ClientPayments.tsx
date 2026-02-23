@@ -1,30 +1,56 @@
 import React, { useEffect, useState } from 'react'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
-import { Receipt, Download, Calendar, CheckCircle, Clock, XCircle, Loader2, AlertCircle } from 'lucide-react'
-import api, { Subscription } from '../../api'
+import { Input } from '../../components/ui/Input'
+import { Receipt, Download, Calendar, CheckCircle, Clock, XCircle, Loader2, AlertCircle, Plus, CreditCard, Wallet, Smartphone, Gift, Filter, X, Search, ChevronDown } from 'lucide-react'
+import { MonthFilterSelect } from '../../components/ui/MonthFilterSelect'
+import api, { paymentsApi, Payment, Subscription } from '../../api'
 import { useAuth } from '../../auth'
-
-interface PaymentRecord {
-  id: string
-  plan: string
-  amount: string
-  status: 'paid' | 'pending' | 'failed' | 'up_to_date'
-  startDate: string
-  cutDate: string
-}
 
 export default function ClientPayments() {
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
-  const [payments, setPayments] = useState<PaymentRecord[]>([])
+  const [payments, setPayments] = useState<Payment[]>([])
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showForm, setShowForm] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [formSuccess, setFormSuccess] = useState<string | null>(null)
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null)
+  
+  // Form state
+  const [selectedSubscription, setSelectedSubscription] = useState('')
+  const [amount, setAmount] = useState('')
+  const [currency, setCurrency] = useState('USD')
+  const [method, setMethod] = useState<'binance' | 'zinli' | 'pago_movil' | 'free'>('binance')
+  const [reference, setReference] = useState('')
+  const [payerEmail, setPayerEmail] = useState('')
+  const [payerPhone, setPayerPhone] = useState('')
+  const [payerIdNumber, setPayerIdNumber] = useState('')
+  const [bank, setBank] = useState('')
+  const [receiptUrl, setReceiptUrl] = useState('')
+
+  // Handle method change to auto-set currency
+  const handleMethodChange = (newMethod: 'binance' | 'zinli' | 'pago_movil' | 'free') => {
+    setMethod(newMethod)
+    // Auto-set currency based on method (amount is entered by the client)
+    if (newMethod === 'binance') {
+      setCurrency('USDT')
+    } else if (newMethod === 'zinli') {
+      setCurrency('USD')
+    } else if (newMethod === 'pago_movil') {
+      setCurrency('VES')
+    } else if (newMethod === 'free') {
+      setCurrency('USD')
+    }
+  }
 
   useEffect(() => {
     let mounted = true
     
-    const fetchPayments = async () => {
+    const fetchData = async () => {
       if (!user?.id) {
         if (mounted) {
           setError('No se encontró el usuario')
@@ -36,82 +62,118 @@ export default function ClientPayments() {
       try {
         setLoading(true)
         
-        // Obtener suscripciones
-        const res = await api.get('/subscriptions')
-        const subscriptions = res.data?.data || res.data || []
-        const userUid = user.id
+        // Fetch subscriptions first to get user's subscription IDs
+        const subsRes = await api.get('/subscriptions')
+        const allSubscriptions = subsRes.data?.data || subsRes.data || []
+        const userSubscriptions = (allSubscriptions as Subscription[])
+          .filter((sub: Subscription) => sub.clientId === user.id)
         
-        // Filtrar suscripciones donde clientId === user.id
-        const userSubscriptions = (subscriptions as Subscription[])
-          .filter((sub: Subscription) => sub.clientId === userUid)
+        if (mounted) setSubscriptions(userSubscriptions)
         
-        if (!mounted) return
+        // Get user's subscription IDs
+        const userSubscriptionIds = new Set(userSubscriptions.map((sub: Subscription) => sub.id))
         
-        // Mapear suscripciones a registros de pago
-        // Nueva lógica: 'al día' si faltan más de 3 días para el corte, 'pendiente' si faltan 3 días o menos, 'pagado' si el corte ya pasó
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
+        // Fetch all payments and filter by user's subscriptions
+        const paymentsRes = await paymentsApi.list({ limit: 100 })
+        console.log('Client payments response:', paymentsRes.data)
         
-        const paymentRecords: PaymentRecord[] = userSubscriptions.map((sub: Subscription) => {
-          const cutDate = sub.cutDate ? new Date(sub.cutDate) : null
-          const isPast = cutDate && cutDate < today
-          const isActive = sub.status === 'active'
-          let status: 'paid' | 'pending' | 'failed' | 'up_to_date' = 'failed';
-          if (isPast) {
-            status = 'paid';
-          } else if (isActive && cutDate) {
-            // Calcular días hasta el corte
-            const diffDays = Math.ceil((cutDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-            if (diffDays > 3) {
-              status = 'up_to_date'; // Al día
-            } else {
-              status = 'pending'; // Por vencer
-            }
-          } else if (!isActive) {
-            status = 'failed';
-          }
-          return {
-            id: sub.id || Math.random().toString(),
-            plan: sub.plan,
-            amount: sub.amount,
-            status,
-            startDate: sub.startDate,
-            cutDate: sub.cutDate
-          }
-        })
-        
-        // Ordenar por fecha de corte descendente
-        paymentRecords.sort((a, b) => {
-          if (!a.cutDate) return 1
-          if (!b.cutDate) return -1
-          return new Date(b.cutDate).getTime() - new Date(a.cutDate).getTime()
-        })
-        
-        setPayments(paymentRecords)
+        if (paymentsRes.data?.ok) {
+          const allPayments = paymentsRes.data.data || []
+          // Filter to only show payments from user's subscriptions
+          const userPayments = allPayments.filter((payment: Payment) => 
+            userSubscriptionIds.has(payment.subscriptionId)
+          )
+          if (mounted) setPayments(userPayments)
+        }
       } catch (err: any) {
-        console.error('Error fetching payments:', err)
-        if (mounted) setError('No se pudieron cargar los pagos')
+        console.error('Error fetching data:', err)
+        if (mounted) setError('No se pudieron cargar los datos')
       } finally {
         if (mounted) setLoading(false)
       }
     }
 
-    fetchPayments()
+    fetchData()
     
     return () => {
       mounted = false
     }
   }, [user])
 
+  const handleSubmitPayment = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedSubscription) {
+      setError('Por favor selecciona una suscripción')
+      return
+    }
+
+    try {
+      setSubmitting(true)
+      setError(null)
+      
+      const paymentData: any = {
+        subscriptionId: selectedSubscription,
+        amount: parseFloat(amount),
+        currency,
+        method,
+        date: new Date().toISOString()
+      }
+
+      // Add method-specific fields
+      if (method === 'binance' || method === 'zinli') {
+        paymentData.reference = reference
+        paymentData.payerEmail = payerEmail
+        if (receiptUrl) paymentData.receiptUrl = receiptUrl
+      } else if (method === 'pago_movil') {
+        paymentData.payerPhone = payerPhone
+        paymentData.payerIdNumber = payerIdNumber
+        paymentData.bank = bank
+        if (reference) paymentData.reference = reference
+      } else if (method === 'free') {
+        paymentData.free = true
+        paymentData.amount = 0
+      }
+
+      await paymentsApi.create(paymentData)
+      
+      setFormSuccess('Pago registrado exitosamente. Será verificado por un administrador.')
+      setShowForm(false)
+      
+      // Reset form
+      setSelectedSubscription('')
+      setAmount('')
+      setMethod('binance')
+      setReference('')
+      setPayerEmail('')
+      setPayerPhone('')
+      setPayerIdNumber('')
+      setBank('')
+      setReceiptUrl('')
+      
+      // Refresh payments
+      const paymentsRes = await paymentsApi.list({ limit: 100 })
+      console.log('Refresh payments response:', paymentsRes.data)
+      
+      if (paymentsRes.data?.ok) {
+        // According to docs: res.data.data is Payment[]
+        const paymentsData = paymentsRes.data.data || []
+        setPayments(paymentsData)
+      }
+    } catch (err: any) {
+      console.error('Error submitting payment:', err)
+      setError(err.response?.data?.message || 'Error al registrar el pago')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'paid':
+      case 'verified':
         return 'text-green-600 bg-green-50 dark:bg-green-900/20'
-      case 'up_to_date':
-        return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'
       case 'pending':
         return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20'
-      case 'failed':
+      case 'rejected':
         return 'text-red-600 bg-red-50 dark:bg-red-900/20'
       default:
         return 'text-gray-600 bg-gray-50 dark:bg-gray-900/20'
@@ -120,13 +182,11 @@ export default function ClientPayments() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'paid':
+      case 'verified':
         return <CheckCircle className="w-4 h-4" />
-      case 'up_to_date':
-        return <CheckCircle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
       case 'pending':
         return <Clock className="w-4 h-4" />
-      case 'failed':
+      case 'rejected':
         return <XCircle className="w-4 h-4" />
       default:
         return <Clock className="w-4 h-4" />
@@ -135,16 +195,44 @@ export default function ClientPayments() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'paid':
-        return 'Pagado'
-      case 'up_to_date':
-        return 'Al día'
+      case 'verified':
+        return 'Aprobado'
       case 'pending':
-        return 'Por vencer'
-      case 'failed':
-        return 'Fallido'
+        return 'Pendiente'
+      case 'rejected':
+        return 'Rechazado'
       default:
         return status
+    }
+  }
+
+  const getMethodLabel = (method: string) => {
+    switch (method) {
+      case 'binance':
+        return 'Binance'
+      case 'zinli':
+        return 'Zinli'
+      case 'pago_movil':
+        return 'Pago Móvil'
+      case 'free':
+        return 'Promocional (Gratis)'
+      default:
+        return method
+    }
+  }
+
+  const getMethodIcon = (method: string) => {
+    switch (method) {
+      case 'binance':
+        return <CreditCard className="w-4 h-4" />
+      case 'zinli':
+        return <Wallet className="w-4 h-4" />
+      case 'pago_movil':
+        return <Smartphone className="w-4 h-4" />
+      case 'free':
+        return <Gift className="w-4 h-4" />
+      default:
+        return <CreditCard className="w-4 h-4" />
     }
   }
 
@@ -154,19 +242,56 @@ export default function ClientPayments() {
     return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
   }
 
-  // Filtrar pagos
-  const filteredPayments = payments.filter(payment => 
-    filter === 'all' || payment.status === filter
-  )
+  const formatCurrency = (amount: number, currency: string) => {
+    // Handle crypto currencies like USDT
+    if (currency === 'USDT' || currency === 'BTC' || currency === 'ETH') {
+      return `${currency} ${amount.toFixed(2)}`
+    }
+    // Handle VES with proper locale
+    if (currency === 'VES') {
+      return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'VES' }).format(amount)
+    }
+    // Default to USD
+    return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(amount)
+  }
 
-  // Calcular totales
-  const totalPaid = payments
-    .filter(p => p.status === 'paid')
-    .reduce((sum, p) => sum + parseFloat(p.amount.replace(/[^0-9.-]+/g, '')), 0)
+  // Filter payments
+  const [monthFilter, setMonthFilter] = useState<string>(new Date().toISOString().slice(0, 7))
+  
+  const filteredPayments = payments.filter(payment => {
+    // Filter by status
+    if (filter !== 'all' && payment.status !== filter) {
+      return false
+    }
+    // Filter by month
+    if (monthFilter) {
+      const paymentDate = new Date(payment.date)
+      const paymentMonth = paymentDate.toISOString().slice(0, 7)
+      if (paymentMonth !== monthFilter) {
+        return false
+      }
+    }
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      return (
+        payment.reference?.toLowerCase().includes(query) ||
+        payment.payerEmail?.toLowerCase().includes(query) ||
+        payment.subscriptionId.toLowerCase().includes(query) ||
+        payment.bank?.toLowerCase().includes(query)
+      )
+    }
+    return true
+  })
+
+  // Calculate totals
+  const totalVerified = payments
+    .filter(p => p.status === 'verified')
+    .reduce((sum, p) => sum + p.amount, 0)
   
   const totalPending = payments
     .filter(p => p.status === 'pending')
-    .reduce((sum, p) => sum + parseFloat(p.amount.replace(/[^0-9.-]+/g, '')), 0)
+    .reduce((sum, p) => sum + p.amount, 0)
 
   if (loading) {
     return (
@@ -178,10 +303,30 @@ export default function ClientPayments() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary tracking-tight">Historial de Pagos</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-300">Consulta tus facturas y estado de pagos</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary tracking-tight">Mis Pagos</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-300">Consulta tus pagos y registra nuevos</p>
+        </div>
+        <Button onClick={() => setShowForm(!showForm)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Registrar Pago
+        </Button>
       </div>
+
+      {formSuccess && (
+        <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 text-sm">
+          <CheckCircle className="w-4 h-4 shrink-0" />
+          <span>{formSuccess}</span>
+        </div>
+      )}
+
+      {actionSuccess && !formSuccess && (
+        <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 text-sm">
+          <CheckCircle className="w-4 h-4 shrink-0" />
+          <span>{actionSuccess}</span>
+        </div>
+      )}
 
       {error && (
         <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-yellow-600 dark:text-yellow-400 text-sm">
@@ -190,62 +335,275 @@ export default function ClientPayments() {
         </div>
       )}
 
-      {/* Resumen */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-          <div className="text-sm text-blue-600 dark:text-blue-400">Saldo pendiente</div>
-          <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">${totalPending.toFixed(2)}</div>
-        </Card>
+      {/* Payment Form */}
+      {showForm && (
         <Card>
-          <div className="text-sm text-blue-600 dark:text-blue-400">¡Gracias por mantenerte al día!</div>
-          <div className="text-lg font-semibold text-blue-700 dark:text-blue-300">Tu historial está en orden</div>
+          <h3 className="text-lg font-semibold mb-4">Registrar Nuevo Pago</h3>
+          <form onSubmit={handleSubmitPayment} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Suscripción *
+                </label>
+                <select
+                  value={selectedSubscription}
+                  onChange={(e) => setSelectedSubscription(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
+                  required
+                >
+                  <option value="">Selecciona una suscripción</option>
+                  {subscriptions.map((sub) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.plan} - {sub.amount} ({sub.status})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Método de Pago *
+                </label>
+                <select
+                  value={method}
+                  onChange={(e) => handleMethodChange(e.target.value as any)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
+                  required
+                >
+                  <option value="binance">Binance</option>
+                  <option value="zinli">Zinli</option>
+                  <option value="pago_movil">Pago Móvil</option>
+                  <option value="free">Promocional (Gratis)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Monto *
+                </label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="50.00"
+                  required={method !== 'free'}
+                  disabled={method === 'free'}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Moneda
+                </label>
+                <div className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-slate-900 text-gray-900 dark:text-white font-medium">
+                  {currency === 'USDT' ? 'USDT (CRIPTOMONEDA)' : currency === 'USD' ? 'USD (DÓLAR ESTADOUNIDENSE)' : 'VES (BOLÍVAR)'}
+                </div>
+              </div>
+            </div>
+
+            {/* Method-specific fields */}
+            {(method === 'binance' || method === 'zinli') && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Referencia *
+                  </label>
+                  <Input
+                    type="text"
+                    value={reference}
+                    onChange={(e) => setReference(e.target.value)}
+                    placeholder={method === 'binance' ? 'BIN_ABC123XYZ' : 'ZN_123456789'}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Email *
+                  </label>
+                  <Input
+                    type="email"
+                    value={payerEmail}
+                    onChange={(e) => setPayerEmail(e.target.value)}
+                    placeholder="usuario@email.com"
+                    required
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    URL del Comprobante
+                  </label>
+                  <Input
+                    type="url"
+                    value={receiptUrl}
+                    onChange={(e) => setReceiptUrl(e.target.value)}
+                    placeholder="https://binance.com/transaction/..."
+                  />
+                </div>
+              </div>
+            )}
+
+            {method === 'pago_movil' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Teléfono *
+                  </label>
+                  <Input
+                    type="tel"
+                    value={payerPhone}
+                    onChange={(e) => setPayerPhone(e.target.value)}
+                    placeholder="+584121234567"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Cédula *
+                  </label>
+                  <Input
+                    type="text"
+                    value={payerIdNumber}
+                    onChange={(e) => setPayerIdNumber(e.target.value)}
+                    placeholder="12345678"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Banco *
+                  </label>
+                  <Input
+                    type="text"
+                    value={bank}
+                    onChange={(e) => setBank(e.target.value)}
+                    placeholder="Banco de Venezuela"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Referencia
+                  </label>
+                  <Input
+                    type="text"
+                    value={reference}
+                    onChange={(e) => setReference(e.target.value)}
+                    placeholder="REF123456"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="secondary" onClick={() => setShowForm(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Registrando...
+                  </>
+                ) : (
+                  'Registrar Pago'
+                )}
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
+
+      {/* Summary */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+          <div className="text-sm text-green-600 dark:text-green-400">Total Aprobado</div>
+          <div className="text-2xl font-bold text-green-700 dark:text-green-300">
+            {formatCurrency(totalVerified, currency)}
+          </div>
+        </Card>
+        <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+          <div className="text-sm text-yellow-600 dark:text-yellow-400">Pendiente</div>
+          <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
+            {formatCurrency(totalPending, currency)}
+          </div>
         </Card>
       </div>
 
-      {/* Filtros */}
-      <Card>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'all'
-                ? 'bg-primary text-white'
-                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
-            }`}
-          >
-            Todos
-          </button>
-          <button
-            onClick={() => setFilter('paid')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'paid'
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
-            }`}
-          >
-            Pagados
-          </button>
-          <button
-            onClick={() => setFilter('pending')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'pending'
-                ? 'bg-yellow-600 text-white'
-                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700'
-            }`}
-          >
-            Pendientes
-          </button>
+      {/* Filters - Mobile First */}
+      <Card className="p-3 sm:p-4">
+        {/* Search Bar */}
+        <div className="relative mb-3">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 z-10 text-gray-900 dark:text-gray-200" />
+          <Input
+            type="text"
+            placeholder="Buscar pagos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 w-full"
+          />
         </div>
+
+        {/* Filter Section - Mobile First */}
+        <div className="flex flex-wrap gap-2 items-center justify-between">
+          {/* Status Filter */}
+          <div className="relative shrink-0">
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="appearance-none pl-3 pr-8 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white cursor-pointer hover:border-primary transition-colors min-w-32.5 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="all">Todos</option>
+              <option value="pending">Pendiente</option>
+              <option value="verified">Aprobado</option>
+              <option value="rejected">Rechazado</option>
+            </select>
+            <Filter className="w-4 h-4 absolute right-7 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          </div>
+
+          {/* Month Filter */}
+          <div className="shrink-0">
+            <MonthFilterSelect
+              value={monthFilter}
+              onChange={setMonthFilter}
+            />
+          </div>
+
+          {/* Active Filters */}
+          {(filter !== 'all' || monthFilter !== new Date().toISOString().slice(0, 7) || searchQuery) && (
+            <button
+              onClick={() => {
+                setFilter('all')
+                setMonthFilter(new Date().toISOString().slice(0, 7))
+                setSearchQuery('')
+              }}
+              className="shrink-0 flex items-center gap-1.5 text-center text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors px-3 py-2"
+            >
+              <X className="w-4 h-4" />
+              <span>Limpiar</span>
+            </button>
+          )}
+        </div>
+
+        {/* Active Filters Count */}
+        {filteredPayments.length > 0 && (
+          <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+            {filteredPayments.length} pago
+            {filteredPayments.length !== 1 ? "s" : ""} encontrado
+            {filteredPayments.length !== 1 ? "s" : ""}
+          </div>
+        )}
       </Card>
 
-      {/* Lista de facturas */}
+      {/* Payments List */}
       {filteredPayments.length === 0 ? (
         <Card>
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Receipt className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 dark:text-white">No hay registros</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {filter !== 'all' 
+              {filter !== 'all' || monthFilter !== new Date().toISOString().slice(0, 7)
                 ? 'No se encontraron resultados con los filtros aplicados' 
                 : 'No tienes pagos registrados aún'}
             </p>
@@ -258,33 +616,47 @@ export default function ClientPayments() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 bg-gray-100 dark:bg-slate-800 rounded-lg">
-                    <Receipt className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    {getMethodIcon(payment.method)}
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-gray-200">{payment.plan}</div>
+                    <div className="font-medium text-gray-900 dark:text-gray-200">
+                      {getMethodLabel(payment.method)}
+                    </div>
                     <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-500 dark:text-gray-400">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        Período: {formatDate(payment.startDate)} - {formatDate(payment.cutDate)}
+                        {formatDate(payment.date)}
                       </span>
+                      {payment.reference && (
+                        <span>Ref: {payment.reference}</span>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <div className="font-bold text-lg text-gray-900 dark:text-secondary">{payment.amount}</div>
+                    <div className="font-bold text-lg text-gray-900 dark:text-secondary">
+                      {formatCurrency(payment.amount, payment.currency)}
+                    </div>
                     <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}>
                       {getStatusIcon(payment.status)}
                       {getStatusLabel(payment.status)}
                     </div>
                   </div>
-                  {payment.status === 'paid' && (
+                  {payment.status === 'verified' && (
                     <Button variant="ghost" size="sm">
                       <Download className="w-4 h-4" />
                     </Button>
                   )}
                 </div>
               </div>
+              {payment.notes && (
+                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <span className="font-medium">Nota:</span> {payment.notes}
+                  </p>
+                </div>
+              )}
             </Card>
           ))}
         </div>
