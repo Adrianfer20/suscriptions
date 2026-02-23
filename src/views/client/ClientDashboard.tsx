@@ -1,14 +1,4 @@
-// Calcula días restantes para el próximo cobro
-const getDaysUntilCut = (cutDate?: string) => {
-  if (!cutDate) return "-";
-  const today = new Date();
-  const [year, month, day] = cutDate.split("-").map(Number);
-  const cut = new Date(year, month - 1, day);
-  const diff = cut.getTime() - today.setHours(0, 0, 0, 0);
-  if (isNaN(diff)) return "-";
-  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-  return days;
-};
+import { getDaysUntilCut } from '../../utils/date'
 import { useEffect, useState } from "react";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
@@ -24,12 +14,10 @@ import {
   UserCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import api, {
-  Subscription,
-  Client,
-  User as AuthUser,
-} from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import api, { Subscription, Client, User as AuthUser } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
+import useClientDashboard from '../../hooks/useClientDashboard'
+import { formatDate } from '../../utils/date'
 
 interface SubscriptionWithClient extends Subscription {
   clientName?: string;
@@ -37,106 +25,14 @@ interface SubscriptionWithClient extends Subscription {
 }
 
 export default function ClientDashboard() {
-  const { user } = useAuth();
+  const { user } = useAuth()
+  const { loading, subscription, clientData, error } = useClientDashboard(user?.id)
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [subscription, setSubscription] =
-    useState<SubscriptionWithClient | null>(null);
-  const [clientData, setClientData] = useState<Client | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  
 
-  useEffect(() => {
-    let mounted = true;
+  // Data fetching moved to `useClientDashboard` hook
 
-    const fetchData = async () => {
-      if (!user?.id) {
-        if (mounted) {
-          setError("No se encontró el usuario");
-          setLoading(false);
-        }
-        return;
-      }
-
-      try {
-        setLoading(true);
-
-        // 1. Obtener datos del cliente desde /auth/me
-        const authRes = await api.get("/auth/me");
-        const authData = authRes.data?.data || authRes.data;
-        const userUid = user.id; // UID de Firebase Auth
-
-        // 2. Obtener cliente desde /clients usando el uid
-        try {
-          const clientRes = await api.get(`/clients/${userUid}`);
-          const client = clientRes.data?.data || clientRes.data;
-          if (mounted) setClientData(client);
-        } catch (e) {
-          // El cliente puede no existir en Firestore si solo tiene usuario en Auth
-          console.log("Cliente no encontrado en Firestore");
-        }
-
-        if (!mounted) return;
-
-        // 3. Obtener suscripciones y filtrar por clientId (uid)
-        const subsRes = await api.get("/subscriptions");
-        const subscriptions = subsRes.data?.data || subsRes.data || [];
-
-        // Filtrar suscripciones donde clientId === userUid
-        const userSubscriptions = (subscriptions as Subscription[]).filter(
-          (sub: Subscription) => sub.clientId === userUid,
-        );
-
-        // Buscar suscripción activa
-        const active = userSubscriptions.find(
-          (sub: Subscription) => sub.status === "active",
-        );
-
-        if (active) {
-          setSubscription({
-            ...active,
-            clientName: authData?.displayName || "",
-            clientEmail: authData?.email || "",
-          });
-        } else {
-          setSubscription(null);
-        }
-      } catch (err: any) {
-        console.error("Error fetching data:", err);
-        if (mounted) setError("No se pudieron cargar los datos");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      mounted = false;
-    };
-  }, [user]);
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return "-";
-    // Mostrar la fecha tal cual, pero con formato legible
-    // dateStr es 'YYYY-MM-DD'
-    const [year, month, day] = dateStr.split("-");
-    const meses = [
-      "enero",
-      "febrero",
-      "marzo",
-      "abril",
-      "mayo",
-      "junio",
-      "julio",
-      "agosto",
-      "septiembre",
-      "octubre",
-      "noviembre",
-      "diciembre",
-    ];
-    const mesNombre = meses[parseInt(month, 10) - 1] || "";
-    return `${parseInt(day, 10)} de ${mesNombre} de ${year}`;
-  };
+  // formatDate moved to utils
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -161,7 +57,7 @@ export default function ClientDashboard() {
     );
   }
 
-  const daysUntil = subscription ? getDaysUntilCut(subscription.cutDate) : "-";
+  const daysUntil = subscription ? getDaysUntilCut(subscription.cutDate) : '-';
 
   return (
     <div className="space-y-6">
