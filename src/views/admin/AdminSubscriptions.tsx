@@ -8,6 +8,7 @@ import {
   Trash2,
   CheckCircle,
 } from "lucide-react";
+import PageHeader from "../../components/layout/PageHeader";
 import {
   subscriptionsApi,
   clientsApi,
@@ -312,31 +313,23 @@ export default function AdminSubscriptions() {
           Copiado al portapapeles
         </div>
       )}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-            Suscripciones
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Gestiona los planes y cobros de los clientes
-          </p>
-        </div>
-        <Button
-          onClick={() => {
-            if (isFormOpen && editingId) handleCancelEdit();
-            else setIsFormOpen(!isFormOpen);
-          }}
-          className="flex items-center gap-2"
-          variant={isFormOpen ? "outline" : "primary"}
-        >
-          {isFormOpen ? <ChevronUp size={18} /> : <Plus size={18} />}
-          {isFormOpen
-            ? editingId
-              ? "Cancelar Edición"
-              : "Cancelar"
-            : "Nueva Suscripción"}
-        </Button>
-      </div>
+      <PageHeader
+        title="Suscripciones"
+        subtitle="Gestiona los planes y cobros de los clientes"
+        action={
+          <Button
+            onClick={() => {
+              if (isFormOpen && editingId) handleCancelEdit();
+              else setIsFormOpen(!isFormOpen);
+            }}
+            className="flex items-center gap-2"
+            variant={isFormOpen ? "outline" : "primary"}
+          >
+            {isFormOpen ? <ChevronUp size={18} /> : <Plus size={18} />}
+            {isFormOpen ? (editingId ? "Cancelar Edición" : "Cancelar") : "Nueva Suscripción"}
+          </Button>
+        }
+      />
 
       {isFormOpen && (
         <SubscriptionForm
