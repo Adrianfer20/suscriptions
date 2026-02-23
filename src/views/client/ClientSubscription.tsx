@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { CreditCard, Calendar, AlertCircle, CheckCircle, Clock, Loader2, KeyRound } from 'lucide-react'
-import api, { Subscription } from '../../api'
-import { useAuth } from '../../auth'
+import api, { Subscription } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
 
 interface SubscriptionWithDetails extends Subscription {
   clientName?: string

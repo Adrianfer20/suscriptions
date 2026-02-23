@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { communicationsApi, Conversation, CommunicationMessage, FirestoreTimestamp } from '../../api'
+import { communicationsApi, Conversation, CommunicationMessage, FirestoreTimestamp } from '../../services/api'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'

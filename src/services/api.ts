@@ -23,6 +23,7 @@ api.interceptors.request.use(async (config) => {
   return config
 })
 
+
 // --- Interfaces ---
 
 export interface Payment {
@@ -307,4 +308,3 @@ export const paymentsApi = {
 };
 
 export default api
-

@@ -31,7 +31,7 @@ import {
   Subscription,
   api,
   Client,
-} from "../../api";
+} from "../../services/api";
 
 export default function AdminPayments() {
   const [loading, setLoading] = useState(true);

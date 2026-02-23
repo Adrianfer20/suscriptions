@@ -1,6 +1,6 @@
 import React from 'react'
 import { CreditCard, Copy, CheckCircle } from 'lucide-react'
-import { Subscription, Client } from '../../../api'
+import { Subscription, Client } from '../../../services/api'
 
 type Props = {
   sub: Subscription & { clientEmail?: string }

@@ -1,4 +1,4 @@
-import { Conversation, FirestoreTimestamp } from '../api'
+import { Conversation, FirestoreTimestamp } from '../services/api'
 
 const formatTimestamp = (ts?: string | FirestoreTimestamp) => {
   if (!ts) return ''

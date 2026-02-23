@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
-import { automationApi } from '../../api'
+import { automationApi } from '../../services/api'
 import { 
   Zap, 
   Clock, 

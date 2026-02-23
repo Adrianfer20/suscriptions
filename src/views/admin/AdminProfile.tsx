@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { authApi, User } from '../../api'
+import { authApi, User } from '../../services/api'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'

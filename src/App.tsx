@@ -1,7 +1,7 @@
 
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { initFirebase } from './firebase'
-import { useAuth } from './auth'
+import { initFirebase } from './services/firebase'
+import { useAuth } from './context/AuthContext'
 
 import PublicRoutes from './routes/PublicRoutes'
 import AdminRoutes from './routes/AdminRoutes'

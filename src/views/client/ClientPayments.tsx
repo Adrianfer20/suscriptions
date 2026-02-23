@@ -4,8 +4,8 @@ import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { Receipt, Download, Calendar, CheckCircle, Clock, XCircle, Loader2, AlertCircle, Plus, CreditCard, Wallet, Smartphone, Gift, Filter, X, Search, ChevronDown } from 'lucide-react'
 import { MonthFilterSelect } from '../../components/ui/MonthFilterSelect'
-import api, { paymentsApi, Payment, Subscription } from '../../api'
-import { useAuth } from '../../auth'
+import api, { paymentsApi, Payment, Subscription } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
 
 export default function ClientPayments() {
   const { user } = useAuth()

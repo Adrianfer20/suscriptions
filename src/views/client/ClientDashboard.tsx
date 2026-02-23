@@ -14,8 +14,8 @@ import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { CreditCard, Receipt, User, Calendar, CheckCircle, AlertCircle, Clock, Loader2, UserCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import api, { Subscription, Client, User as AuthUser } from '../../api'
-import { useAuth } from '../../auth'
+import api, { Subscription, Client, User as AuthUser } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
 
 interface SubscriptionWithClient extends Subscription {
   clientName?: string

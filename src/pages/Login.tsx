@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAuth } from '../auth'
+import { useAuth } from '../context/AuthContext'
 import Button from '../components/Button'
 import { Input } from '../components/ui/Input'
 import { Card } from '../components/ui/Card'

@@ -4,8 +4,8 @@ import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { User, Mail, Phone, MapPin, Calendar, Save, Lock, Bell, Shield, Loader2, AlertCircle, CheckCircle, Edit } from 'lucide-react'
-import api, { Client } from '../../api'
-import { useAuth } from '../../auth'
+import api, { Client } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
 
 export default function ClientProfile() {
   const { user } = useAuth();

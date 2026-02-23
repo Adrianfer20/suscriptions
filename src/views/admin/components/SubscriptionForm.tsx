@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
-import { Client } from '../../../api'
+import { Client } from '../../../services/api'
 
 type FormShape = {
   clientId: string
