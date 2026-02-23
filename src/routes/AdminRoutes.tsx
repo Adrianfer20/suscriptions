@@ -1,7 +1,7 @@
 import { Route } from 'react-router-dom'
 import { ProtectedRoute } from '../components/ProtectedRoute'
 import AppLayout from '../components/AppLayout'
-import AdminDashboard from '../views/AdminDashboard'
+import AdminDashboard from '../views/admin/AdminDashboard'
 import AdminClients from '../views/admin/AdminClients'
 import AdminSubscriptions from '../views/admin/AdminSubscriptions'
 import AdminClientEdit from '../views/admin/AdminClientEdit'

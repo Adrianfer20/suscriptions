@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Card } from "../components/ui/Card";
-import { Button } from "../components/ui/Button";
-import { clientsApi, subscriptionsApi, communicationsApi } from "../api";
+import { Card } from "../../components/ui/Card";
+import { Button } from "../../components/ui/Button";
+import { clientsApi, subscriptionsApi, communicationsApi } from "../../api";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
