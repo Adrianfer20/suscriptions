@@ -133,6 +133,7 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
         logout={logout}
         theme={theme}
         toggleTheme={toggleTheme}
+        isDesktop={isDesktop}
       />
 
       <main
