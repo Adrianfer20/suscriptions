@@ -1,19 +1,26 @@
+// timezone de Caracas: UTC-4
+const CARACAS_OFFSET_HOURS = -4;
+
 export const getDaysUntilCut = (cutDate?: string): number | "-" => {
   if (!cutDate) return '-'
   
-  // Crear fechas usando fechas de solo fecha (sin hora) para evitar problemas de timezone
-  const today = new Date()
-  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  // Obtener la fecha actual en timezone de Caracas
+  const now = new Date();
+  const nowInCaracas = new Date(now.getTime() + CARACAS_OFFSET_HOURS * 60 * 60 * 1000);
   
-  const [year, month, day] = cutDate.split('-').map(Number)
-  const cutDateOnly = new Date(year, month - 1, day)
+  // Crear fecha de corte
+  const [year, month, day] = cutDate.split('-').map(Number);
+  const cutDateOnly = new Date(year, month - 1, day);
   
-  const diff = cutDateOnly.getTime() - todayDate.getTime()
-  if (isNaN(diff)) return '-'
+  // Calcular diferencia en días (sin hora)
+  const todayDate = new Date(nowInCaracas.getFullYear(), nowInCaracas.getMonth(), nowInCaracas.getDate());
+  const diff = cutDateOnly.getTime() - todayDate.getTime();
   
-  // Dividir y redondear (no ceil, para obtener días completos restantes)
-  const days = Math.round(diff / (1000 * 60 * 60 * 24))
-  return days
+  if (isNaN(diff)) return '-';
+  
+  // Dividir por milisegundos en un día
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return days;
 }
 
 export const formatDate = (dateStr?: string) => {

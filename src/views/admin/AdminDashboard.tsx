@@ -89,12 +89,14 @@ export default function AdminDashboard() {
             (() => {
               const upcomingSubs = subsList.filter((sub) => {
                 if (!sub.cutDate) return false;
-                // Usar fechas sin hora para evitar problemas de timezone
-                const today = new Date();
-                const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                // Usar timezone de Caracas (UTC-4)
+                const CARACAS_OFFSET_HOURS = -4;
+                const now = new Date();
+                const nowInCaracas = new Date(now.getTime() + CARACAS_OFFSET_HOURS * 60 * 60 * 1000);
                 const [year, month, day] = sub.cutDate.split('-').map(Number);
                 const cutDateOnly = new Date(year, month - 1, day);
-                const diff = Math.round(
+                const todayDate = new Date(nowInCaracas.getFullYear(), nowInCaracas.getMonth(), nowInCaracas.getDate());
+                const diff = Math.floor(
                   (cutDateOnly.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24),
                 );
                 return diff >= 0 && diff <= 7;
@@ -145,12 +147,14 @@ export default function AdminDashboard() {
                       const client = clientsList.find(
                         (c) => c.uid === sub.clientId || c.id === sub.clientId,
                       );
-                      // Usar fechas sin hora para evitar problemas de timezone
-                      const today = new Date();
-                      const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                      // Usar timezone de Caracas (UTC-4)
+                      const CARACAS_OFFSET_HOURS = -4;
+                      const now = new Date();
+                      const nowInCaracas = new Date(now.getTime() + CARACAS_OFFSET_HOURS * 60 * 60 * 1000);
                       const [year, month, day] = sub.cutDate.split('-').map(Number);
                       const cutDateOnly = new Date(year, month - 1, day);
-                      const diff = Math.round(
+                      const todayDate = new Date(nowInCaracas.getFullYear(), nowInCaracas.getMonth(), nowInCaracas.getDate());
+                      const diff = Math.floor(
                         (cutDateOnly.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24),
                       );
                       return (
