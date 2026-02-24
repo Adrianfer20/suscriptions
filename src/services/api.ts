@@ -2,8 +2,8 @@ import axios, { AxiosResponse } from 'axios'
 import { getAuthInstance } from './firebase'
 
 // En desarrollo prioriza localhost:3000, en producción usa la variable de entorno
-const baseURL = import.meta.env.VITE_API_BASE
-// const baseURL = 'http://localhost:3000' // Cambia a tu URL de backend en producción
+// const baseURL = import.meta.env.VITE_API_BASE
+const baseURL = 'http://localhost:3000' // Cambia a tu URL de backend en producción
 
 
 export const api = axios.create({ baseURL })
@@ -94,9 +94,10 @@ export interface Subscription {
   cutDate: string // YYYY-MM-DD
   plan: string
   amount: string
-  country: string // Nuevo atributo: país de la suscripción
+  country: string // País de la suscripción
   passwordSub?: string
-  status?: 'active' | 'inactive' | 'past_due' | 'cancelled'
+  kitNumber?: string // Número de KIT del dispositivo
+  status?: 'active' | 'about_to_expire' | 'suspended' | 'paused' | 'cancelled'
 }
 
 export interface FirestoreTimestamp {
@@ -208,6 +209,11 @@ export const subscriptionsApi = {
   // Body: Campos a actualizar (startDate, cutDate, plan, amount, country)
   update: async (id: string, data: Partial<Subscription>) => {
     return api.patch<ApiResponse<Subscription>>(`/subscriptions/${id}`, data)
+  },
+  // PATCH /subscriptions/:id/status
+  // Body: { status: 'active' | 'about_to_expire' | 'suspended' | 'paused' | 'cancelled' }
+  updateStatus: async (id: string, status: 'active' | 'about_to_expire' | 'suspended' | 'paused' | 'cancelled') => {
+    return api.patch<ApiResponse<Subscription>>(`/subscriptions/${id}/status`, { status })
   }
 }
 

@@ -11,6 +11,7 @@ type FormShape = {
   status?: string
   plan?: string
   passwordSub?: string
+  kitNumber?: string
   country?: string
 }
 
@@ -92,6 +93,13 @@ export default function SubscriptionForm({ form, setForm, clients, onCancel, onS
               onChange={(e) => setForm({ ...form, passwordSub: e.target.value })} 
               placeholder="Contraseña del servicio"
               required={!editingId}
+            />
+
+            <Input 
+              label="Número de KIT" 
+              value={form.kitNumber || ''} 
+              onChange={(e) => setForm({ ...form, kitNumber: e.target.value })} 
+              placeholder="Número de KIT del dispositivo"
             />
 
             <Input 

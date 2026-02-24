@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Plus,
   ChevronUp,
@@ -7,6 +7,9 @@ import {
   Pencil,
   Trash2,
   CheckCircle,
+  Search,
+  Filter,
+  X,
 } from "lucide-react";
 import PageHeader from "../../components/layout/PageHeader";
 import {
@@ -19,9 +22,9 @@ import {
 } from "../../services/api";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
-import SubscriptionCard from "./components/SubscriptionCard";
 import SubscriptionForm from "./components/SubscriptionForm";
 import SubscriptionItem from "./components/SubscriptionItem";
+import { useAuth } from "../../context/AuthContext";
 
 type SubscriptionWithEmail = Subscription & { clientEmail?: string };
 
@@ -33,10 +36,12 @@ type SubscriptionForm = {
   status?: string;
   plan?: string;
   passwordSub?: string;
+  kitNumber?: string;
   country?: string;
 };
 
 export default function AdminSubscriptions() {
+  const { user } = useAuth();
   const [items, setItems] = useState<SubscriptionWithEmail[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -49,9 +54,43 @@ export default function AdminSubscriptions() {
     amount: "",
     plan: "",
     passwordSub: "",
+    kitNumber: "",
   });
   const [clients, setClients] = useState<Client[]>([]);
   const [copiedValue, setCopiedValue] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+
+  // Filtrar y ordenar suscripciones
+  const filteredItems = useMemo(() => {
+    let result = [...items];
+
+    // Filtrar por nombre del cliente
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((sub) => {
+        const client = clients.find((c) => c.uid === sub.clientId || c.id === sub.clientId);
+        const clientName = client?.name?.toLowerCase() || "";
+        return clientName.includes(query);
+      });
+    }
+
+    // Filtrar por status
+    if (statusFilter) {
+      result = result.filter((sub) => sub.status === statusFilter);
+    }
+
+    // Ordenar alfabéticamente por nombre del cliente
+    result.sort((a, b) => {
+      const clientA = clients.find((c) => c.uid === a.clientId || c.id === a.clientId);
+      const clientB = clients.find((c) => c.uid === b.clientId || c.id === b.clientId);
+      const nameA = clientA?.name?.toLowerCase() || "";
+      const nameB = clientB?.name?.toLowerCase() || "";
+      return nameA.localeCompare(nameB);
+    });
+
+    return result;
+  }, [items, clients, searchQuery, statusFilter]);
 
   const PLAN_LABELS: Record<string, string> = {
     "Itinerante Ilimitado": "Itinerante Ilimitado",
@@ -148,7 +187,12 @@ export default function AdminSubscriptions() {
       cutDate: item.cutDate,
       country: item.country || "",
       passwordSub: item.passwordSub || "",
+      kitNumber: item.kitNumber || "",
     });
+    // Scroll suave hacia el formulario
+    setTimeout(() => {
+      document.getElementById('subscription-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   }
 
   function handleCancelEdit() {
@@ -161,6 +205,7 @@ export default function AdminSubscriptions() {
       amount: "",
       plan: "",
       passwordSub: "",
+      kitNumber: "",
     });
   }
 
@@ -198,6 +243,7 @@ export default function AdminSubscriptions() {
         cutDate: formatDate(form.cutDate) ?? form.cutDate ?? "",
         amount: normalizeAmount(form.amount),
         country: form.country || "",
+        kitNumber: form.kitNumber || "",
       };
 
       if (form.passwordSub) {
@@ -305,6 +351,14 @@ export default function AdminSubscriptions() {
     setTimeout(() => setCopiedValue(null), 2000);
   };
 
+  const handleStatusChange = (id: string, newStatus: string) => {
+    setItems((prev) =>
+      prev.map((s) =>
+        s.id === id ? { ...s, status: newStatus as Subscription["status"] } : s
+      )
+    );
+  };
+
   return (
     <div className="space-y-6">
       {copiedValue && (
@@ -332,27 +386,66 @@ export default function AdminSubscriptions() {
       />
 
       {isFormOpen && (
-        <SubscriptionForm
-          form={form}
-          setForm={setForm}
-          clients={clients}
-          onCancel={handleCancelEdit}
-          onSubmit={handleCreate}
-          creating={creating}
-          editingId={editingId}
-        />
+        <div id="subscription-form">
+          <SubscriptionForm
+            form={form}
+            setForm={setForm}
+            clients={clients}
+            onCancel={handleCancelEdit}
+            onSubmit={handleCreate}
+            creating={creating}
+            editingId={editingId}
+          />
+        </div>
       )}
 
       {/* Lista */}
       <Card
-        title={`Historial de Suscripciones (${items.length})`}
+        title={`Suscripciones (${filteredItems.length}${searchQuery || statusFilter ? ` / ${items.length}` : ''})`}
         className="h-full"
       >
+        {/* Buscador y Filtro */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              placeholder="Buscar por nombre del cliente..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="pl-10 pr-8 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none min-w-40"
+            >
+              <option value="">Todos los status</option>
+              <option value="active">Activa</option>
+              <option value="about_to_expire">Por Vencer</option>
+              <option value="suspended">Suspendida</option>
+              <option value="paused">Pausada</option>
+              <option value="cancelled">Cancelada</option>
+            </select>
+          </div>
+        </div>
+
         {loading ? (
           <div className="flex justify-center p-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        ) : items.length === 0 ? (
+        ) : filteredItems.length === 0 ? (
           <div className="text-center p-12">
             <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
               <CreditCard
@@ -361,18 +454,26 @@ export default function AdminSubscriptions() {
               />
             </div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No hay suscripciones activas
+              No se encontraron suscripciones
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Crea una nueva suscripción para comenzar.
+              {searchQuery || statusFilter
+                ? "Intenta con otros filtros de búsqueda"
+                : "Crea una nueva suscripción para comenzar."}
             </p>
-            <Button onClick={() => setIsFormOpen(true)}>
-              Crear primera suscripción
-            </Button>
+            {(searchQuery || statusFilter) ? (
+              <Button onClick={() => { setSearchQuery(""); setStatusFilter(""); }}>
+                Limpiar filtros
+              </Button>
+            ) : (
+              <Button onClick={() => setIsFormOpen(true)}>
+                Crear primera suscripción
+              </Button>
+            )}
           </div>
         ) : (
 <div className="flex flex-col gap-4">
-  {items.map((sub: any) => {
+  {filteredItems.map((sub: any) => {
     const client = clients.find(
       (c) => c.uid === sub.clientId || c.id === sub.clientId,
     );
@@ -387,6 +488,8 @@ export default function AdminSubscriptions() {
         onCopy={handleCopy}
         copiedValue={copiedValue ?? ""}
         PLAN_LABELS={PLAN_LABELS}
+        isAdmin={user?.role === "admin"}
+        onStatusChange={handleStatusChange}
       />
     );
   })}

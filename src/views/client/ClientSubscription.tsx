@@ -98,10 +98,12 @@ export default function ClientSubscription() {
     switch (status) {
       case 'active':
         return 'text-green-600 bg-green-50 dark:bg-green-900/20'
-      case 'inactive':
-        return 'text-gray-600 bg-gray-50 dark:bg-gray-900/20'
-      case 'past_due':
+      case 'about_to_expire':
         return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20'
+      case 'suspended':
+        return 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+      case 'paused':
+        return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'
       case 'cancelled':
         return 'text-red-600 bg-red-50 dark:bg-red-900/20'
       default:
@@ -113,10 +115,12 @@ export default function ClientSubscription() {
     switch (status) {
       case 'active':
         return 'Activo'
-      case 'inactive':
-        return 'Inactivo'
-      case 'past_due':
-        return 'Pendiente de pago'
+      case 'about_to_expire':
+        return 'Por Vencer'
+      case 'suspended':
+        return 'Suspendido'
+      case 'paused':
+        return 'Pausado'
       case 'cancelled':
         return 'Cancelado'
       default:
@@ -166,7 +170,7 @@ export default function ClientSubscription() {
           <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${getStatusColor(subscription.status || '')}`}> 
             {subscription.status === 'active' ? (
               <CheckCircle className="w-4 h-4" />
-            ) : subscription.status === 'past_due' ? (
+            ) : subscription.status === 'about_to_expire' ? (
               <AlertCircle className="w-4 h-4" />
             ) : (
               <Clock className="w-4 h-4" />
