@@ -1,11 +1,18 @@
 export const getDaysUntilCut = (cutDate?: string): number | "-" => {
   if (!cutDate) return '-'
+  
+  // Crear fechas usando fechas de solo fecha (sin hora) para evitar problemas de timezone
   const today = new Date()
+  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  
   const [year, month, day] = cutDate.split('-').map(Number)
-  const cut = new Date(year, month - 1, day)
-  const diff = cut.getTime() - new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime()
+  const cutDateOnly = new Date(year, month - 1, day)
+  
+  const diff = cutDateOnly.getTime() - todayDate.getTime()
   if (isNaN(diff)) return '-'
-  const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
+  
+  // Dividir y redondear (no ceil, para obtener días completos restantes)
+  const days = Math.round(diff / (1000 * 60 * 60 * 24))
   return days
 }
 
