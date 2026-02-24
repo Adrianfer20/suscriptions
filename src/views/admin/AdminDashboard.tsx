@@ -4,6 +4,7 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import PageHeader from '../../components/layout/PageHeader'
 import { clientsApi, subscriptionsApi, communicationsApi } from "../../services/api";
+import { formatDate } from "../../utils/date";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -102,25 +103,6 @@ export default function AdminDashboard() {
                 return diff >= 0 && diff <= 7;
               });
               if (upcomingSubs.length === 0) return null;
-              // Helper para mostrar fecha en formato '26 de Febrero'
-              const formatDate = (dateStr: string) => {
-                const date = new Date(dateStr);
-                const meses = [
-                  "Enero",
-                  "Febrero",
-                  "Marzo",
-                  "Abril",
-                  "Mayo",
-                  "Junio",
-                  "Julio",
-                  "Agosto",
-                  "Septiembre",
-                  "Octubre",
-                  "Noviembre",
-                  "Diciembre",
-                ];
-                return `${date.getDate()} de ${meses[date.getMonth()]}`;
-              };
               return (
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-2">
