@@ -101,6 +101,13 @@ export default function AdminDashboard() {
                   (cutDateOnly.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24),
                 );
                 return diff >= 0 && diff <= 7;
+              }).sort((a, b) => {
+                // Ordenar por fecha de vencimiento más próxima primero
+                const [yearA, monthA, dayA] = a.cutDate.split('-').map(Number);
+                const [yearB, monthB, dayB] = b.cutDate.split('-').map(Number);
+                const dateA = new Date(yearA, monthA - 1, dayA);
+                const dateB = new Date(yearB, monthB - 1, dayB);
+                return dateA.getTime() - dateB.getTime();
               });
               if (upcomingSubs.length === 0) return null;
               return (

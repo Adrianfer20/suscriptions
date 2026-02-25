@@ -2,8 +2,8 @@ import axios, { AxiosResponse } from 'axios'
 import { getAuthInstance } from './firebase'
 
 // En desarrollo prioriza localhost:3000, en producción usa la variable de entorno
-// const baseURL = import.meta.env.VITE_API_BASE
-const baseURL = 'http://localhost:3000' // Cambia a tu URL de backend en producción
+const baseURL = import.meta.env.VITE_API_BASE
+// const baseURL = 'http://localhost:3000' // Cambia a tu URL de backend en producción
 
 
 export const api = axios.create({ baseURL })
