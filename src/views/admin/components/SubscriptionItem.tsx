@@ -81,69 +81,71 @@ export default function SubscriptionItem({
 
   return (
     <>
-      <div className="group bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 hover:shadow-xl hover:border-secondary/20 transition-all duration-300">
-        {/* Vista Compacta: Solo nombre, status y mostrar más */}
-        <div className="flex items-center gap-4">
+      <div className="group bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-3 sm:p-4 hover:shadow-xl hover:border-secondary/20 transition-all duration-300 w-full overflow-hidden">
+        {/* Vista Compacta: diseño móvil-primero (columna), en pantallas >=sm fila */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {/* Nombre de la suscripción */}
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-secondary font-bold text-lg border border-slate-200 dark:border-slate-600 shrink-0">
               {client?.name?.charAt(0) || "U"}
             </div>
             <div className="flex flex-col min-w-0">
-              <h3 className="font-bold text-gray-900 dark:text-white truncate">
+              <h3 className="font-bold text-gray-900 dark:text-white truncate text-sm">
                 {client?.name || "Cliente desconocido"}
               </h3>
-              <span className="text-xs font-semibold text-secondary uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-secondary uppercase tracking-wider">
                 {PLAN_LABELS[sub.plan] || sub.plan}
               </span>
             </div>
           </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+            {/* Status Badge o Select (solo admin) */}
+            {isAdmin ? (
+              <div className="relative w-full sm:w-auto">
+                <select
+                  value={currentStatus}
+                  onChange={(e) => handleStatusChangeRequest(e.target.value)}
+                  disabled={changingStatus}
+                  className={`appearance-none px-3 py-1.5 pr-8 rounded-full text-xs sm:text-sm font-bold uppercase cursor-pointer border-0 focus:ring-2 focus:ring-secondary w-full sm:w-auto text-left ${statusConfig.bgColor} ${statusConfig.textColor}`}
+                >
+                  {STATUS_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-800 text-gray-900 dark:text-white">
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+                {changingStatus && (
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                    <Loader2 size={14} className="animate-spin text-secondary" />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <span className={`px-2 py-1 rounded-full text-[11px] font-bold uppercase ${statusConfig.bgColor} ${statusConfig.textColor}`}>
+                {statusConfig.label}
+              </span>
+            )}
 
-          {/* Status Badge o Select (solo admin) */}
-          {isAdmin ? (
-            <div className="relative">
-              <select
-                value={currentStatus}
-                onChange={(e) => handleStatusChangeRequest(e.target.value)}
-                disabled={changingStatus}
-                className={`appearance-none px-3 py-1.5 pr-8 rounded-full text-xs font-bold uppercase cursor-pointer border-0 focus:ring-2 focus:ring-secondary ${statusConfig.bgColor} ${statusConfig.textColor}`}
-              >
-                {STATUS_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-800 text-gray-900 dark:text-white">
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              {changingStatus && (
-                <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                  <Loader2 size={14} className="animate-spin text-secondary" />
-                </div>
-              )}
-            </div>
-          ) : (
-            <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase ${statusConfig.bgColor} ${statusConfig.textColor}`}>
-              {statusConfig.label}
-            </span>
-          )}
-
-          {/* Botón Mostrar más */}
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="p-2.5 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-500 hover:bg-secondary hover:text-white transition-all shadow-sm"
-          >
-            {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </button>
+            {/* Botón Mostrar más */}
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="p-2.5 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-500 hover:bg-secondary hover:text-white transition-all shadow-sm"
+              aria-expanded={expanded}
+            >
+              {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
+          </div>
         </div>
 
         {/* Vista Expandida: Más información */}
         {expanded && (
           <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700 animate-in slide-in-from-top-2 duration-200">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Credenciales */}
               <div className="space-y-2">
                 {sub.clientEmail && (
                   <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2 rounded-xl border border-gray-100 dark:border-slate-700 group/copy">
-                    <span className="text-xs text-gray-500 dark:text-slate-400 truncate mr-2">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 truncate mr-2 wrap-break-word">
                       {sub.clientEmail}
                     </span>
                     <button
@@ -167,7 +169,7 @@ export default function SubscriptionItem({
                 )}
                 {sub.kitNumber && (
                   <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2 rounded-xl border border-gray-100 dark:border-slate-700">
-                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                    <span className="text-xs text-gray-500 dark:text-slate-400 truncate wrap-break-word">
                       KIT: <span className="font-mono font-bold">{sub.kitNumber}</span>
                     </span>
                     <button
@@ -199,17 +201,17 @@ export default function SubscriptionItem({
             </div>
 
             {/* Acciones en vista expandida */}
-            <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-slate-700">
+            <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-slate-700">
               <button
                 onClick={() => onEdit(sub)}
-                className="flex-1 p-2.5 flex items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-500 hover:bg-secondary hover:text-white transition-all shadow-sm"
+                className="w-full sm:flex-1 p-2.5 flex items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-500 hover:bg-secondary hover:text-white transition-all shadow-sm"
               >
                 <Pencil size={18} />
                 <span className="text-sm font-medium">Editar</span>
               </button>
               <button
                 onClick={() => onDelete(sub.id ?? sub.clientId)}
-                className="flex-1 p-2.5 flex items-center justify-center gap-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                className="w-full sm:flex-1 p-2.5 flex items-center justify-center gap-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
               >
                 <Trash2 size={18} />
                 <span className="text-sm font-medium">Eliminar</span>

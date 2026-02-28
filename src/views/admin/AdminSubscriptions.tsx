@@ -429,7 +429,7 @@ export default function AdminSubscriptions() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="pl-10 pr-8 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none min-w-40"
+              className="pl-10 pr-8 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none min-w-40 w-full sm:w-auto"
             >
               <option value="">Todos los status</option>
               <option value="active">Activa</option>
@@ -472,7 +472,7 @@ export default function AdminSubscriptions() {
             )}
           </div>
         ) : (
-<div className="flex flex-col gap-4">
+<div className="flex flex-col gap-3 p-2 sm:p-0 max-w-full">
   {filteredItems.map((sub: any) => {
     const client = clients.find(
       (c) => c.uid === sub.clientId || c.id === sub.clientId,
