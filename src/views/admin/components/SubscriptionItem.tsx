@@ -95,7 +95,7 @@ export default function SubscriptionItem({
               </h3>
               <div className="flex items-center gap-3">
                 <span className="text-[11px] font-medium text-secondary">{PLAN_LABELS[sub.plan] || sub.plan}</span>
-                <span className="text-xs text-gray-500">Corte: {sub.cutDate || "—"}</span>
+                <span className="text-xs text-gray-500 uppercase">Corte: {sub.cutDate || "—"}</span>
               </div>
             </div>
           </div>
@@ -107,10 +107,10 @@ export default function SubscriptionItem({
                   value={currentStatus}
                   onChange={(e) => handleStatusChangeRequest(e.target.value)}
                   disabled={changingStatus}
-                  className={`appearance-none px-3 py-1.5 pr-8 rounded-full text-xs font-medium cursor-pointer border-0 focus:ring-2 focus:ring-secondary w-full sm:w-auto text-left ${statusConfig.bgColor} ${statusConfig.textColor}`}
+                  className={`appearance-none px-2 py-1.5 rounded-full text-xs font-medium cursor-pointer border-0 focus:ring-2 focus:ring-secondary w-full sm:w-auto text-left ${statusConfig.bgColor} ${statusConfig.textColor}`}
                 >
                   {STATUS_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-800 text-gray-900 dark:text-white">
+                    <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-center">
                       {opt.label}
                     </option>
                   ))}
@@ -222,6 +222,7 @@ export default function SubscriptionItem({
 
               {/* Info Financiera / Fechas */}
               <div className="grid grid-cols-2 gap-2 p-2 bg-slate-50/50 dark:bg-slate-900/20 rounded-2xl border border-dashed border-gray-200 dark:border-slate-700">
+                
                 <div className="flex flex-col items-center justify-center border-r border-gray-200 dark:border-slate-700">
                   <span className="text-[10px] uppercase text-gray-400 font-bold mb-1">Monto</span>
                   <span className="text-sm font-bold text-gray-700 dark:text-gray-200">{sub.amount}</span>

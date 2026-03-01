@@ -70,16 +70,6 @@ export default function Header({
             {(user?.displayName || user?.email || 'U').charAt(0).toUpperCase()}
           </div>
         </NavLink>
-        {/* Collapse toggle for desktop */}
-        <Button
-          onClick={() => setCollapsed(!collapsed)}
-          className="hidden md:inline-flex ml-3 items-center justify-center p-2"
-          title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
-          variant="ghost"
-          size="icon"
-        >
-          <ChevronRight className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : 'rotate-0'}`} />
-        </Button>
       </div>
     </header>
   )
