@@ -67,7 +67,7 @@ export default function SubscriptionList({
           )}
         </div>
       ) : (
-        <div className="flex flex-col gap-3 p-2 sm:p-0 max-w-full">
+        <div className="flex flex-col gap-2 sm:p-0 max-w-full">
           {filteredItems.map((sub) => {
             const client = clients.find((c) => c.uid === sub.clientId || c.id === sub.clientId);
             return (
