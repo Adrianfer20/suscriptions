@@ -1,8 +1,40 @@
-import React, { useState } from "react";
-import { Copy, Pencil, Trash2, CheckCircle, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { Copy, Pencil, Trash2, CheckCircle, ChevronDown, ChevronUp, Loader2, AlertCircle, Clock } from "lucide-react";
 import { subscriptionsApi } from "../../../services/api";
 import toast from "react-hot-toast";
 import { Button } from '../../../components/ui/Button'
+
+// Función para calcular días hasta la fecha de corte
+const getDaysUntilCutDate = (cutDate: string): number | null => {
+  if (!cutDate) return null;
+  
+  // Manejar formato YYYY-MM-DD
+  const parts = cutDate.split('-');
+  if (parts.length === 3) {
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10);
+    const day = parseInt(parts[2], 10);
+    
+    if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const cutDateObj = new Date(year, month - 1, day);
+    const diffTime = cutDateObj.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+  
+  return null;
+};
+
+// Obtener configuración visual según estado de la fecha de corte
+const getCutDateStatus = (cutDate: string) => {
+  const days = getDaysUntilCutDate(cutDate);
+  if (days === null) return { label: 'Sin fecha', color: 'text-gray-400', bg: 'bg-gray-100', icon: null };
+  if (days < 0) return { label: 'Vencida', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30', icon: AlertCircle };
+  if (days <= 7) return { label: `${days}d por vencer`, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-900/30', icon: Clock };
+  return { label: `${days}d restantes`, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30', icon: CheckCircle };
+};
 
 const STATUS_CONFIG: Record<string, { label: string; bgColor: string; textColor: string }> = {
   active: { label: "Activa", bgColor: "bg-green-100 dark:bg-green-900/30", textColor: "text-green-700 dark:text-green-400" },
@@ -78,6 +110,9 @@ export default function SubscriptionItem({
 
   const currentStatus = sub.status || "inactive";
   const statusConfig = STATUS_CONFIG[currentStatus] || STATUS_CONFIG.inactive;
+  
+  // Calcular estado de la fecha de corte
+  const cutDateStatus = getCutDateStatus(sub.cutDate);
 
   return (
     <>
@@ -96,7 +131,11 @@ export default function SubscriptionItem({
               </h3>
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <span className="text-xs font-semibold text-secondary bg-secondary/10 px-2 py-0.5 rounded-md">{PLAN_LABELS[sub.plan] || sub.plan}</span>
-                <span className="text-xs text-gray-500 uppercase font-medium">Corte: {sub.cutDate || "—"}</span>
+                {/* Badge de fecha de corte con estado visual */}
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-md flex items-center gap-1 ${cutDateStatus.bg} ${cutDateStatus.color}`}>
+                  {cutDateStatus.icon && <cutDateStatus.icon size={12} />}
+                  {sub.cutDate || "—"}
+                </span>
               </div>
             </div>
           </div>
@@ -232,15 +271,18 @@ export default function SubscriptionItem({
                 )}
               </div>
 
-              {/* Info Financiera */}
+              {/* Info Financiera y Fecha de Corte */}
               <div className="flex gap-2 p-3 bg-slate-50/50 dark:bg-slate-900/20 rounded-lg border border-gray-100 dark:border-slate-700">
                 <div className="flex-1 flex flex-col items-center border-r border-gray-200 dark:border-slate-600">
                   <span className="text-xs uppercase text-gray-400 font-medium mb-0.5">Monto</span>
                   <span className="text-base font-bold text-gray-700 dark:text-gray-200">{sub.amount}</span>
                 </div>
-                <div className="flex-1 flex flex-col items-center">
-                  <span className="text-xs uppercase text-red-400 font-medium mb-0.5">Corte</span>
-                  <span className="text-base font-bold text-red-600 dark:text-red-400">{sub.cutDate}</span>
+                <div className={`flex-1 flex flex-col items-center rounded-lg p-1 ${cutDateStatus.bg}`}>
+                  <span className={`text-xs uppercase font-medium mb-0.5 flex items-center gap-1 ${cutDateStatus.color}`}>
+                    {cutDateStatus.icon && <cutDateStatus.icon size={12} />}
+                    {cutDateStatus.label}
+                  </span>
+                  <span className={`text-base font-bold ${cutDateStatus.color}`}>{sub.cutDate}</span>
                 </div>
               </div>
             </div>

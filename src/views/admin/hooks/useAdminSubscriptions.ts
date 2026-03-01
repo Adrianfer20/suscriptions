@@ -25,8 +25,6 @@ export type SubscriptionForm = {
 const PLAN_LABELS: Record<string, string> = {
   "Itinerante Ilimitado": "Itinerante Ilimitado",
   "Itinerante Limitado": "Itinerante Limitado",
-  "starlink-basic": "Itinerante Ilimitado",
-  "starlink-limited": "Itinerante Limitado",
 };
 
 export function useAdminSubscriptions() {
@@ -41,6 +39,7 @@ export function useAdminSubscriptions() {
   // copied feedback handled with react-hot-toast
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
+  const [cutDateFilter, setCutDateFilter] = useState<string>("");
   const [cutDateSort, setCutDateSort] = useState<"asc" | "desc" | null>(null);
 
   useEffect(() => {
@@ -98,6 +97,29 @@ export function useAdminSubscriptions() {
 
   const filteredItems = useMemo(() => {
     let result = [...items];
+    
+    // Función para calcular días hasta la fecha de corte (formato YYYY-MM-DD)
+    const getDaysUntilCutDate = (cutDate: string): number | null => {
+      if (!cutDate) return null;
+      
+      const parts = cutDate.split('-');
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const day = parseInt(parts[2], 10);
+        
+        if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const cutDateObj = new Date(year, month - 1, day);
+        const diffTime = cutDateObj.getTime() - today.getTime();
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      }
+      
+      return null;
+    };
+    
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter((sub) => {
@@ -106,9 +128,22 @@ export function useAdminSubscriptions() {
         return clientName.includes(q);
       });
     }
+    
     if (statusFilter) {
       result = result.filter((sub) => sub.status === statusFilter);
     }
+    
+    // Filtrar por fecha de corte
+    if (cutDateFilter) {
+      result = result.filter((sub) => {
+        const days = getDaysUntilCutDate(sub.cutDate || "");
+        if (cutDateFilter === "overdue") return days !== null && days < 0;
+        if (cutDateFilter === "soon") return days !== null && days >= 0 && days <= 7;
+        if (cutDateFilter === "ok") return days === null || days > 7;
+        return true;
+      });
+    }
+    
     if (cutDateSort) {
       result.sort((a, b) => {
         const da = a.cutDate || "";
@@ -270,6 +305,8 @@ export function useAdminSubscriptions() {
     setSearchQuery,
     statusFilter,
     setStatusFilter,
+    cutDateFilter,
+    setCutDateFilter,
     filteredItems,
     PLAN_LABELS,
     handleEdit,

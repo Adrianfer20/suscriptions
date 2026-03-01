@@ -25,6 +25,8 @@ export default function AdminSubscriptions() {
     setSearchQuery,
     statusFilter,
     setStatusFilter,
+    cutDateFilter,
+    setCutDateFilter,
     filteredItems,
     items,
     PLAN_LABELS,
@@ -81,6 +83,8 @@ export default function AdminSubscriptions() {
         setIsFormOpen={setIsFormOpen}
         cutDateSort={cutDateSort}
         onToggleCutDateSort={toggleCutDateSort}
+        cutDateFilter={cutDateFilter}
+        setCutDateFilter={setCutDateFilter}
       />
 
       <SubscriptionList
