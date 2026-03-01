@@ -245,18 +245,22 @@ export default function AdminUsers() {
                               </div>
                               {editingId !== u.uid && (
                                 <div className="flex gap-1">
-                                    <button 
-                                        onClick={() => handleEdit(u)} 
-                                        className="text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition-colors"
+                                    <Button
+                                      onClick={() => handleEdit(u)}
+                                      className="text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-full transition-colors"
+                                      variant="ghost"
+                                      size="icon"
                                     >
-                                        <Edit size={18} />
-                                    </button>
-                                    <button 
-                                        onClick={() => setUserToDelete(u)} 
-                                        className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-full transition-colors"
+                                      <Edit size={18} />
+                                    </Button>
+                                    <Button
+                                      onClick={() => setUserToDelete(u)}
+                                      className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-full transition-colors"
+                                      variant="ghost"
+                                      size="icon"
                                     >
-                                        <Trash size={18} />
-                                    </button>
+                                      <Trash size={18} />
+                                    </Button>
                                 </div>
                               )}
                           </div>
@@ -416,27 +420,29 @@ export default function AdminUsers() {
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     {editingId === u.uid ? (
                                         <div className="flex justify-end gap-2">
-                                            <button onClick={() => saveEdit(u.uid)} className="text-green-600 hover:text-green-900 bg-green-50 p-1.5 rounded-md hover:bg-green-100 transition-colors" title="Guardar">
-                                                <Check size={16} />
-                                            </button>
-                                            <button onClick={cancelEdit} className="text-red-600 hover:text-red-900 bg-red-50 p-1.5 rounded-md hover:bg-red-100 transition-colors" title="Cancelar">
-                                                <X size={16} />
-                                            </button>
+                                            <Button onClick={() => saveEdit(u.uid)} className="text-green-600 hover:text-green-900 bg-green-50 p-1.5 rounded-md hover:bg-green-100 transition-colors" title="Guardar" variant="ghost" size="icon">
+                                              <Check size={16} />
+                                            </Button>
+                                            <Button onClick={cancelEdit} className="text-red-600 hover:text-red-900 bg-red-50 p-1.5 rounded-md hover:bg-red-100 transition-colors" title="Cancelar" variant="ghost" size="icon">
+                                              <X size={16} />
+                                            </Button>
                                         </div>
                                     ) : (
                                         <div className="flex justify-end gap-2">
-                                            <button 
-                                                onClick={() => handleEdit(u)} 
-                                                className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 inline-flex items-center gap-1 hover:bg-slate-100 dark:hover:bg-slate-800 px-3 py-1.5 rounded-md transition-colors text-xs font-medium"
+                                            <Button
+                                              onClick={() => handleEdit(u)}
+                                              className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 inline-flex items-center gap-1 hover:bg-slate-100 dark:hover:bg-slate-800 px-3 py-1.5 rounded-md transition-colors text-xs font-medium"
+                                              variant="ghost"
                                             >
-                                                <Edit size={14} /> Editar
-                                            </button>
-                                            <button 
-                                                onClick={() => setUserToDelete(u)} 
-                                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 inline-flex items-center gap-1 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1.5 rounded-md transition-colors text-xs font-medium"
+                                              <Edit size={14} /> Editar
+                                            </Button>
+                                            <Button
+                                              onClick={() => setUserToDelete(u)}
+                                              className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 inline-flex items-center gap-1 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1.5 rounded-md transition-colors text-xs font-medium"
+                                              variant="ghost"
                                             >
-                                                <Trash size={14} />
-                                            </button>
+                                              <Trash size={14} />
+                                            </Button>
                                         </div>
                                     )}
                                 </td>

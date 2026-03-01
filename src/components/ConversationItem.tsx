@@ -1,4 +1,5 @@
 import { Conversation, FirestoreTimestamp } from '../services/api'
+import { Button } from './ui/Button'
 
 const formatTimestamp = (ts?: string | FirestoreTimestamp) => {
   if (!ts) return ''
@@ -23,7 +24,7 @@ interface ConversationItemProps {
 
 export function ConversationItem({ conversation: c, selected, onClick }: ConversationItemProps) {
   return (
-    <button
+    <Button
       onClick={onClick}
       className={`
         group w-full text-left p-4 rounded-xl border flex items-center gap-4 transition-all duration-200 cursor-pointer shadow-sm
@@ -33,6 +34,7 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
           : 'bg-slate-100 dark:bg-slate-800 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-200 dark:hover:border-slate-600'
         }
       `}
+      variant="ghost"
     >
       {/* Avatar */}
       <div
@@ -113,7 +115,7 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
           )}
         </div>
       </div>
-    </button>
+    </Button>
   )
 }
 

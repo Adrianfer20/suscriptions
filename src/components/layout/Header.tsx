@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { MessageSquare, ChevronRight } from 'lucide-react'
+import { Button } from '../ui/Button'
 
 export default function Header({
   role,
@@ -20,10 +21,12 @@ export default function Header({
   return (
     <header className="fixed top-0 inset-x-0 h-16 bg-primary dark:bg-slate-900/90 dark:border-b dark:border-slate-800 border-b border-gray-200 z-30 flex items-center justify-between px-4 md:hidden shadow-sm backdrop-blur-md">
       <div className="flex items-center gap-3">
-        <button
+        <Button
           onClick={onOpenSidebar}
-          className="p-2 -ml-2 rounded-lg text-white hover:bg-secondary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+          className="p-2 -ml-2"
           aria-label="Abrir menú"
+          variant="ghost"
+          size="icon"
         >
           <svg
             className="w-6 h-6"
@@ -38,7 +41,7 @@ export default function Header({
               d="M4 6h16M4 12h16M4 18h16"
             />
           </svg>
-        </button>
+        </Button>
         <span className="font-bold text-lg text-white truncate">
           A<span className="text-secondary">|</span>R SYSTEM
         </span>
@@ -68,13 +71,15 @@ export default function Header({
           </div>
         </NavLink>
         {/* Collapse toggle for desktop */}
-        <button
+        <Button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden md:inline-flex ml-3 items-center justify-center p-2 rounded-md text-white/90 hover:bg-white/10 transition-colors"
+          className="hidden md:inline-flex ml-3 items-center justify-center p-2"
           title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+          variant="ghost"
+          size="icon"
         >
           <ChevronRight className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : 'rotate-0'}`} />
-        </button>
+        </Button>
       </div>
     </header>
   )

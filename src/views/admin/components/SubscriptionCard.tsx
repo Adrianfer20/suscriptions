@@ -1,17 +1,18 @@
 import React from 'react'
 import { CreditCard, Copy, CheckCircle } from 'lucide-react'
 import { Subscription, Client } from '../../../services/api'
+import toast from 'react-hot-toast'
+import { Button } from '../../../components/ui/Button'
 
 type Props = {
   sub: Subscription & { clientEmail?: string }
   client?: Client
   onEdit: (s: any) => void
   onDelete: (id: string) => void
-  copiedValue: string | null
   onCopy: (text: string) => void
 }
 
-export default function SubscriptionCard({ sub, client, onEdit, onDelete, copiedValue, onCopy }: Props) {
+export default function SubscriptionCard({ sub, client, onEdit, onDelete, onCopy }: Props) {
   return (
     <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4 shadow-sm space-y-3 relative overflow-hidden">
       <div className="absolute top-0 right-0 p-2 opacity-5 dark:opacity-10 dark:text-white">
@@ -24,9 +25,9 @@ export default function SubscriptionCard({ sub, client, onEdit, onDelete, copied
           {sub.clientEmail && (
             <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
               <span className="truncate max-w-50">{sub.clientEmail}</span>
-              <button onClick={() => onCopy(sub.clientEmail!)} className="hover:text-primary transition-colors p-1" title="Copiar email">
-                {copiedValue === sub.clientEmail ? <CheckCircle size={12} className="text-green-500" /> : <Copy size={12} />}
-              </button>
+              <Button onClick={async () => { try { await navigator.clipboard.writeText(sub.clientEmail!); toast.success('Copiado al portapapeles'); if (onCopy) onCopy(sub.clientEmail!); } catch { toast.error('No se pudo copiar') } }} className="hover:text-primary transition-colors p-1" title="Copiar email" variant="ghost" size="icon">
+                <Copy size={12} />
+              </Button>
             </div>
           )}
 
@@ -35,9 +36,9 @@ export default function SubscriptionCard({ sub, client, onEdit, onDelete, copied
               <span className="font-mono font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-slate-700/80 px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-600 select-all">
                 {sub.passwordSub}
               </span>
-              <button onClick={() => onCopy(sub.passwordSub!)} className="text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary transition-colors p-1" title="Copiar contraseña">
-                {copiedValue === sub.passwordSub ? <CheckCircle size={12} className="text-green-500" /> : <Copy size={12} />}
-              </button>
+              <Button onClick={async () => { try { await navigator.clipboard.writeText(sub.passwordSub!); toast.success('Copiado al portapapeles'); if (onCopy) onCopy(sub.passwordSub!); } catch { toast.error('No se pudo copiar') } }} className="text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary transition-colors p-1" title="Copiar contraseña" variant="ghost" size="icon">
+                <Copy size={12} />
+              </Button>
             </div>
           )}
 
@@ -74,18 +75,8 @@ export default function SubscriptionCard({ sub, client, onEdit, onDelete, copied
       </div>
 
       <div className="flex gap-2 pt-1">
-        <button 
-          onClick={() => onEdit(sub)}
-          className="flex-1 flex items-center justify-center gap-2 text-primary dark:text-white bg-primary/10 dark:bg-primary/50 hover:bg-primary/10 dark:hover:bg-primary/30 py-2 rounded-lg text-xs font-medium transition-colors border border-primary/10 dark:border-primary/20 cursor-pointer"
-        >
-          Editar
-        </button>
-        <button 
-          onClick={() => onDelete(sub.id ?? sub.clientId)}
-          className="flex-1 flex items-center justify-center gap-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/40 py-2 rounded-lg text-xs font-medium transition-colors border border-red-100 dark:border-red-900/30 cursor-pointer"
-        >
-          Eliminar
-        </button>
+        <Button onClick={() => onEdit(sub)} className="flex-1" variant="secondary">Editar</Button>
+        <Button onClick={() => onDelete(sub.id ?? sub.clientId)} className="flex-1" variant="destructive">Eliminar</Button>
       </div>
     </div>
   )

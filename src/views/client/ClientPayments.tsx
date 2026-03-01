@@ -575,17 +575,18 @@ export default function ClientPayments() {
 
           {/* Active Filters */}
           {(filter !== 'all' || monthFilter !== new Date().toISOString().slice(0, 7) || searchQuery) && (
-            <button
+            <Button
               onClick={() => {
                 setFilter('all')
                 setMonthFilter(new Date().toISOString().slice(0, 7))
                 setSearchQuery('')
               }}
               className="shrink-0 flex items-center gap-1.5 text-center text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors px-3 py-2"
+              variant="ghost"
             >
               <X className="w-4 h-4" />
               <span>Limpiar</span>
-            </button>
+            </Button>
           )}
         </div>
 

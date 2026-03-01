@@ -401,12 +401,13 @@ export default function AdminClients() {
                       >
                         Ver detalles
                       </Link>
-                      <button
+                      <Button
                         onClick={() => handleDelete(c.uid || c.id)}
                         className="ml-2 inline-flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 px-3 py-2 rounded-lg text-sm"
+                        variant="destructive"
                       >
                         Eliminar
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}

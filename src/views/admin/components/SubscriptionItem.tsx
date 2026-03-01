@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Copy, Pencil, Trash2, CheckCircle, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { subscriptionsApi } from "../../../services/api";
+import toast from "react-hot-toast";
+import { Button } from '../../../components/ui/Button'
 
 const STATUS_CONFIG: Record<string, { label: string; bgColor: string; textColor: string }> = {
   active: { label: "Activa", bgColor: "bg-green-100 dark:bg-green-900/30", textColor: "text-green-700 dark:text-green-400" },
@@ -23,8 +25,7 @@ export default function SubscriptionItem({
   client, 
   onEdit, 
   onDelete, 
-  onCopy, 
-  copiedValue,
+  onCopy,
   PLAN_LABELS,
   isAdmin = false,
   onStatusChange,
@@ -33,8 +34,7 @@ export default function SubscriptionItem({
   client: any;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
-  onCopy: (value: string) => void;
-  copiedValue: string;
+  onCopy?: (value: string) => void;
   PLAN_LABELS: Record<string, string>;
   isAdmin?: boolean;
   onStatusChange?: (id: string, newStatus: string) => void;
@@ -69,7 +69,7 @@ export default function SubscriptionItem({
         onStatusChange(sub.id, previousStatus);
       }
       const errorMessage = error?.response?.data?.message || error?.response?.data?.error || "Error al cambiar el status";
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setChangingStatus(false);
       setPendingStatus("");
@@ -93,9 +93,10 @@ export default function SubscriptionItem({
               <h3 className="font-bold text-gray-900 dark:text-white truncate text-sm">
                 {client?.name || "Cliente desconocido"}
               </h3>
-              <span className="text-[11px] font-semibold text-secondary uppercase tracking-wider">
-                {PLAN_LABELS[sub.plan] || sub.plan}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-medium text-secondary">{PLAN_LABELS[sub.plan] || sub.plan}</span>
+                <span className="text-xs text-gray-500">Corte: {sub.cutDate || "—"}</span>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
@@ -106,7 +107,7 @@ export default function SubscriptionItem({
                   value={currentStatus}
                   onChange={(e) => handleStatusChangeRequest(e.target.value)}
                   disabled={changingStatus}
-                  className={`appearance-none px-3 py-1.5 pr-8 rounded-full text-xs sm:text-sm font-bold uppercase cursor-pointer border-0 focus:ring-2 focus:ring-secondary w-full sm:w-auto text-left ${statusConfig.bgColor} ${statusConfig.textColor}`}
+                  className={`appearance-none px-3 py-1.5 pr-8 rounded-full text-xs font-medium cursor-pointer border-0 focus:ring-2 focus:ring-secondary w-full sm:w-auto text-left ${statusConfig.bgColor} ${statusConfig.textColor}`}
                 >
                   {STATUS_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-800 text-gray-900 dark:text-white">
@@ -121,19 +122,21 @@ export default function SubscriptionItem({
                 )}
               </div>
             ) : (
-              <span className={`px-2 py-1 rounded-full text-[11px] font-bold uppercase ${statusConfig.bgColor} ${statusConfig.textColor}`}>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig.bgColor} ${statusConfig.textColor}`}>
                 {statusConfig.label}
               </span>
             )}
 
             {/* Botón Mostrar más */}
-            <button
+            <Button
               onClick={() => setExpanded(!expanded)}
-              className="p-2.5 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-500 hover:bg-secondary hover:text-white transition-all shadow-sm"
+              className="rounded-xl"
               aria-expanded={expanded}
+              variant="ghost"
+              size="icon"
             >
               {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -148,23 +151,43 @@ export default function SubscriptionItem({
                     <span className="text-xs text-gray-500 dark:text-slate-400 truncate mr-2 wrap-break-word">
                       {sub.clientEmail}
                     </span>
-                    <button
-                      onClick={() => onCopy(sub.clientEmail)}
+                    <Button
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(sub.clientEmail);
+                          toast.success("Copiado al portapapeles");
+                          if (onCopy) onCopy(sub.clientEmail);
+                        } catch {
+                          toast.error("No se pudo copiar");
+                        }
+                      }}
                       className="text-gray-400 hover:text-secondary transition-all active:scale-90"
+                      variant="ghost"
+                      size="icon"
                     >
-                      {copiedValue === sub.clientEmail ? <CheckCircle size={14} className="text-green-500" /> : <Copy size={14} />}
-                    </button>
+                      <Copy size={14} />
+                    </Button>
                   </div>
                 )}
                 {sub.passwordSub && (
                   <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2 rounded-xl border border-gray-100 dark:border-slate-700">
                     <span className="text-xs font-mono text-gray-400 tracking-widest">••••••••</span>
-                    <button
-                      onClick={() => onCopy(sub.passwordSub)}
+                    <Button
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(sub.passwordSub);
+                          toast.success("Copiado al portapapeles");
+                          if (onCopy) onCopy(sub.passwordSub);
+                        } catch {
+                          toast.error("No se pudo copiar");
+                        }
+                      }}
                       className="text-gray-400 hover:text-secondary transition-all active:scale-90"
+                      variant="ghost"
+                      size="icon"
                     >
-                      {copiedValue === sub.passwordSub ? <CheckCircle size={14} className="text-green-500" /> : <Copy size={14} />}
-                    </button>
+                      <Copy size={14} />
+                    </Button>
                   </div>
                 )}
                 {sub.kitNumber && (
@@ -172,12 +195,22 @@ export default function SubscriptionItem({
                     <span className="text-xs text-gray-500 dark:text-slate-400 truncate wrap-break-word">
                       KIT: <span className="font-mono font-bold">{sub.kitNumber}</span>
                     </span>
-                    <button
-                      onClick={() => onCopy(sub.kitNumber)}
+                    <Button
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(sub.kitNumber);
+                          toast.success("Copiado al portapapeles");
+                          if (onCopy) onCopy(sub.kitNumber);
+                        } catch {
+                          toast.error("No se pudo copiar");
+                        }
+                      }}
                       className="text-gray-400 hover:text-secondary transition-all active:scale-90"
+                      variant="ghost"
+                      size="icon"
                     >
-                      {copiedValue === sub.kitNumber ? <CheckCircle size={14} className="text-green-500" /> : <Copy size={14} />}
-                    </button>
+                      <Copy size={14} />
+                    </Button>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400">
@@ -202,20 +235,22 @@ export default function SubscriptionItem({
 
             {/* Acciones en vista expandida */}
             <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-slate-700">
-              <button
+              <Button
                 onClick={() => onEdit(sub)}
-                className="w-full sm:flex-1 p-2.5 flex items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-500 hover:bg-secondary hover:text-white transition-all shadow-sm"
+                className="w-full sm:flex-1"
+                variant="secondary"
               >
                 <Pencil size={18} />
                 <span className="text-sm font-medium">Editar</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => onDelete(sub.id ?? sub.clientId)}
-                className="w-full sm:flex-1 p-2.5 flex items-center justify-center gap-2 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                className="w-full sm:flex-1"
+                variant="destructive"
               >
                 <Trash2 size={18} />
                 <span className="text-sm font-medium">Eliminar</span>
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -232,21 +267,23 @@ export default function SubscriptionItem({
               ¿Estás seguro de que deseas cambiar el status de esta suscripción a <strong>{STATUS_CONFIG[pendingStatus]?.label || pendingStatus}</strong>?
             </p>
             <div className="flex gap-3">
-              <button
+              <Button
                 onClick={() => setShowConfirmModal(false)}
-                className="flex-1 px-4 py-2 rounded-xl border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                className="flex-1"
+                variant="outline"
                 disabled={changingStatus}
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleStatusChange}
                 disabled={changingStatus}
-                className="flex-1 px-4 py-2 rounded-xl bg-secondary text-white hover:bg-secondary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 flex items-center justify-center gap-2"
+                variant="secondary"
               >
                 {changingStatus && <Loader2 size={16} className="animate-spin" />}
                 Confirmar
-              </button>
+              </Button>
             </div>
           </div>
         </div>

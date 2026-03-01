@@ -16,6 +16,7 @@ import {
   DollarSign,
 } from 'lucide-react'
 import { cn } from '../../lib/cn'
+import { Button } from '../ui/Button'
 
 const MENU_CONFIG: Record<string, { label: string; to: string; icon: React.ReactNode }[]> = {
   admin: [
@@ -80,12 +81,14 @@ export default function Sidebar({
         )}
       >
         <div className={cn('flex items-center gap-3', collapsed ? 'justify-center' : '')}>
-          <div
-            className="h-12 w-12 min-w-12 bg-primary rounded-md flex items-center justify-center text-white shadow-lg shadow-primary/25 cursor-pointer transition-transform hover:scale-105"
+          <Button
             onClick={() => setCollapsed(!collapsed)}
+            variant="primary"
+            className="h-12 w-12 min-w-12 rounded-md flex items-center justify-center text-white shadow-lg shadow-primary/25 cursor-pointer transition-transform hover:scale-105"
+            size="icon"
           >
             <span className="font-extrabold text-xl">A<span className="text-secondary">|</span>R</span>
-          </div>
+          </Button>
 
           {!effectiveCollapsed && (
             <div className="flex flex-col whitespace-nowrap overflow-hidden transition-all duration-300">
@@ -96,9 +99,9 @@ export default function Sidebar({
         </div>
 
         {!collapsed && (
-          <button onClick={() => setCollapsed(true)} className="hidden md:flex p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400">
+          <Button onClick={() => setCollapsed(true)} className="hidden md:flex p-1" variant="ghost" size="icon">
             <ChevronRight className="w-4 h-4 rotate-180" />
-          </button>
+          </Button>
         )}
       </div>
 
@@ -175,14 +178,14 @@ export default function Sidebar({
 
             {!effectiveCollapsed && (
               <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-gray-100 dark:border-slate-700">
-                <button onClick={logout} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg text-xs font-medium text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 dark:text-slate-400 dark:hover:text-red-400 transition-all border border-transparent hover:border-red-100 cursor-pointer">
+                <Button onClick={logout} className="flex flex-col items-center justify-center gap-1 p-2" variant="ghost">
                   <LogOut className="w-4 h-4" />
                   <span>Salir</span>
-                </button>
-                <button onClick={toggleTheme} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg text-xs font-medium text-slate-500 hover:text-primary hover:bg-primary/5 dark:hover:bg-primary dark:text-slate-400 dark:hover:text-slate-200 transition-all border border-transparent hover:border-primary/10 cursor-pointer">
+                </Button>
+                <Button onClick={toggleTheme} className="flex flex-col items-center justify-center gap-1 p-2" variant="ghost">
                   {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
                   <span>{theme === 'light' ? 'Oscuro' : 'Claro'}</span>
-                </button>
+                </Button>
               </div>
             )}
           </div>

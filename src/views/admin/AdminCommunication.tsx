@@ -494,12 +494,14 @@ export default function AdminCommunication() {
                 {/* Chat Header */}
                 <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-between items-center shrink-0">
                     <div className="flex items-center gap-3">
-                        <button 
-                            onClick={() => setSelectedConversation(null)}
-                            className="md:hidden p-2 -ml-2 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors"
+                        <Button
+                          onClick={() => setSelectedConversation(null)}
+                          className="md:hidden p-2 -ml-2"
+                          variant="ghost"
+                          size="icon"
                         >
-                            <ArrowLeft size={20} />
-                        </button>
+                          <ArrowLeft size={20} />
+                        </Button>
                         <div>
                             <h3 className="font-semibold text-slate-900 dark:text-white">{selectedConversation.name || selectedConversation.phone}</h3>
                             <p className="text-xs text-slate-500 dark:text-slate-400">{selectedConversation.phone}</p>
@@ -596,9 +598,10 @@ export default function AdminCommunication() {
                             />
                         </div>
                         <Button 
-                            className="h-11 w-11 md:w-auto px-0 md:px-4 rounded-lg bg-primary hover:bg-primary-700 shadow-md transition-all shrink-0 flex items-center justify-center" 
-                            type="submit" 
-                            disabled={sending || !newMessage.trim()}
+                          variant="primary"
+                          className="h-11 w-11 md:w-auto px-0 md:px-4 rounded-lg shadow-md transition-all shrink-0 flex items-center justify-center" 
+                          type="submit" 
+                          disabled={sending || !newMessage.trim()}
                         >
                             {sending ? (
                                 <Loader2 className="animate-spin h-5 w-5" />

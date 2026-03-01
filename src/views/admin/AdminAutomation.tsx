@@ -199,12 +199,13 @@ export default function AdminAutomation() {
                   <span className={`h-2.5 w-2.5 rounded-full ${active ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-slate-300 dark:bg-slate-600'}`} />
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{active ? 'Servicio Activo' : 'Servicio Inactivo'}</span>
                 </div>
-                <button 
+                <Button
                   onClick={handleResetConfig}
                   className="text-xs flex items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 underline decoration-dotted underline-offset-2 transition-colors"
+                  variant="ghost"
                 >
                   <RotateCcw size={12} /> Restablecer valores
-                </button>
+                </Button>
              </div>
           </div>
         </Card>
@@ -257,14 +258,21 @@ export default function AdminAutomation() {
           
           <div className="flex pb-4 sm:items-center flex-col sm:flex-row gap-4 mb-4 border-b border-slate-100 dark:border-slate-700">
             <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700 w-full sm:w-auto">
-               <div className={`w-5 h-5 rounded flex items-center justify-center border ${dryRun ? 'bg-primary border-primary text-white' : 'bg-white border-slate-300 dark:bg-slate-800 dark:border-slate-600'}`}>
+               <Button
+                 type="button"
+                 onClick={() => setDryRun(!dryRun)}
+                 size="icon"
+                 variant={dryRun ? 'primary' : 'ghost'}
+                 className="w-5 h-5 p-0 flex items-center justify-center border"
+                 aria-pressed={dryRun}
+               >
                  {dryRun && <CheckCircle size={14} />}
-               </div>
-               <input 
-                 type="checkbox" 
+               </Button>
+               <input
+                 type="checkbox"
                  checked={dryRun}
                  onChange={(e) => setDryRun(e.target.checked)}
-                 className="hidden" // Custom checkbox styling
+                 className="hidden"
                />
                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Modo Simulación</span>
             </label>

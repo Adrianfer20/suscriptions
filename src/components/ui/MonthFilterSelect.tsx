@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Calendar, X, ChevronDown } from 'lucide-react'
+import { Button } from './Button'
 
 interface MonthFilterSelectProps {
   value: string
@@ -72,7 +73,7 @@ export function MonthFilterSelect({ value, onChange, className = '' }: MonthFilt
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       {/* Dropdown Trigger */}
-      <button
+      <Button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`
@@ -80,6 +81,7 @@ export function MonthFilterSelect({ value, onChange, className = '' }: MonthFilt
           ${value ? 'border-slate-300 dark:border-slate-400 bg-slate-400/5 dark:bg-slate-800 text-slate-900 dark:text-slate-400':'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-200 dark:text-slate-300 hover:border-slate-400'
           }
         `}
+        variant="ghost"
       >
         <Calendar className="w-4 h-4 shrink-0" />
         <span className="flex-1 text-left truncate">{displayValue}</span>
@@ -91,7 +93,7 @@ export function MonthFilterSelect({ value, onChange, className = '' }: MonthFilt
         ) : (
           <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         )}
-      </button>
+      </Button>
 
       {/* Dropdown Content */}
       {isOpen && (

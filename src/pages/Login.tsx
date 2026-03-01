@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import Button from '../components/Button'
+import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { Card } from '../components/ui/Card'
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react'
@@ -80,17 +80,19 @@ export default function Login() {
                     autoComplete="current-password"
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="focus:outline-none text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                      variant="ghost"
+                      size="icon"
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5" />
                       ) : (
                         <Eye className="h-5 w-5" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -98,7 +100,8 @@ export default function Login() {
 
             <Button 
               type="submit" 
-              className="w-full h-12 text-base font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all active:scale-[0.98] rounded-lg bg-primary hover:bg-primary-600 text-white border-0" 
+              variant="primary"
+              className="w-full h-12 text-base font-semibold shadow-lg transition-all active:scale-[0.98] rounded-lg border-0" 
               disabled={loading}
             >
               {loading ? (

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Calendar from 'react-calendar'
 import { Calendar as CalendarIcon, X } from 'lucide-react'
+import { Button } from './Button'
 import 'react-calendar/dist/Calendar.css'
 
 interface MonthPickerProps {
@@ -44,10 +45,11 @@ export function MonthPicker({ value, onChange, placeholder = 'Seleccionar mes' }
   return (
     <div ref={containerRef} className="relative">
       {/* Trigger Button */}
-      <button
+      <Button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white hover:border-primary transition-colors w-full justify-between min-w-40"
+        variant="ghost"
       >
         <div className="flex items-center gap-2">
           <CalendarIcon className="w-4 h-4 text-slate-400" />
@@ -62,7 +64,7 @@ export function MonthPicker({ value, onChange, placeholder = 'Seleccionar mes' }
             }}
           />
         )}
-      </button>
+      </Button>
 
       {/* Calendar Dropdown */}
       {isOpen && (

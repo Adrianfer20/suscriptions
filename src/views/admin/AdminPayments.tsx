@@ -762,12 +762,12 @@ export default function AdminPayments() {
           </div>
 
           {/* Active Filters */}
-          {(statusFilter ||
+            {(statusFilter ||
             methodFilter ||
             subscriptionFilter ||
             monthFilter ||
             searchQuery) && (
-            <button
+            <Button
               onClick={() => {
                 setStatusFilter("");
                 setMethodFilter("");
@@ -776,10 +776,11 @@ export default function AdminPayments() {
                 setSearchQuery("");
               }}
               className="shrink-0 flex items-center gap-1.5 text-center text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors px-3 py-2"
+              variant="ghost"
             >
               <X className="w-4 h-4" />
               <span>Limpiar</span>
-            </button>
+            </Button>
           )}
         </div>
 
@@ -879,26 +880,30 @@ export default function AdminPayments() {
                   {/* Action Buttons - Only show on pending */}
                   {payment.status === "pending" && (
                     <div className="flex gap-1">
-                      <button
+                      <Button
                         onClick={() => {
                           setSelectedPayment(payment);
                           setShowVerifyModal(true);
                         }}
                         className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                         title="Aprobar"
+                        variant="ghost"
+                        size="icon"
                       >
                         ✓
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => {
                           setSelectedPayment(payment);
                           setShowRejectModal(true);
                         }}
                         className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                         title="Rechazar"
+                        variant="ghost"
+                        size="icon"
                       >
                         ✗
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>
