@@ -2,8 +2,7 @@ Reporte de uso `bg-primary` — Scan automático
 
 Fecha: 28/02/2026
 
-Resumen
-- Encontradas 31 ocurrencias de `bg-primary` (o variantes como `bg-primary/10`, `dark:bg-primary`, etc.) en `src/`.
+- Encontradas 25-26 ocurrencias residuales de `bg-primary` (o variantes como `bg-primary/10`, `dark:bg-primary`, etc.) en `src/` después de las conversiones realizadas.
 - Recomendación general: sustituir usos directos en controles interactivos por el componente `Button` (usar `variant` adecuado). Mantener algunos usos decorativos (avatares, badges) pero uniformizar la semántica y verificar contraste en modo oscuro.
 
 Lista de resultados (archivo — línea — fragmento relevante)
@@ -24,9 +23,9 @@ Lista de resultados (archivo — línea — fragmento relevante)
   ? 'bg-primary text-white rounded-tr-sm'
   Recomendación: si es un estado o badge interactivo, sustituir por `Button variant="primary"` o por `span` con rol y aria-label; revisar contraste.
 
-- src/views/admin/AdminCommunication.tsx — L601
+-- src/views/admin/AdminCommunication.tsx — L601
   className="... rounded-lg bg-primary hover:bg-primary-700 ..."
-  Recomendación: si es un botón/CTA, usar `Button` con `variant="primary"`.
+  Recomendación: ya refactorizado a `Button variant="primary"` en cambios aplicados.
 
 - src/views/admin/AdminClients.tsx — L304
   className="text-primary hover:bg-primary/5 dark:hover:bg-primary/20 p-2 rounded-full ..."
@@ -40,17 +39,17 @@ Lista de resultados (archivo — línea — fragmento relevante)
   Varias ocurrencias relacionadas con indicadores de estado/toggles (bg-primary/10, bg-primary/90)
   Recomendación: conservar para indicadores visuales, pero preferir tokens semánticos (`status-success-bg`, `toggle-on-bg`) y centralizarlos.
 
-- src/pages/Login.tsx — L103
+-- src/pages/Login.tsx — L103
   className="... bg-primary hover:bg-primary-600 text-white ..."
-  Recomendación: botón de envío → usar `<Button variant="primary">` y evitar `bg-primary` directo.
+  Recomendación: ya refactorizado a `<Button variant="primary">`.
 
 - src/components/ConversationItem.tsx — L33-L46, L111
   Variantes usadas para item seleccionado y badge: `bg-primary/10`, `bg-primary/20`, `bg-primary text-white`.
   Recomendación: conservar para estado seleccionado, pero extraer a clase utilitaria o token para uniformidad; los items no deben usar `Button` si son list items, pero asegurar roles/accessibility.
 
-- src/components/layout/Sidebar.tsx — L85, L126
+-- src/components/layout/Sidebar.tsx — L85, L126
   className="... bg-primary ..." para logo y active menu
-  Recomendación: layout global — mantener `bg-primary` para sidebar/brand, pero definir variables CSS en `:root` y `@media (prefers-color-scheme)` para controlar dark contrast.
+  Recomendación: logo convertido a `Button variant="primary"` para centralizar comportamiento; conservar `bg-primary` en items activos del menú (layout).
 
 - src/components/ui/Button.tsx — L23-L29
   Nota: `Button` aún referencia `bg-primary` en su variante `primary` — esto es correcto; en modo oscuro `primary` mapea a `dark:bg-secondary`.
@@ -80,8 +79,10 @@ Reemplazo de ejemplo (antes → después)
 - Después:
   <Button variant="primary" className="w-full">Enviar</Button>
 
-Acción recomendada siguiente
-- ¿Deseas que aplique automáticamente cambios para controles interactivos (reemplazos seguros por `Button`) en todo el repo? Puedo crear un PR con los cambios propuestos (fase 1: botones y icon-buttons).
+- Acción tomada: se aplicaron reemplazos automáticos y manuales para controles interactivos en archivos clave (Login, Sidebar logo, AdminCommunication, AdminAutomation toggle, Subscriptions components, etc.) y se hizo commit.
+
+- Acción recomendada siguiente
+  - ¿Deseas que aplique la Fase 2: migración de decorativos a tokens CSS (header, badges, avatares), o prefieres que genere un PR draft con los cambios propuestos para revisión manual?
 - Si prefieres, puedo generar un patch sugerido y listarlo en un PR draft para revisión manual.
 
 ---
