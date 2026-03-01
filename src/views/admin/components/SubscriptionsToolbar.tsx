@@ -27,6 +27,8 @@ export default function SubscriptionsToolbar({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         <input
           type="text"
+          inputMode="search"
+          aria-label="Buscar suscripciones"
           placeholder="Buscar por nombre del cliente..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -35,7 +37,7 @@ export default function SubscriptionsToolbar({
         {searchQuery && (
           <Button
             onClick={() => setSearchQuery("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 h-10 w-10 p-2"
             aria-label="Limpiar búsqueda"
             variant="ghost"
             size="icon"
@@ -45,13 +47,16 @@ export default function SubscriptionsToolbar({
         )}
       </div>
 
-      <div className="relative">
-        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="pl-10 pr-8 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none min-w-40 w-full sm:w-auto"
-        >
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1 sm:flex-none">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <label className="sr-only" htmlFor="status-filter">Filtrar por estado</label>
+          <select
+            id="status-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="pl-10 pr-8 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none min-w-40 w-full sm:w-auto"
+          >
           <option value="">Todos los status</option>
           <option value="active">Activa</option>
           <option value="about_to_expire">Por Vencer</option>
@@ -61,12 +66,11 @@ export default function SubscriptionsToolbar({
         </select>
       </div>
 
-      <div className="flex items-center gap-2">
         {onToggleCutDateSort && (
           <Button
             onClick={onToggleCutDateSort}
             title={cutDateSort === "asc" ? "Orden: Corte Inicio → Fin" : cutDateSort === "desc" ? "Orden: Corte Fin → Inicio" : "Ordenar por fecha de corte"}
-            className="ml-2"
+            className="ml-2 h-10 w-10 p-2"
             aria-label="Alternar orden por fecha de corte"
             variant="ghost"
             size="icon"
