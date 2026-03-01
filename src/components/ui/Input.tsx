@@ -25,10 +25,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             id={inputId}
             ref={ref}
+            // Mobile-First: inputMode para teclado optimizado, autoComplete para autofill
+            inputMode={props.type === 'email' ? 'email' : props.type === 'tel' ? 'tel' : props.type === 'numeric' ? 'numeric' : props.type === 'search' ? 'search' : 'text'}
+            autoComplete={props.type === 'email' ? 'email' : props.type === 'tel' ? 'tel' : props.type === 'numeric' ? 'numeric' : undefined}
             className={cn(
-              'flex h-11 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-shadow',
+              // Mobile-First: altura mínima 48px para touch target comfortable
+              'flex h-12 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2 text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-shadow',
               error ? 'border-red-500 focus:ring-red-500' : '',
-              endContent ? 'pr-10' : '',
+              endContent ? 'pr-12' : 'pr-4',
               className
             )}
             aria-invalid={!!error}

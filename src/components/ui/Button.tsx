@@ -34,10 +34,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     const sizes: Record<ButtonSize, string> = {
-      sm: 'h-8 px-3 text-xs rounded-md',
-      md: 'h-10 px-4 text-sm rounded-lg',
-      lg: 'h-12 px-6 text-base rounded-lg',
-      icon: 'h-10 w-10 p-2 rounded-md',
+      // Mobile-First: todos los touch targets mínimo 44x44px según WCAG 2.1
+      sm: 'h-9 px-3 text-xs rounded-md min-w-[44px]', // Mínimo 44px de ancho
+      md: 'h-11 px-5 text-sm rounded-lg min-w-[44px]', // Increased from h-10
+      lg: 'h-12 px-6 text-base rounded-lg min-w-[44px]',
+      // Icon: 44x44px mínimo para cumplimiento WCAG (era 40x40)
+      icon: 'h-11 w-11 p-2.5 rounded-lg', 
     }
 
     return (

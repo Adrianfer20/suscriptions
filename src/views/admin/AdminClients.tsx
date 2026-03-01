@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Plus, ChevronDown, ChevronUp, UserPlus } from "lucide-react";
+import { ChevronDown, ChevronUp, UserPlus, Search, X, Phone, MapPin, Mail, Trash2 } from "lucide-react";
 import { clientsApi, authApi, Client } from "../../services/api";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
@@ -29,6 +29,21 @@ export default function AdminClients() {
     address: "",
     password: "",
   });
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtrar clientes por búsqueda
+  const filteredClients = useMemo(() => {
+    if (!searchQuery.trim()) return clients;
+    const query = searchQuery.toLowerCase();
+    return clients.filter(
+      (c) =>
+        c.name?.toLowerCase().includes(query) ||
+        c.email?.toLowerCase().includes(query) ||
+        c.phone?.toLowerCase().includes(query) ||
+        c.address?.toLowerCase().includes(query)
+    );
+  }, [clients, searchQuery]);
 
   useEffect(() => {
     let mounted = true;
@@ -166,20 +181,21 @@ export default function AdminClients() {
         }
       />
 
-      {/* Formulario Collapsible */}
+      {/* Formulario Collapsible - Mobile-First */}
       {isFormOpen && (
-        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden transition-all duration-300 ease-in-out">
-          <div className="p-6 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-100 dark:border-slate-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden transition-all duration-300">
+          <div className="p-4 sm:p-5 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-100 dark:border-slate-700">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
               Registrar Nuevo Cliente
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Ingresa los datos para crear un nuevo perfil de cliente.
+              Ingresa los datos para crear un nuevo perfil.
             </p>
           </div>
-          <div className="p-6">
-            <form onSubmit={handleCreate} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-4 sm:p-5">
+            <form onSubmit={handleCreate} className="space-y-4">
+              {/* Mobile-First: 1 columna en móvil, 2 en desktop */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   label="Nombre Completo"
                   value={form.name}
@@ -188,7 +204,7 @@ export default function AdminClients() {
                   }
                   required
                   placeholder="Juan Pérez"
-                  className="md:col-span-2"
+                  className="sm:col-span-2"
                 />
 
                 <Input
@@ -233,16 +249,18 @@ export default function AdminClients() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              {/* Botones con touch target adecuado */}
+              <div className="flex flex-col sm:flex-row gap-2 sm:justify-end pt-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsFormOpen(false)}
                   disabled={creating}
+                  className="w-full sm:w-auto h-11"
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={creating} className="min-w-30">
+                <Button type="submit" disabled={creating} className="w-full sm:w-auto h-11">
                   {creating ? "Guardando..." : "Crear Cliente"}
                 </Button>
               </div>
@@ -251,121 +269,127 @@ export default function AdminClients() {
         </div>
       )}
 
+      {/* Barra de búsqueda - Mobile-First */}
+      <div className="relative">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+        <input
+          type="text"
+          inputMode="search"
+          placeholder="Buscar clientes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary text-base"
+        />
+        {searchQuery && (
+          <Button
+            onClick={() => setSearchQuery("")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10"
+            variant="ghost"
+            size="icon"
+            aria-label="Limpiar búsqueda"
+          >
+            <X size={18} />
+          </Button>
+        )}
+      </div>
+
       {/* Lista */}
-      <Card title={`Lista de Clientes (${clients.length})`} className="h-full">
+      <Card className="h-full min-h-[50vh] sm:min-h-0">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg sm:text-base font-bold text-gray-900 dark:text-white">
+            Clientes ({filteredClients.length}{searchQuery ? ` / ${clients.length}` : ''})
+          </h2>
+        </div>
+
         {loading ? (
-          <div className="flex justify-center p-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="flex justify-center py-12 sm:py-8">
+            <div className="animate-spin rounded-full h-10 w-10 sm:h-8 sm:w-8 border-b-2 border-primary"></div>
           </div>
-        ) : clients.length === 0 ? (
-          <div className="text-center p-12">
-            <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
-              <UserPlus
-                size={32}
-                className="text-gray-400 dark:text-gray-500"
-              />
+        ) : filteredClients.length === 0 ? (
+          <div className="text-center py-12 sm:py-8 px-4">
+            <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-20 w-20 sm:h-16 sm:w-16 flex items-center justify-center mx-auto mb-4">
+              <UserPlus size={36} className="text-gray-400 dark:text-gray-500" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No hay clientes registrados
+            <h3 className="text-xl sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              {searchQuery ? "No se encontraron clientes" : "No hay clientes registrados"}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Comienza agregando tu primer cliente.
+            <p className="text-gray-500 dark:text-gray-400 mb-6 text-base sm:text-sm">
+              {searchQuery ? "Intenta con otros filtros" : "Comienza agregando tu primer cliente."}
             </p>
-            <Button onClick={() => setIsFormOpen(true)}>
-              Crear primer cliente
-            </Button>
+            {!searchQuery && (
+              <Button onClick={() => setIsFormOpen(true)} className="w-full sm:w-auto h-11">
+                Crear primer cliente
+              </Button>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto -mx-4 sm:mx-0">
-            {/* Mobile View (Cards) */}
-            <div className="sm:hidden space-y-4 px-4 pb-4">
+            {/* Mobile View (Cards) - Consistente con SubscriptionItem */}
+            <div className="sm:hidden -mx-2 px-2">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {clients.map((c: any) => (
-                <div
+              {filteredClients.map((c: any) => (
+                <Link
                   key={c.uid || c.id}
-                  className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4 shadow-sm space-y-3"
+                  to={`/admin/client/${c.id}`}
+                  className="block bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-3 mb-2 hover:shadow-xl hover:border-secondary/20 transition-all"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-white dark:bg-slate-700 text-white border border-gray-200 dark:border-slate-700 flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
-                        {c.name.charAt(0).toUpperCase()}
+                  <div className="flex items-center gap-3">
+                    {/* Avatar - mismo estilo que SubscriptionItem */}
+                    <div className="w-12 h-12 rounded-full bg-secondary/10 dark:bg-secondary/20 flex items-center justify-center text-secondary font-bold text-lg border-2 border-secondary/30 shrink-0">
+                      {c.name?.charAt(0).toUpperCase()}
+                    </div>
+                    
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-gray-900 dark:text-white truncate text-base">
+                        {c.name}
                       </div>
-                      <div>
-                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {c.name}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {c.email || "Sin email"}
-                        </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 truncate flex items-center gap-1">
+                        <Mail size={12} />
+                        {c.email || "Sin email"}
                       </div>
                     </div>
-                    <Link
-                      to={`/admin/client/${c.id}`}
-                      className="text-primary hover:bg-primary/5 dark:hover:bg-primary/20 p-2 rounded-full transition-colors"
-                    >
-                      <ChevronDown size={20} className="-rotate-90" />
-                    </Link>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-300 pt-2 border-t border-gray-50 dark:border-slate-700/50">
-                    <div>
-                      <span className="block text-gray-400 dark:text-gray-500 text-[10px] uppercase font-semibold">
-                        Teléfono
-                      </span>
-                      {c.phone || "-"}
-                    </div>
-                    <div>
-                      <span className="block text-gray-400 dark:text-gray-500 text-[10px] uppercase font-semibold">
-                        Dirección
-                      </span>
-                      <span className="truncate block">{c.address || "-"}</span>
+                    
+                    {/* Indicador de teléfono y flecha */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {c.phone && (
+                        <div className="h-10 w-10 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center" title={c.phone}>
+                          <Phone size={16} className="text-green-600 dark:text-green-400" />
+                        </div>
+                      )}
+                      <ChevronDown size={22} className="text-gray-400 -rotate-90" />
                     </div>
                   </div>
-                  <div className="flex justify-end gap-2 pt-2">
-                    <Button variant="destructive" onClick={() => handleDelete(c.uid || c.id)}>Eliminar</Button>
-                  </div>
-                </div>
+                </Link>
               ))}
             </div>
 
-            {/* Desktop View (Table) */}
+            {/* Desktop View (Table) - Diseño limpio y consistente */}
             <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700 hidden sm:table">
               <thead className="bg-gray-50/50 dark:bg-slate-900/50">
                 <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                     Cliente
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
                     Contacto
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
-                    Acciones
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
+                    Acción
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {clients.map((c: any) => (
-                  <tr
-                    key={c.uid || c.id}
-                    className="hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-white dark:bg-slate-800 text-primary border border-gray-200 dark:border-slate-700 flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-white dark:ring-slate-800">
-                          {c.name.charAt(0).toUpperCase()}
+                {filteredClients.map((c: any) => (
+                  <tr key={c.uid || c.id} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-secondary/10 text-secondary border-2 border-secondary/30 flex items-center justify-center font-bold text-sm shrink-0">
+                          {c.name?.charAt(0).toUpperCase()}
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                        <div>
+                          <div className="font-bold text-gray-900 dark:text-white text-sm">
                             {c.name}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -374,40 +398,30 @@ export default function AdminClients() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 dark:text-gray-300 flex items-center gap-2">
-                        <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded text-xs font-medium">
-                          Email
-                        </span>
+                    <td className="px-4 py-3">
+                      <div className="text-sm text-gray-700 dark:text-gray-300">
                         {c.email}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
-                        {c.phone ? (
-                          <>
-                            <span className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded text-xs font-medium">
-                              Tel
-                            </span>
-                            {c.phone}
-                          </>
-                        ) : (
-                          "Sin teléfono"
-                        )}
+                      <div className="text-xs text-green-600 dark:text-green-400 mt-0.5">
+                        {c.phone || "Sin teléfono"}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link
-                        to={`/admin/client/${c.id}`}
-                        className="inline-flex items-center justify-center text-primary dark:text-white hover:text-primary-700 dark:hover:text-primary font-medium text-sm bg-primary/10 dark:bg-primary/50 hover:bg-primary/20 dark:hover:bg-secondary px-4 py-2 rounded-lg transition-colors"
-                      >
-                        Ver detalles
-                      </Link>
-                      <Button
-                        onClick={() => handleDelete(c.uid || c.id)}
-                        className="ml-2 inline-flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 px-3 py-2 rounded-lg text-sm"
-                        variant="destructive"
-                      >
-                        Eliminar
-                      </Button>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          to={`/admin/client/${c.id}`}
+                          className="h-9 px-3 flex items-center justify-center text-sm font-medium text-secondary bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
+                        >
+                          Ver
+                        </Link>
+                        <Button
+                          onClick={() => handleDelete(c.uid || c.id)}
+                          variant="ghost"
+                          className="h-9 px-3 text-gray-500 hover:text-red-600"
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}

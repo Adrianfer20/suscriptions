@@ -44,30 +44,50 @@ export default function SubscriptionList({
   onStatusChange,
 }: Props) {
   return (
-    <Card title={`Suscripciones (${filteredItems.length}${searchQuery || statusFilter ? ` / ${itemsCount}` : ''})`} className="h-full">
+    <Card className="h-full min-h-[50vh] sm:min-h-0">
+      {/* Mobile-First: Título más legible en móvil */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg sm:text-base font-bold text-gray-900 dark:text-white">
+          Suscripciones ({filteredItems.length}{searchQuery || statusFilter ? ` / ${itemsCount}` : ''})
+        </h2>
+      </div>
+
       {loading ? (
-        <div className="flex justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="flex justify-center py-12 sm:py-8">
+          <div className="animate-spin rounded-full h-10 w-10 sm:h-8 sm:w-8 border-b-2 border-primary"></div>
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="text-center p-12">
-          <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
-            <CreditCard size={32} className="text-gray-400 dark:text-gray-500" />
+        <div className="text-center py-12 sm:py-8 px-4">
+          <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-20 w-20 sm:h-16 sm:w-16 flex items-center justify-center mx-auto mb-4">
+            <CreditCard size={36} className="text-gray-400 dark:text-gray-500 sm:32" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No se encontraron suscripciones</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
-            {searchQuery || statusFilter ? "Intenta con otros filtros de búsqueda" : "Crea una nueva suscripción para comenzar."}
+          <h3 className="text-xl sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            No se encontraron suscripciones
+          </h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-6 text-base sm:text-sm">
+            {searchQuery || statusFilter 
+              ? "Intenta con otros filtros de búsqueda" 
+              : "Crea una nueva suscripción para comenzar."}
           </p>
-          {(searchQuery || statusFilter) ? (
-            <Button onClick={onClearFilters} variant="outline">Limpiar filtros</Button>
-          ) : (
-            <Button onClick={onToggleCutDateSort ?? onCreateFirst} variant="primary">
-              {cutDateSort === "asc" ? "Ordenar por corte: Inicio → Fin" : cutDateSort === "desc" ? "Ordenar por corte: Fin → Inicio" : "Ordenar por fecha de corte"}
-            </Button>
-          )}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            {(searchQuery || statusFilter) ? (
+              <Button onClick={onClearFilters} variant="outline" className="w-full sm:w-auto h-12">
+                Limpiar filtros
+              </Button>
+            ) : (
+              <Button onClick={onToggleCutDateSort ?? onCreateFirst} variant="primary" className="w-full sm:w-auto h-12">
+                {cutDateSort === "asc" 
+                  ? "Ordenar: Inicio → Fin" 
+                  : cutDateSort === "desc" 
+                    ? "Ordenar: Fin → Inicio" 
+                    : "Ordenar por fecha de corte"}
+              </Button>
+            )}
+          </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-2 sm:p-0 max-w-full">
+        /* Mobile-First: Gap más comfortable en móvil */
+        <div className="flex flex-col gap-3 sm:gap-2 -mx-2 sm:mx-0 px-2 sm:px-0">
           {filteredItems.map((sub) => {
             const client = clients.find((c) => c.uid === sub.clientId || c.id === sub.clientId);
             return (
