@@ -129,7 +129,7 @@ export function useAdminSubscriptions() {
       });
     }
     return result;
-  }, [items, clients, searchQuery, statusFilter]);
+  }, [items, clients, searchQuery, statusFilter, cutDateSort]);
 
   function handleEdit(item: SubscriptionWithEmail) {
     setIsFormOpen(true);
