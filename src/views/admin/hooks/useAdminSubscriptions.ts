@@ -163,14 +163,16 @@ export function useAdminSubscriptions() {
       });
     }
     
-    // If no manual sort is selected, sort by client name for consistent ordering
+    // If no manual sort is selected, sort by cutDate (oldest to newest)
     if (!cutDateSort) {
       result.sort((a, b) => {
-        const clientA = clients.find((c) => c.uid === a.clientId || c.id === a.clientId);
-        const clientB = clients.find((c) => c.uid === b.clientId || c.id === b.clientId);
-        const nameA = clientA?.name?.toLowerCase() || "";
-        const nameB = clientB?.name?.toLowerCase() || "";
-        return nameA.localeCompare(nameB);
+        const dateA = a.cutDate || '';
+        const dateB = b.cutDate || '';
+        if (!dateA && !dateB) return 0;
+        if (!dateA) return 1;
+        if (!dateB) return -1;
+        // Sort oldest to newest (ascending)
+        return dateA.localeCompare(dateB);
       });
     }
     return result;

@@ -6,8 +6,10 @@ import { Button } from '../../components/ui/Button'
 import PageHeader from '../../components/layout/PageHeader'
 import { Input } from '../../components/ui/Input'
 import { Shield, Edit, Check, X, UserPlus, Trash, Save, User as UserIcon, Lock, Mail, MoreHorizontal } from 'lucide-react'
+import { useTheme } from '../../context/ThemeContext'
 
 export default function AdminUsers() {
+  const { theme } = useTheme();
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -130,7 +132,7 @@ export default function AdminUsers() {
           <Button
             onClick={() => setIsFormOpen(!isFormOpen)}
             className="w-full sm:w-auto flex items-center justify-center gap-2"
-            variant={isFormOpen ? "outline" : "primary"}
+            variant={isFormOpen ? "outline" : theme === 'dark' ? 'secondary' : 'primary'}
           >
             {isFormOpen ? <X size={18} /> : <UserPlus size={18} />}
             {isFormOpen ? 'Cancelar' : 'Nuevo Usuario'}

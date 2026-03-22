@@ -6,6 +6,7 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import PageHeader from '../../components/layout/PageHeader'
 import { Input } from "../../components/ui/Input";
+import { useTheme } from "../../context/ThemeContext";
 
 type ClientWithEmail = Client & { email?: string };
 
@@ -18,6 +19,7 @@ type ClientForm = {
 };
 
 export default function AdminClients() {
+  const { theme } = useTheme();
   const [clients, setClients] = useState<ClientWithEmail[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -171,7 +173,7 @@ export default function AdminClients() {
           <Button
             onClick={() => setIsFormOpen(!isFormOpen)}
             className="flex items-center gap-2"
-            variant={isFormOpen ? "outline" : "primary"}
+            variant={isFormOpen ? "outline" : theme === 'dark' ? 'secondary' : 'primary'}
           >
             {isFormOpen ? <ChevronUp size={18} /> : <UserPlus size={18} />}
             {isFormOpen ? "Cancelar" : "Nuevo Cliente"}
