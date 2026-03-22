@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { communicationsApi } from '../services/api'
 import { useTheme } from '../context/ThemeContext'
+import { useFCM } from '../hooks/useFCM'
 import Header from './layout/Header'
 import Sidebar from './layout/Sidebar'
 import { cn } from '../lib/cn'
@@ -59,12 +60,30 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
     setSidebarOpen(false)
   }, [])
 
-  useEffect(() => {
-    if (role === 'admin' && 'Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission()
-    }
-  }, [role])
+  // Firebase Cloud Messaging
+  const { requestPermission: requestFCMPermission, isSupported: fcmSupported, error: fcmError } = useFCM()
 
+  // Solicitar permiso de notificaciones (FCM + navegador)
+  useEffect(() => {
+    if (role === 'admin' && fcmSupported) {
+      // Intentar obtener permiso de notificaciones del navegador
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission()
+      }
+      // También intentar obtener token FCM
+      requestFCMPermission().then(token => {
+        if (token) {
+          console.log('[AppLayout] FCM Token obtenido, listo para recibir notificaciones push')
+          // Aquí podrías enviar el token al backend para guardarlo
+          // api.post('/notifications/token', { token })
+        }
+      }).catch(err => {
+        console.warn('[AppLayout] Error con FCM:', err)
+      })
+    }
+  }, [role, fcmSupported, requestFCMPermission])
+
+  // Polling para verificar mensajes sin leer (como backup de FCM)
   useEffect(() => {
     if (role !== 'admin') return
     const checkUnread = async () => {
@@ -73,21 +92,7 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
         const list: any[] = Array.isArray(res.data) ? res.data : (res.data?.data || [])
         const total = list.reduce((acc: number, curr: any) => acc + (curr.unreadCount || 0), 0)
         if (!isFirstLoad.current && total > prevUnreadCount.current) {
-          if ('Notification' in window && Notification.permission === 'granted') {
-            navigator.serviceWorker.ready
-              .then(registration => {
-                registration.showNotification('A|R System', {
-                  body: `Tienes ${total} mensajes sin leer`,
-                  icon: '/suscriptions/vite.svg',
-                })
-              })
-              .catch(() => {
-                new Notification('A|R System', {
-                  body: `Tienes ${total} mensajes sin leer`,
-                  icon: '/suscriptions/vite.svg',
-                })
-              })
-          }
+          // FCM maneja las notificaciones push, pero reproducimos sonido como backup
           try {
             const audio = new Audio('/suscriptions/notification.mp3')
             audio.play().catch(() => {})

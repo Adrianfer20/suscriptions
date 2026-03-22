@@ -11,14 +11,15 @@
     "deploy": "npx gh-pages -d dist"
   },
   "dependencies": {
+    "@types/firebase": "^2.4.32",
     "axios": "^1.4.0",
-    "firebase": "^9.22.2",
+    "firebase": "^9.23.0",
     "lucide-react": "^0.564.0",
     "react": "^18.2.0",
     "react-calendar": "^6.0.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.14.1",
-    "react-hot-toast": "^2.4.0"
+    "react-hot-toast": "^2.4.0",
+    "react-router-dom": "^6.14.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
