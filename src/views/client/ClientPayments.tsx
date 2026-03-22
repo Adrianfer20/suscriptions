@@ -25,7 +25,8 @@ export default function ClientPayments() {
   const [selectedSubscription, setSelectedSubscription] = useState('')
   const [amount, setAmount] = useState('')
   const [currency, setCurrency] = useState('USD')
-  const [method, setMethod] = useState<'binance' | 'zinli' | 'pago_movil' | 'free'>('binance')
+  // Updated payment methods per new API: bank_transfer, payment_link, cash, free
+  const [method, setMethod] = useState<'bank_transfer' | 'payment_link' | 'cash' | 'free'>('bank_transfer')
   const [reference, setReference] = useState('')
   const [payerEmail, setPayerEmail] = useState('')
   const [payerPhone, setPayerPhone] = useState('')
@@ -34,14 +35,15 @@ export default function ClientPayments() {
   const [receiptUrl, setReceiptUrl] = useState('')
 
   // Handle method change to auto-set currency
-  const handleMethodChange = (newMethod: 'binance' | 'zinli' | 'pago_movil' | 'free') => {
+  // Updated: bank_transfer (was binance), payment_link (was zinli), cash (was pago_movil)
+  const handleMethodChange = (newMethod: 'bank_transfer' | 'payment_link' | 'cash' | 'free') => {
     setMethod(newMethod)
     // Auto-set currency based on method (amount is entered by the client)
-    if (newMethod === 'binance') {
+    if (newMethod === 'bank_transfer') {
       setCurrency('USDT')
-    } else if (newMethod === 'zinli') {
+    } else if (newMethod === 'payment_link') {
       setCurrency('USD')
-    } else if (newMethod === 'pago_movil') {
+    } else if (newMethod === 'cash') {
       setCurrency('VES')
     } else if (newMethod === 'free') {
       setCurrency('USD')
@@ -121,11 +123,12 @@ export default function ClientPayments() {
       }
 
       // Add method-specific fields
-      if (method === 'binance' || method === 'zinli') {
+      // Updated: bank_transfer (was binance), payment_link (was zinli), cash (was pago_movil)
+      if (method === 'bank_transfer' || method === 'payment_link') {
         paymentData.reference = reference
         paymentData.payerEmail = payerEmail
         if (receiptUrl) paymentData.receiptUrl = receiptUrl
-      } else if (method === 'pago_movil') {
+      } else if (method === 'cash') {
         paymentData.payerPhone = payerPhone
         paymentData.payerIdNumber = payerIdNumber
         paymentData.bank = bank
@@ -143,7 +146,7 @@ export default function ClientPayments() {
       // Reset form
       setSelectedSubscription('')
       setAmount('')
-      setMethod('binance')
+      setMethod('bank_transfer')
       setReference('')
       setPayerEmail('')
       setPayerPhone('')
@@ -209,12 +212,12 @@ export default function ClientPayments() {
 
   const getMethodLabel = (method: string) => {
     switch (method) {
-      case 'binance':
-        return 'Binance'
-      case 'zinli':
-        return 'Zinli'
-      case 'pago_movil':
-        return 'Pago Móvil'
+      case 'bank_transfer':
+        return 'Transferencia Bancaria'
+      case 'payment_link':
+        return 'Link de Pago'
+      case 'cash':
+        return 'Efectivo'
       case 'free':
         return 'Promocional (Gratis)'
       default:
@@ -224,11 +227,11 @@ export default function ClientPayments() {
 
   const getMethodIcon = (method: string) => {
     switch (method) {
-      case 'binance':
+      case 'bank_transfer':
         return <CreditCard className="w-4 h-4" />
-      case 'zinli':
+      case 'payment_link':
         return <Wallet className="w-4 h-4" />
-      case 'pago_movil':
+      case 'cash':
         return <Smartphone className="w-4 h-4" />
       case 'free':
         return <Gift className="w-4 h-4" />
@@ -373,9 +376,10 @@ export default function ClientPayments() {
                   className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                   required
                 >
-                  <option value="binance">Binance</option>
-                  <option value="zinli">Zinli</option>
-                  <option value="pago_movil">Pago Móvil</option>
+                  {/* Updated: bank_transfer (was binance), payment_link (was zinli), cash (was pago_movil) */}
+                  <option value="bank_transfer">Transferencia Bancaria</option>
+                  <option value="payment_link">Link de Pago</option>
+                  <option value="cash">Efectivo</option>
                   <option value="free">Promocional (Gratis)</option>
                 </select>
               </div>
@@ -405,8 +409,8 @@ export default function ClientPayments() {
               </div>
             </div>
 
-            {/* Method-specific fields */}
-            {(method === 'binance' || method === 'zinli') && (
+            {/* Method-specific fields - Updated: bank_transfer, payment_link */}
+            {(method === 'bank_transfer' || method === 'payment_link') && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -416,7 +420,7 @@ export default function ClientPayments() {
                     type="text"
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
-                    placeholder={method === 'binance' ? 'BIN_ABC123XYZ' : 'ZN_123456789'}
+                    placeholder={method === 'bank_transfer' ? 'REF123456789' : 'LINK_PAYMENT_123'}
                     required
                   />
                 </div>
@@ -440,13 +444,13 @@ export default function ClientPayments() {
                     type="url"
                     value={receiptUrl}
                     onChange={(e) => setReceiptUrl(e.target.value)}
-                    placeholder="https://binance.com/transaction/..."
+                    placeholder="https://banco.com/comprobante/..."
                   />
                 </div>
               </div>
             )}
 
-            {method === 'pago_movil' && (
+            {method === 'cash' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">

@@ -42,7 +42,8 @@ export interface Payment {
   amount: number
   currency: string
   date: string
-  method: 'free' | 'binance' | 'zinli' | 'pago_movil'
+  // Updated payment methods per new API
+  method: 'free' | 'bank_transfer' | 'payment_link' | 'cash'
   status: 'pending' | 'verified' | 'rejected'
   reference?: string
   payerEmail?: string
@@ -138,6 +139,8 @@ export interface Conversation {
   prospect?: boolean
   name?: string | null
   clientId?: string | null
+  // Support for multiple subscriptions per phone (new API)
+  subscriptionIds?: string[]
   // Deprecated fields, keeping for safety if backend sends them
   uid?: string
   address?: string
@@ -229,7 +232,7 @@ export const subscriptionsApi = {
 
 // 4. Communications
 export const communicationsApi = {
-  sendTemplate: async (data: { clientId: string; template: string }) => {
+  sendTemplate: async (data: { clientId: string; template: string; templateData?: Record<string, any> }) => {
     return api.post<ApiResponse<any>>('/communications/send-template', data)
   },
   send: async (data: { clientId: string; body: string }) => {
@@ -238,14 +241,24 @@ export const communicationsApi = {
   listConversations: async () => {
     return api.get<ApiResponse<Conversation[]>>('/communications/conversations')
   },
-  getMessages: async (clientId: string, params?: { limit?: number; startAfter?: string; orderBy?: string; sort?: string }) => {
-    return api.get<ApiResponse<CommunicationMessage[]>>(`/communications/messages/${encodeURIComponent(clientId)}`, { params })
+  getMessages: async (id: string, params?: { limit?: number; startAfter?: string; orderBy?: string; sort?: string }) => {
+    // id can be clientId (old) or phoneNumber (new, recommended for unknown contacts)
+    return api.get<ApiResponse<CommunicationMessage[]>>(`/communications/messages/${encodeURIComponent(id)}`, { params })
   },
   getUnreadCount: async () => {
     return api.get<ApiResponse<{ count: number }>>('/communications/unread-count')
   },
-  markAsRead: async (clientId: string) => {
-    return api.post<ApiResponse<any>>(`/communications/conversations/${encodeURIComponent(clientId)}/read`)
+  markAsRead: async (id: string) => {
+    // id can be clientId or phoneNumber
+    return api.post<ApiResponse<any>>(`/communications/conversations/${encodeURIComponent(id)}/read`)
+  },
+  // New: Link multiple subscriptions to a phone number
+  linkSubscriptions: async (phone: string, subscriptionIds: string[]) => {
+    return api.post<ApiResponse<any>>('/communications/subscriptions/link', { phone, subscriptionIds })
+  },
+  // New: Get subscriptions linked to a phone number
+  getSubscriptionsByPhone: async (phone: string) => {
+    return api.get<ApiResponse<Subscription[]>>(`/communications/subscriptions/${encodeURIComponent(phone)}`)
   },
   // webhook is usually external, not called by frontend
 }
@@ -275,14 +288,14 @@ export const healthApi = {
   }
 }
 
-// 7. Payments
+// 7. Payments (updated methods per new API)
 export const paymentsApi = {
   create: async (data: {
     subscriptionId: string;
     amount: number;
     currency?: string;
     date?: string;
-    method: 'free' | 'binance' | 'zinli' | 'pago_movil';
+    method: 'free' | 'bank_transfer' | 'payment_link' | 'cash';
     reference?: string;
     payerEmail?: string;
     payerPhone?: string;
@@ -296,7 +309,7 @@ export const paymentsApi = {
   list: async (params?: {
     subscriptionId?: string;
     status?: 'pending' | 'verified' | 'rejected';
-    method?: 'free' | 'binance' | 'zinli' | 'pago_movil';
+    method?: 'free' | 'bank_transfer' | 'payment_link' | 'cash';
     createdBy?: string;
     page?: number;
     limit?: number;
