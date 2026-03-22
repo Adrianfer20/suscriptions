@@ -20,6 +20,7 @@ type Props = {
   onEdit: (s: SubscriptionWithEmail) => void;
   onDelete: (id: string) => void;
   onCopy: (text: string) => void;
+  onRenew?: (id: string) => void;
   PLAN_LABELS: Record<string, string>;
   isAdmin: boolean;
   onStatusChange: (id: string, status: string) => void;
@@ -39,6 +40,7 @@ export default function SubscriptionList({
   onEdit,
   onDelete,
   onCopy,
+  onRenew,
   PLAN_LABELS,
   isAdmin,
   onStatusChange,
@@ -98,6 +100,7 @@ export default function SubscriptionList({
                 onEdit={() => onEdit(sub)}
                 onDelete={onDelete}
                 onCopy={onCopy}
+                onRenew={onRenew}
                 PLAN_LABELS={PLAN_LABELS}
                 isAdmin={isAdmin}
                 onStatusChange={onStatusChange}

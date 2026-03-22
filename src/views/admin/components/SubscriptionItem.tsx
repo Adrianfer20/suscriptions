@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Copy, Pencil, Trash2, CheckCircle, ChevronDown, ChevronUp, Loader2, AlertCircle, Clock } from "lucide-react";
+import { Copy, Pencil, Trash2, CheckCircle, ChevronDown, ChevronUp, Loader2, AlertCircle, Clock, RefreshCw } from "lucide-react";
 import { subscriptionsApi } from "../../../services/api";
 import toast from "react-hot-toast";
 import { Button } from '../../../components/ui/Button'
@@ -58,6 +58,7 @@ export default function SubscriptionItem({
   onEdit, 
   onDelete, 
   onCopy,
+  onRenew,
   PLAN_LABELS,
   isAdmin = false,
   onStatusChange,
@@ -67,6 +68,7 @@ export default function SubscriptionItem({
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onCopy?: (value: string) => void;
+  onRenew?: (id: string) => void;
   PLAN_LABELS: Record<string, string>;
   isAdmin?: boolean;
   onStatusChange?: (id: string, newStatus: string) => void;
@@ -75,6 +77,7 @@ export default function SubscriptionItem({
   const [changingStatus, setChangingStatus] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<string>("");
+  const [renewing, setRenewing] = useState(false);
 
   const handleStatusChangeRequest = (newStatus: string) => {
     setPendingStatus(newStatus);
@@ -289,6 +292,17 @@ export default function SubscriptionItem({
 
             {/* Acciones - Botones más sutiles */}
             <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
+              {onRenew && (
+                <Button
+                  onClick={() => onRenew(sub.id)}
+                  disabled={renewing}
+                  className="flex-1 h-11"
+                  variant="outline"
+                >
+                  {renewing ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                  <span className="ml-1.5 text-sm font-medium">Renovar</span>
+                </Button>
+              )}
               <Button
                 onClick={() => onEdit(sub)}
                 className="flex-1 h-11"

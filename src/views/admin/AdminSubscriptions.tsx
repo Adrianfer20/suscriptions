@@ -36,6 +36,7 @@ export default function AdminSubscriptions() {
     handleDelete,
     handleCopy,
     handleStatusChange,
+    handleRenew,
     cutDateSort,
     toggleCutDateSort,
   } = useAdminSubscriptions() as any;
@@ -101,6 +102,7 @@ export default function AdminSubscriptions() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onCopy={handleCopy}
+        onRenew={handleRenew}
         PLAN_LABELS={PLAN_LABELS}
         isAdmin={user?.role === "admin"}
         onStatusChange={handleStatusChange}

@@ -120,14 +120,33 @@ export function useAdminSubscriptions() {
       return null;
     };
     
+    // Search by cutDate, client name, or plan
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter((sub) => {
+        // Search by cutDate (YYYY-MM-DD format)
+        const cutDateMatch = sub.cutDate?.toLowerCase().includes(q);
+        // Search by client name
         const client = clients.find((c) => c.uid === sub.clientId || c.id === sub.clientId);
         const clientName = client?.name?.toLowerCase() || "";
-        return clientName.includes(q);
+        const clientMatch = clientName.includes(q);
+        // Search by plan
+        const planMatch = sub.plan?.toLowerCase().includes(q);
+        // Search by amount
+        const amountMatch = sub.amount?.toLowerCase().includes(q);
+        return cutDateMatch || clientMatch || planMatch || amountMatch;
       });
     }
+    
+    // Default sort by cutDate (ascending - nearest first)
+    result.sort((a, b) => {
+      const dateA = a.cutDate || '';
+      const dateB = b.cutDate || '';
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1;
+      if (!dateB) return -1;
+      return dateA.localeCompare(dateB);
+    });
     
     if (statusFilter) {
       result = result.filter((sub) => sub.status === statusFilter);
@@ -286,6 +305,21 @@ export function useAdminSubscriptions() {
     setItems((prev) => prev.map((s) => (s.id === id ? { ...s, status: newStatus as Subscription["status"] } : s)));
   };
 
+  const handleRenew = async (id: string) => {
+    try {
+      const res = await subscriptionsApi.renew(id);
+      const updated = res.data?.data || res.data;
+      if (updated) {
+        setItems((prev) => prev.map((s) => (s.id === id ? { ...s, ...updated } : s)));
+        toast.success("Suscripción renovada correctamente");
+      }
+    } catch (err: any) {
+      const serverMsg = err?.response?.data?.message || err?.response?.data?.error;
+      const msg = serverMsg || (err instanceof Error ? err.message : "Error renovando suscripción");
+      toast.error(msg);
+    }
+  };
+
   const toggleCutDateSort = () => {
     setCutDateSort((prev) => (prev === "asc" ? "desc" : "asc"));
   };
@@ -315,6 +349,7 @@ export function useAdminSubscriptions() {
     handleDelete,
     handleCopy,
     handleStatusChange,
+    handleRenew,
     cutDateSort,
     toggleCutDateSort,
   } as const;
