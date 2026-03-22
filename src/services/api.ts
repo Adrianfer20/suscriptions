@@ -135,6 +135,10 @@ export interface Conversation {
   lastMessageAt?: string | FirestoreTimestamp
   lastMessageBody?: string
   lastMessageDir?: 'inbound' | 'outbound'
+  // Possible status field names from backend
+  lastMessageStatus?: string // Status from Twilio: 'queued', 'sent', 'delivered', 'failed', etc.
+  status?: string // Alternative field name
+  messageStatus?: string // Alternative field name
   unreadCount?: number
   prospect?: boolean
   name?: string | null
@@ -259,6 +263,10 @@ export const communicationsApi = {
   // New: Get subscriptions linked to a phone number
   getSubscriptionsByPhone: async (phone: string) => {
     return api.get<ApiResponse<Subscription[]>>(`/communications/subscriptions/${encodeURIComponent(phone)}`)
+  },
+  // Delete conversation (requires admin role)
+  deleteConversation: async (phone: string) => {
+    return api.delete<ApiResponse<any>>(`/communications/conversations/${encodeURIComponent(phone)}`)
   },
   // webhook is usually external, not called by frontend
 }

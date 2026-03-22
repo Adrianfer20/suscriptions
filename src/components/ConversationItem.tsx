@@ -3,13 +3,41 @@ import { Button } from './ui/Button'
 
 const formatTimestamp = (ts?: string | FirestoreTimestamp) => {
   if (!ts) return ''
+  
+  let date: Date
   if (typeof ts === 'string') {
-    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    date = new Date(ts)
+  } else if (isFirestoreTimestamp(ts)) {
+    date = new Date(ts._seconds * 1000)
+  } else {
+    return ''
   }
-  if (isFirestoreTimestamp(ts)) {
-    return new Date(ts._seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+  const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  
+  const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  
+  // Same day - show time
+  if (messageDate.getTime() === today.getTime()) {
+    return timeStr
   }
-  return ''
+  
+  // Yesterday
+  if (messageDate.getTime() === yesterday.getTime()) {
+    return 'Ayer'
+  }
+  
+  // This week - show day name
+  const daysDiff = Math.floor((today.getTime() - messageDate.getTime()) / (24 * 60 * 60 * 1000))
+  if (daysDiff < 7) {
+    return date.toLocaleDateString('es-VE', { weekday: 'short' })
+  }
+  
+  // Older - show date
+  return date.toLocaleDateString('es-VE', { month: 'short', day: 'numeric' })
 }
 
 function isFirestoreTimestamp(ts: any): ts is FirestoreTimestamp {
@@ -17,34 +45,52 @@ function isFirestoreTimestamp(ts: any): ts is FirestoreTimestamp {
 }
 
 // Helper to format message preview - clean up technical template names
-const formatMessagePreview = (body?: string, isTemplate?: boolean): string => {
-  if (!body) return 'Sin mensajes';
+// Helper to determine message delivery status for display
+// Checks multiple possible status fields
+const getMessageStatusDisplay = (conversation: { lastMessageStatus?: string; status?: string; messageStatus?: string }): { icon: 'sent' | 'delivered' | 'read'; color: string } => {
+  // Check multiple possible status fields
+  const status = conversation.lastMessageStatus || conversation.status || conversation.messageStatus
   
-  // If it's a template, show a friendly name
+  if (!status) return { icon: 'sent', color: 'text-slate-400' }
+  
+  const lowerStatus = status.toLowerCase()
+  if (lowerStatus === 'read') return { icon: 'read', color: 'text-blue-500' }
+  if (lowerStatus === 'delivered') return { icon: 'delivered', color: 'text-slate-400' }
+  if (lowerStatus === 'sent') return { icon: 'sent', color: 'text-slate-400' }
+  if (lowerStatus === 'failed' || lowerStatus === 'error') return { icon: 'sent', color: 'text-red-500' }
+  if (lowerStatus === 'queued') return { icon: 'sent', color: 'text-slate-400' }
+  
+  return { icon: 'sent', color: 'text-slate-400' }
+}
+
+const formatMessagePreview = (body?: string, isTemplate?: boolean): { text: string; isAutomated: boolean } => {
+  if (!body) return { text: 'Sin mensajes', isAutomated: false };
+  
+  // If it's a template, show a friendly name with robot indicator
   if (isTemplate || body.startsWith('Template:')) {
     // Extract the template name and make it friendly
     const templateName = body.replace('Template:', '').replace(/_/g, ' ').trim();
     // Map common templates to friendly names
     const friendlyNames: Record<string, string> = {
-      'subscription_cutoff': '📋 Aviso de corte',
-      'subscription_welcome': '👋 Bienvenida',
-      'subscription_renewed': '✅ Renovación',
-      'subscription_payment': '💳 Recordatorio de pago',
-      'subscription_reminder': '⏰ Recordatorio',
+      'subscription_cutoff': 'Aviso de corte enviado',
+      'subscription_welcome': 'Mensaje de bienvenida',
+      'subscription_renewed': 'Notificación de renovación',
+      'subscription_payment': 'Recordatorio de pago',
+      'subscription_reminder': 'Recordatorio automático',
     };
     
     const lowerName = templateName.toLowerCase();
     for (const [key, friendly] of Object.entries(friendlyNames)) {
-      if (lowerName.includes(key)) return friendly;
+      if (lowerName.includes(key)) return { text: friendly, isAutomated: true };
     }
-    return `📋 ${templateName}`;
+    return { text: `Mensaje automático: ${templateName}`, isAutomated: true };
   }
   
   // Truncate long messages
-  if (body.length > 40) {
-    return body.substring(0, 40) + '...';
+  if (body.length > 45) {
+    return { text: body.substring(0, 45) + '...', isAutomated: false };
   }
-  return body;
+  return { text: body, isAutomated: false };
 }
 
 interface ConversationItemProps {
@@ -58,23 +104,23 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
     <Button
       onClick={onClick}
       className={`
-        group w-full text-left p-4 rounded-xl border flex items-center gap-4 transition-all duration-200 cursor-pointer shadow-sm
+        group w-full text-left px-4 py-6 rounded-none flex items-center gap-3 transition-all duration-200 cursor-pointer border-b border-slate-100 dark:border-slate-700/30
 
         ${selected
-          ? 'bg-primary/10 dark:bg-primary/20 border-primary/30 shadow-sm'
-          : 'bg-slate-100 dark:bg-slate-800 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-200 dark:hover:border-slate-600'
+          ? 'bg-primary/5 dark:bg-secondary/10'
+          : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'
         }
       `}
       variant="ghost"
     >
-      {/* Avatar */}
+      {/* Avatar - simplified without extra borders */}
       <div
         className={`
-          h-11 w-11 rounded-full flex items-center justify-center font-semibold text-sm ring-2 shadow-sm shrink-0 transition-colors
+          h-10 w-10 rounded-full flex items-center justify-center font-semibold text-sm shrink-0 transition-colors
 
           ${selected
-            ? 'bg-primary/20 text-primary/foreground ring-primary/20'
-            : 'bg-primary/20 dark:bg-primary/30 text-slate-700 dark:text-slate-200 ring-primary dark:ring-slate-700 group-hover:bg-primary/30 group-hover:text-primary'
+            ? 'bg-primary text-secondary'
+            : 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-secondary/50 group-hover:bg-indigo-200 group-hover:text-indigo-800'
           }
         `}
       >
@@ -82,30 +128,38 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 overflow-hidden">
         {/* Header - improved layout with proper spacing */}
-        <div className="flex justify-between items-start gap-2">
-          {/* Left side: Name */}
-          <span
-            className={`
-              font-bold text-sm truncate transition-colors flex-1 min-w-0
-              ${selected
-                ? 'text-primary dark:text-secondary'
-                : 'text-slate-900 dark:text-slate-100 group-hover:text-primary'
-              }
-            `}
-          >
-            {c.name || c.phone || 'Usuario Desconocido'}
-          </span>
+        <div className="flex justify-between items-center gap-2">
+          {/* Left side: Name - bolder when unread */}
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            {/* Unread indicator dot */}
+            {!!c.unreadCount && (
+              <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+            )}
+            <span
+              className={`
+                text-sm truncate transition-colors min-w-0
+                ${selected
+                  ? 'text-primary dark:text-secondary font-semibold'
+                  : c.unreadCount 
+                    ? 'text-slate-900 dark:text-slate-100 font-bold'
+                    : 'text-slate-600 dark:text-slate-300 font-medium group-hover:text-primary'
+                }
+              `}
+            >
+              {c.name || c.phone || 'Usuario Desconocido'}
+            </span>
+          </div>
 
-          {/* Right side: Time */}
+          {/* Right side: Time - smaller, more subtle */}
           {c.lastMessageAt && (
             <span
               className={`
-                text-[10px] shrink-0 transition-colors opacity-60
+                text-[11px] shrink-0 transition-colors
                 ${selected
-                  ? 'text-primary'
-                  : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                  ? 'text-primary/60 dark:text-secondary/60'
+                  : 'text-slate-400 dark:text-slate-500'
                 }
               `}
             >
@@ -114,25 +168,54 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
           )}
         </div>
 
-        {/* Second row: Badge + Message preview + Unread */}
-        <div className="flex justify-between items-center gap-2 mt-0.5">
-          {/* Prospect badge */}
+        {/* Second row: Badge + Message preview */}
+        <div className="flex items-center gap-2 mt-0.5">
+          {/* Prospect badge - outline style */}
           {c.prospect && (
-            <span className="text-[10px] uppercase font-bold text-amber-600 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded-full shrink-0">
-              Prospecto
+            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-600/50 px-1.5 py-0.5 rounded shrink-0">
+              PROSPECTO
             </span>
           )}
-          {/* Message preview fills remaining space */}
-          <p className="text-xs truncate font-medium text-slate-500 dark:text-slate-400 flex-1">
-            {c.lastMessageDir === 'outbound' && <span className="font-bold mr-1 opacity-70">Tú:</span>}
-            {formatMessagePreview(c.lastMessageBody, c.lastMessageBody?.startsWith('Template:'))}
-          </p>
-          {/* Unread badge */}
-          {!!c.unreadCount && (
-            <span className="min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold shrink-0">
-              {c.unreadCount}
-            </span>
-          )}
+          {/* Message preview - show robot icon for automated messages */}
+          {(() => {
+            const preview = formatMessagePreview(c.lastMessageBody, c.lastMessageBody?.startsWith('Template:'))
+            return (
+              <p className="text-xs truncate text-slate-500 dark:text-slate-400 flex-1 min-w-0 items-center gap-1">
+                {preview.isAutomated && (
+                  <span className="inline-flex items-center text-slate-400" title="Mensaje automático">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                  </span>
+                )}
+                {c.lastMessageDir === 'outbound' && (
+                  <span className={`inline-flex items-center mr-0.5 ${
+                    getMessageStatusDisplay(c).color
+                  }`}>
+                    {getMessageStatusDisplay(c).icon === 'read' ? (
+                      // Double check blue (read)
+                      <svg className="w-4 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    ) : getMessageStatusDisplay(c).icon === 'delivered' ? (
+                      // Double check gray (delivered)
+                      <svg className="w-4 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    ) : (
+                      // Single check (sent) or failed
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </span>
+                )}
+                <span className={c.lastMessageDir === 'outbound' ? 'italic opacity-70' : ''}>
+                  {preview.text}
+                </span>
+              </p>
+            )
+          })()}
         </div>
       </div>
     </Button>

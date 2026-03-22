@@ -4,7 +4,7 @@ import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { ConversationItem } from '../../components/ConversationItem'
-import { Send, Loader2, ArrowLeft, Search, MessageSquare } from 'lucide-react'
+import { Send, Loader2, ArrowLeft, Search, MessageSquare, Trash2 } from 'lucide-react'
 
 const formatTimestamp = (ts?: string | FirestoreTimestamp) => {
   if (!ts) return ''
@@ -31,6 +31,10 @@ export default function AdminCommunication() {
   
   // Search state
   const [searchTerm, setSearchTerm] = useState('')
+  
+  // Filter state
+  type FilterType = 'all' | 'unread' | 'prospects' | 'clients'
+  const [filter, setFilter] = useState<FilterType>('all')
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -432,27 +436,51 @@ export default function AdminCommunication() {
         {/* Left: Conversations List */}
         <Card className={`flex flex-col h-full overflow-hidden p-0 bg-white dark:bg-slate-800 ${selectedConversation ? 'hidden md:flex' : 'flex'}`}>
            {/* Custom Header with Search */}
-           <div className="p-4 border-b border-slate-100 dark:border-slate-700 space-y-3 bg-white dark:bg-slate-800">
+           <div className="p-3 border-b border-slate-100 dark:border-slate-700 space-y-2 bg-white dark:bg-slate-800">
                 <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
                         <MessageSquare className="text-primary" size={20} />
                         Mensajes
                     </h3>
-                    <span className="h-8 w-8 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">{conversations.length}</span>
+                    <span className="h-7 w-7 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">{conversations.length}</span>
                 </div>
+                {/* Filter chips */}
+                <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+                    {([
+                        { key: 'all', label: 'Todos' },
+                        { key: 'unread', label: 'No leídos' },
+                        { key: 'prospects', label: 'Prospectos' },
+                        { key: 'clients', label: 'Clientes' },
+                    ] as const).map((f) => (
+                        <button
+                            key={f.key}
+                            onClick={() => setFilter(f.key)}
+                            className={`
+                                px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-all
+                                ${filter === f.key
+                                    ? 'bg-primary text-white shadow-sm'
+                                    : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                                }
+                            `}
+                        >
+                            {f.label}
+                        </button>
+                    ))}
+                </div>
+                {/* Compact search */}
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
                     <input 
                         type="text"
                         placeholder="Buscar chat..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-600 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-white"
+                        className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-600 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-white"
                     />
                 </div>
            </div>
 
-           <div className="flex-1 overflow-y-auto min-h-0 p-2 bg-slate-50/50 dark:bg-slate-900/50">
+           <div className="flex-1 overflow-y-auto min-h-0 p-2 bg-slate-50/50 dark:bg-slate-900/50 custom-scrollbar">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-8 space-y-2 text-slate-400">
                  <Loader2 className="animate-spin" size={20} />
@@ -463,16 +491,23 @@ export default function AdminCommunication() {
                 No hay conversaciones activas.
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="">
                 {conversations
                     .filter(c => {
-                        if (!searchTerm) return true
-                        const term = searchTerm.toLowerCase()
-                        return (
-                            c.name?.toLowerCase().includes(term) || 
-                            c.phone?.includes(term) ||
-                            c.lastMessageBody?.toLowerCase().includes(term)
-                        )
+                        // Search filter
+                        if (searchTerm) {
+                            const term = searchTerm.toLowerCase()
+                            if (!c.name?.toLowerCase().includes(term) && 
+                                !c.phone?.includes(term) &&
+                                !c.lastMessageBody?.toLowerCase().includes(term)) {
+                                return false
+                            }
+                        }
+                        // Category filter
+                        if (filter === 'unread' && !c.unreadCount) return false
+                        if (filter === 'prospects' && !c.prospect) return false
+                        if (filter === 'clients' && c.prospect) return false
+                        return true
                     })
                     .map((c: Conversation) => (
                   <ConversationItem
@@ -507,13 +542,32 @@ export default function AdminCommunication() {
                             <p className="text-xs text-slate-500 dark:text-slate-400">{selectedConversation.phone}</p>
                         </div>
                     </div>
+                    <Button
+                      onClick={() => {
+                        if (confirm('¿Estás seguro de eliminar esta conversación? Esta acción no se puede deshacer.')) {
+                          communicationsApi.deleteConversation(selectedConversation.phone).then(() => {
+                            setSelectedConversation(null)
+                            fetchConversations()
+                          }).catch(err => {
+                            console.error('Error deleting conversation:', err)
+                            alert('Error al eliminar la conversación')
+                          })
+                        }
+                      }}
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      title="Eliminar conversación"
+                    >
+                      <Trash2 size={18} />
+                    </Button>
                 </div>
 
                 {/* Messages Area */}
                 <div 
                     ref={scrollContainerRef}
                     onScroll={handleScrollEvent}
-                    className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/20 dark:bg-slate-900/20 min-h-0"
+                    className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/20 dark:bg-slate-900/20 min-h-0 custom-scrollbar"
                 >
                     {loadingMore && (
                         <div className="flex justify-center py-2 text-xs text-slate-400">
