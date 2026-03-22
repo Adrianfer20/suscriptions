@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronUp, UserPlus, Search, X, Phone, MapPin, Mail, Trash2 } from "lucide-react";
-import { clientsApi, authApi, Client } from "../../services/api";
+import { clientsApi, authApi, Client, extractData } from "../../services/api";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import PageHeader from '../../components/layout/PageHeader'
@@ -54,8 +54,8 @@ export default function AdminClients() {
         const res = await clientsApi.list();
         if (!mounted) return;
 
-        // Handle potential different response structures if backend is inconsistent
-        const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        // Use helper to extract data consistently
+        const list = extractData<Client[]>(res) || [];
 
         // Enrich clients with email from Auth API
         const enriched = await Promise.all(
@@ -64,8 +64,7 @@ export default function AdminClients() {
             try {
               const userRes = await authApi.getUser(c.uid);
               // Access user data safely
-              const user = userRes.data?.data || userRes.data;
-              // @ts-ignore: Accessing user property if nested differently
+              const user = extractData<{ email?: string; user?: { email?: string } }>(userRes);
               const email = user?.email || user?.user?.email;
               return { ...c, email };
             } catch (e) {
@@ -107,8 +106,7 @@ export default function AdminClients() {
         role: "client",
       });
 
-      const authData = authRes.data?.data || authRes.data;
-      // @ts-ignore: safe access
+      const authData = extractData<{ uid?: string; user?: { uid?: string } }>(authRes);
       const uid = authData?.uid || authData?.user?.uid;
 
       if (!uid) {
@@ -125,9 +123,9 @@ export default function AdminClients() {
       };
       const res = await clientsApi.create(clientPayload);
 
-      // The response might be wrapped in .data or not, depending on backend consistency
-      // We cast to Client to ensure we have the correct type for the state
-      const createdData = (res.data?.data || res.data) as Client;
+      // Use helper to extract data consistently
+      const createdData = extractData<Client>(res);
+      if (!createdData) throw new Error('Error al crear cliente: respuesta inválida');
       const newClient: ClientWithEmail = { ...createdData, email: form.email };
 
       setClients((s) => [newClient, ...s]);

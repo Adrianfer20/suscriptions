@@ -15,7 +15,7 @@ type Props = {
   setSearchQuery: (v: string) => void;
   statusFilter: string;
   setStatusFilter: (v: string) => void;
-  // Nota: `setIsFormOpen` eliminado porque no se usa en este componente
+  setIsFormOpen?: (v: boolean) => void; // For creating new subscription from toolbar
   cutDateSort?: "asc" | "desc" | null;
   onToggleCutDateSort?: () => void;
   cutDateFilter?: string;

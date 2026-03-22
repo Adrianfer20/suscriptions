@@ -39,7 +39,8 @@ export default function AdminDashboard() {
         // Calculate revenue
         const revenue = subs.reduce((acc: number, sub: any) => {
           if (!sub.amount) return acc;
-          const clean = sub.amount.replace(/[^0-9]/g, "");
+          // Ensure amount is string before cleaning non-numeric characters
+          const clean = String(sub.amount).replace(/[^0-9]/g, "");
           return acc + (parseInt(clean) || 0);
         }, 0);
         // Unread messages

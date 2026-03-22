@@ -1,6 +1,16 @@
 import axios, { AxiosResponse } from 'axios'
 import { getAuthInstance } from './firebase'
 
+// Helper to extract data from potentially wrapped API responses
+// Handles: { data: T }, { data: { data: T } }, or T directly
+export function extractData<T>(response: { data?: any }): T | undefined {
+  if (!response?.data) return undefined;
+  // If data is an array or has direct properties (not wrapped), return it
+  if (Array.isArray(response.data)) return response.data as T;
+  if (response.data.data !== undefined) return response.data.data as T;
+  return response.data as T;
+}
+
 // En desarrollo prioriza localhost:3000, en producción usa la variable de entorno
 const baseURL = import.meta.env.VITE_API_BASE
 // const baseURL = 'http://localhost:3000' // Cambia a tu URL de backend en producción
