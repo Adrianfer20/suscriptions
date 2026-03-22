@@ -32,14 +32,14 @@ export default function PlanCard({
   return (
     <Card className="border-l-4 border-l-primary/70">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-slate-900 dark:text-secondary">Tu Plan Actual</h3>
+        <h3 className="font-semibold text-slate-900 dark:text-white">Tu Plan Actual</h3>
         <StatusBadge status={subscription.status} />
       </div>
 
       <div className="flex items-center justify-between py-2">
         <div>
           <div className="font-bold text-lg text-slate-900 dark:text-slate-200">{subscription.plan}</div>
-          <div className="text-2xl font-bold text-primary mt-1 dark:text-secondary">
+          <div className="text-2xl font-bold text-primary mt-1 dark:text-white">
             {subscription.amount}
             <span className="text-sm font-normal text-slate-500 dark:text-slate-300">/mes</span>
           </div>
@@ -55,7 +55,7 @@ export default function PlanCard({
         <span className="font-medium text-slate-900 dark:text-slate-200">{formatDate(subscription.cutDate)}</span>
       </div>
 
-      <div className="mt-2 flex items-center gap-2 text-sm text-primary dark:text-secondary font-semibold">
+      <div className="mt-2 flex items-center gap-2 text-sm text-primary dark:text-white font-semibold">
         {typeof daysUntil === 'number' && daysUntil >= 0 ? (
           <>
             <Clock className="w-4 h-4" />

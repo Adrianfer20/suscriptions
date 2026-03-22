@@ -36,7 +36,7 @@ export default function SubscriptionCard({ sub, client, onEdit, onDelete, onCopy
               <span className="font-mono font-medium text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/80 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 select-all">
                 {sub.passwordSub}
               </span>
-              <Button onClick={async () => { try { await navigator.clipboard.writeText(sub.passwordSub!); toast.success('Copiado al portapapeles'); if (onCopy) onCopy(sub.passwordSub!); } catch { toast.error('No se pudo copiar') } }} className="text-slate-400 hover:text-primary dark:text-slate-500 dark:hover:text-primary transition-colors p-1" title="Copiar contraseña" variant="ghost" size="icon">
+              <Button onClick={async () => { try { await navigator.clipboard.writeText(sub.passwordSub!); toast.success('Copiado al portapapeles'); if (onCopy) onCopy(sub.passwordSub!); } catch { toast.error('No se pudo copiar') } }} className="text-slate-400 hover:text-primary dark:text-slate-500 dark:hover:text-white transition-colors p-1" title="Copiar contraseña" variant="ghost" size="icon">
                 <Copy size={12} />
               </Button>
             </div>

@@ -20,7 +20,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variants: Record<ButtonVariant, string> = {
       // primary: use primary in light mode, but switch to secondary-like background in dark for better contrast
       primary:
-        `bg-primary hover:bg-primary-600 text-white shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${focusOffsetLight} dark:bg-secondary dark:hover:bg-secondary/90 dark:focus-visible:ring-secondary ${focusOffsetDark}`,
+        `bg-primary hover:bg-primary-600 text-white shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${focusOffsetLight} dark:bg-secondary dark:hover:bg-secondary/90 dark:text-primary dark:focus-visible:ring-secondary ${focusOffsetDark}`,
       secondary:
         `bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-slate-200 focus-visible:ring-offset-2 ${focusOffsetLight} shadow-sm`,
       ghost:

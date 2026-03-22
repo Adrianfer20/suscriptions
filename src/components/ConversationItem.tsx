@@ -16,6 +16,37 @@ function isFirestoreTimestamp(ts: any): ts is FirestoreTimestamp {
   return ts && typeof ts._seconds === 'number'
 }
 
+// Helper to format message preview - clean up technical template names
+const formatMessagePreview = (body?: string, isTemplate?: boolean): string => {
+  if (!body) return 'Sin mensajes';
+  
+  // If it's a template, show a friendly name
+  if (isTemplate || body.startsWith('Template:')) {
+    // Extract the template name and make it friendly
+    const templateName = body.replace('Template:', '').replace(/_/g, ' ').trim();
+    // Map common templates to friendly names
+    const friendlyNames: Record<string, string> = {
+      'subscription_cutoff': '📋 Aviso de corte',
+      'subscription_welcome': '👋 Bienvenida',
+      'subscription_renewed': '✅ Renovación',
+      'subscription_payment': '💳 Recordatorio de pago',
+      'subscription_reminder': '⏰ Recordatorio',
+    };
+    
+    const lowerName = templateName.toLowerCase();
+    for (const [key, friendly] of Object.entries(friendlyNames)) {
+      if (lowerName.includes(key)) return friendly;
+    }
+    return `📋 ${templateName}`;
+  }
+  
+  // Truncate long messages
+  if (body.length > 40) {
+    return body.substring(0, 40) + '...';
+  }
+  return body;
+}
+
 interface ConversationItemProps {
   conversation: Conversation
   selected: boolean
@@ -52,31 +83,26 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-1">
-          <div className="flex items-center gap-2 overflow-hidden pr-2">
-            <span
-              className={`
-                font-semibold text-sm truncate transition-colors
-                ${selected
-                  ? 'text-primary'
-                  : 'text-slate-900 dark:text-slate-100 group-hover:text-primary'
-                }
-              `}
-            >
-              {c.name || c.phone || 'Usuario Desconocido'}
-            </span>
-            {c.prospect && (
-              <span className="text-[10px] uppercase font-bold text-amber-600 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded-full shrink-0">
-                Prospecto
-              </span>
-            )}
-          </div>
+        {/* Header - improved layout with proper spacing */}
+        <div className="flex justify-between items-start gap-2">
+          {/* Left side: Name */}
+          <span
+            className={`
+              font-bold text-sm truncate transition-colors flex-1 min-w-0
+              ${selected
+                ? 'text-primary dark:text-secondary'
+                : 'text-slate-900 dark:text-slate-100 group-hover:text-primary'
+              }
+            `}
+          >
+            {c.name || c.phone || 'Usuario Desconocido'}
+          </span>
 
+          {/* Right side: Time */}
           {c.lastMessageAt && (
             <span
               className={`
-                text-[10px] font-medium shrink-0 transition-colors
+                text-[10px] shrink-0 transition-colors opacity-60
                 ${selected
                   ? 'text-primary'
                   : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'
@@ -88,28 +114,22 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
           )}
         </div>
 
-        {/* Last message */}
-        <div className="flex justify-between items-center">
-          <p
-            className={`
-              text-xs truncate max-w-[85%] font-medium transition-colors
-              ${selected
-                ? 'text-slate-900 dark:text-slate-100'
-                : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200'
-              }
-            `}
-          >
-            {c.lastMessageDir === 'outbound' && (
-              <span className="font-bold mr-1 opacity-70">Tú:</span>
-            )}
-            {c.lastMessageBody || 'Sin mensajes'}
+        {/* Second row: Badge + Message preview + Unread */}
+        <div className="flex justify-between items-center gap-2 mt-0.5">
+          {/* Prospect badge */}
+          {c.prospect && (
+            <span className="text-[10px] uppercase font-bold text-amber-600 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded-full shrink-0">
+              Prospecto
+            </span>
+          )}
+          {/* Message preview fills remaining space */}
+          <p className="text-xs truncate font-medium text-slate-500 dark:text-slate-400 flex-1">
+            {c.lastMessageDir === 'outbound' && <span className="font-bold mr-1 opacity-70">Tú:</span>}
+            {formatMessagePreview(c.lastMessageBody, c.lastMessageBody?.startsWith('Template:'))}
           </p>
-
+          {/* Unread badge */}
           {!!c.unreadCount && (
-            <span className="
-              min-w-5 h-5 px-1 ml-2 flex items-center justify-center rounded-full
-              bg-primary text-white text-[10px] font-bold shadow-sm border border-white dark:border-slate-800
-            ">
+            <span className="min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold shrink-0">
               {c.unreadCount}
             </span>
           )}

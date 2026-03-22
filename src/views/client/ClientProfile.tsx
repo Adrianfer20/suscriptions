@@ -100,13 +100,13 @@ export default function ClientProfile() {
       <div className="space-y-6">
         {/* Cintillo header */}
         <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-secondary tracking-tight">Mi Perfil</h2>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Mi Perfil</h2>
             <p className="text-sm text-slate-500 dark:text-slate-300">Gestiona tu información personal</p>
         </div>
         <div className="flex flex-col md:flex-row gap-6">
           {/* Card de información de perfil */}
           <Card className="flex-1 p-6 shadow-md border border-slate-200 dark:border-slate-800">
-            <h2 className="text-xl font-bold text-primary dark:text-secondary mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-primary dark:text-white mb-4 flex items-center gap-2">
               <User className="w-6 h-6" /> Mi Perfil
             </h2>
             <div className="space-y-4">
@@ -130,7 +130,7 @@ export default function ClientProfile() {
           </Card>
           {/* Card de edición */}
           <Card className="flex-1 p-6 shadow-md border border-slate-200 dark:border-slate-800">
-            <h3 className="font-semibold text-primary dark:text-secondary mb-4 flex items-center gap-2">
+            <h3 className="font-semibold text-primary dark:text-white mb-4 flex items-center gap-2">
               <Edit className="w-5 h-5" /> Editar información personal
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -157,7 +157,7 @@ export default function ClientProfile() {
                   disabled={saving || !((formData.phone !== profile?.phone) || (formData.address !== profile?.address))}
                   className={(!((formData.phone !== profile?.phone) || (formData.address !== profile?.address))) 
                     ? 'opacity-60 cursor-not-allowed' 
-                    : 'dark:text-secondary'}
+                    : 'dark:text-white'}
                 >
                   <Save className="w-4 h-4 mr-2" />
                   {saving ? 'Guardando...' : 'Actualizar información'}

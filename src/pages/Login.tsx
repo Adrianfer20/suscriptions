@@ -62,7 +62,7 @@ export default function Login() {
                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                      Contraseña
                    </label>
-                   <a href="#" className="text-xs font-medium text-primary hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300" tabIndex={-1}>
+                   <a href="#" className="text-xs font-medium text-primary hover:text-primary-600 dark:text-white-400 dark:hover:text-primary-300" tabIndex={-1}>
                     ¿Olvidaste tu contraseña?
                    </a>
                 </div>

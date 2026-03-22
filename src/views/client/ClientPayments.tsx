@@ -330,7 +330,7 @@ export default function ClientPayments() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-secondary tracking-tight">Mis Pagos</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Mis Pagos</h2>
           <p className="text-sm text-slate-500 dark:text-slate-300">Consulta tus pagos y registra nuevos</p>
         </div>
         <Button onClick={() => setShowForm(!showForm)}>
@@ -643,7 +643,7 @@ export default function ClientPayments() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <div className="font-bold text-lg text-slate-900 dark:text-secondary">
+                    <div className="font-bold text-lg text-slate-900 dark:text-white">
                       {formatCurrency(payment.amount, payment.currency)}
                     </div>
                     <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}>

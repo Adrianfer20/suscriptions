@@ -145,7 +145,7 @@ export default function ClientSubscription() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-secondary tracking-tight">Mi Suscripción</h2>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Mi Suscripción</h2>
         <p className="text-sm text-slate-500 dark:text-slate-300">Gestiona tu plan de suscripción</p>
       </div>
 
@@ -185,7 +185,7 @@ export default function ClientSubscription() {
               <div className="flex items-center justify-between py-2">
                 <div>
                   <div className="font-bold text-xl text-slate-900 dark:text-slate-200">{subscription.plan}</div>
-                  <div className="text-3xl font-bold text-primary dark:text-secondary mt-2">{subscription.amount}<span className="text-sm font-normal text-slate-500 dark:text-slate-300">/mes</span></div>
+                  <div className="text-3xl font-bold text-primary dark:text-white mt-2">{subscription.amount}<span className="text-sm font-normal text-slate-500 dark:text-slate-300">/mes</span></div>
                   {subscription.country && (
                     <div className="mt-2 text-sm text-blue-600 dark:text-blue-300 font-semibold">País: {subscription.country}</div>
                   )}

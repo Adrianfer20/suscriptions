@@ -163,17 +163,8 @@ export function useAdminSubscriptions() {
       });
     }
     
-    if (cutDateSort) {
-      result.sort((a, b) => {
-        const da = a.cutDate || "";
-        const db = b.cutDate || "";
-        if (!da && !db) return 0;
-        if (!da) return cutDateSort === "asc" ? 1 : -1;
-        if (!db) return cutDateSort === "asc" ? -1 : 1;
-        if (da === db) return 0;
-        return cutDateSort === "asc" ? da.localeCompare(db) : db.localeCompare(da);
-      });
-    } else {
+    // If no manual sort is selected, sort by client name for consistent ordering
+    if (!cutDateSort) {
       result.sort((a, b) => {
         const clientA = clients.find((c) => c.uid === a.clientId || c.id === a.clientId);
         const clientB = clients.find((c) => c.uid === b.clientId || c.id === b.clientId);

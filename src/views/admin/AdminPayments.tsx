@@ -877,7 +877,7 @@ export default function AdminPayments() {
                 {/* Right side - Amount & Actions */}
                 <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 sm:gap-2 ml-13 sm:ml-0">
                   <div className="text-right">
-                    <div className="font-bold text-lg sm:text-xl text-slate-900 dark:text-secondary">
+                    <div className="font-bold text-lg sm:text-xl text-slate-900 dark:text-white">
                       {formatCurrency(payment.amount, payment.currency)}
                     </div>
                   </div>
