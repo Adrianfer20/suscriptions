@@ -7,13 +7,13 @@ export default function StatusBadge({ status }: { status?: string }) {
       case 'active':
         return 'text-green-600 bg-green-50 dark:bg-green-900/20'
       case 'inactive':
-        return 'text-gray-600 bg-gray-50 dark:bg-gray-900/20'
+        return 'text-slate-600 bg-slate-50 dark:bg-slate-900/20'
       case 'past_due':
         return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20'
       case 'cancelled':
         return 'text-red-600 bg-red-50 dark:bg-red-900/20'
       default:
-        return 'text-gray-600 bg-gray-50 dark:bg-gray-900/20'
+        return 'text-slate-600 bg-slate-50 dark:bg-slate-900/20'
     }
   }
 

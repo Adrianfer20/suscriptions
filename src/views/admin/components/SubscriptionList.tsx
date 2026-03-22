@@ -47,7 +47,7 @@ export default function SubscriptionList({
     <Card className="h-full min-h-[50vh] sm:min-h-0">
       {/* Mobile-First: Título más legible en móvil */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg sm:text-base font-bold text-gray-900 dark:text-white">
+        <h2 className="text-lg sm:text-base font-bold text-slate-900 dark:text-white">
           Suscripciones ({filteredItems.length}{searchQuery || statusFilter ? ` / ${itemsCount}` : ''})
         </h2>
       </div>
@@ -58,13 +58,13 @@ export default function SubscriptionList({
         </div>
       ) : filteredItems.length === 0 ? (
         <div className="text-center py-12 sm:py-8 px-4">
-          <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-20 w-20 sm:h-16 sm:w-16 flex items-center justify-center mx-auto mb-4">
-            <CreditCard size={36} className="text-gray-400 dark:text-gray-500 sm:32" />
+          <div className="bg-slate-100 dark:bg-slate-700/50 rounded-full h-20 w-20 sm:h-16 sm:w-16 flex items-center justify-center mx-auto mb-4">
+            <CreditCard size={36} className="text-slate-400 dark:text-slate-500 sm:32" />
           </div>
-          <h3 className="text-xl sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <h3 className="text-xl sm:text-lg font-semibold text-slate-900 dark:text-white mb-2">
             No se encontraron suscripciones
           </h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-6 text-base sm:text-sm">
+          <p className="text-slate-500 dark:text-slate-400 mb-6 text-base sm:text-sm">
             {searchQuery || statusFilter 
               ? "Intenta con otros filtros de búsqueda" 
               : "Crea una nueva suscripción para comenzar."}

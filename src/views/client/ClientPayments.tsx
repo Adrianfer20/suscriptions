@@ -177,7 +177,7 @@ export default function ClientPayments() {
       case 'rejected':
         return 'text-red-600 bg-red-50 dark:bg-red-900/20'
       default:
-        return 'text-gray-600 bg-gray-50 dark:bg-gray-900/20'
+        return 'text-slate-600 bg-slate-50 dark:bg-slate-900/20'
     }
   }
 
@@ -327,8 +327,8 @@ export default function ClientPayments() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary tracking-tight">Mis Pagos</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-300">Consulta tus pagos y registra nuevos</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-secondary tracking-tight">Mis Pagos</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-300">Consulta tus pagos y registra nuevos</p>
         </div>
         <Button onClick={() => setShowForm(!showForm)}>
           <Plus className="w-4 h-4 mr-2" />
@@ -345,13 +345,13 @@ export default function ClientPayments() {
           <form onSubmit={handleSubmitPayment} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Suscripción *
                 </label>
                 <select
                   value={selectedSubscription}
                   onChange={(e) => setSelectedSubscription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                   required
                 >
                   <option value="">Selecciona una suscripción</option>
@@ -364,13 +364,13 @@ export default function ClientPayments() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Método de Pago *
                 </label>
                 <select
                   value={method}
                   onChange={(e) => handleMethodChange(e.target.value as any)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                   required
                 >
                   <option value="binance">Binance</option>
@@ -381,7 +381,7 @@ export default function ClientPayments() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Monto *
                 </label>
                 <Input
@@ -396,10 +396,10 @@ export default function ClientPayments() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Moneda
                 </label>
-                <div className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-slate-900 text-gray-900 dark:text-white font-medium">
+                <div className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-white font-medium">
                   {currency === 'USDT' ? 'USDT (CRIPTOMONEDA)' : currency === 'USD' ? 'USD (DÓLAR ESTADOUNIDENSE)' : 'VES (BOLÍVAR)'}
                 </div>
               </div>
@@ -409,7 +409,7 @@ export default function ClientPayments() {
             {(method === 'binance' || method === 'zinli') && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Referencia *
                   </label>
                   <Input
@@ -421,7 +421,7 @@ export default function ClientPayments() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Email *
                   </label>
                   <Input
@@ -433,7 +433,7 @@ export default function ClientPayments() {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     URL del Comprobante
                   </label>
                   <Input
@@ -449,7 +449,7 @@ export default function ClientPayments() {
             {method === 'pago_movil' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Teléfono *
                   </label>
                   <Input
@@ -461,7 +461,7 @@ export default function ClientPayments() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Cédula *
                   </label>
                   <Input
@@ -473,7 +473,7 @@ export default function ClientPayments() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Banco *
                   </label>
                   <Input
@@ -485,7 +485,7 @@ export default function ClientPayments() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Referencia
                   </label>
                   <Input
@@ -537,7 +537,7 @@ export default function ClientPayments() {
       <Card className="p-3 sm:p-4">
         {/* Search Bar */}
         <div className="relative mb-3">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 z-10 text-gray-900 dark:text-gray-200" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 z-10 text-slate-900 dark:text-slate-200" />
           <Input
             type="text"
             placeholder="Buscar pagos..."
@@ -554,15 +554,15 @@ export default function ClientPayments() {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="appearance-none pl-3 pr-8 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white cursor-pointer hover:border-primary transition-colors min-w-32.5 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="appearance-none pl-3 pr-8 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white cursor-pointer hover:border-primary transition-colors min-w-32.5 focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               <option value="all">Todos</option>
               <option value="pending">Pendiente</option>
               <option value="verified">Aprobado</option>
               <option value="rejected">Rechazado</option>
             </select>
-            <Filter className="w-4 h-4 absolute right-7 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Filter className="w-4 h-4 absolute right-7 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           </div>
 
           {/* Month Filter */}
@@ -592,7 +592,7 @@ export default function ClientPayments() {
 
         {/* Active Filters Count */}
         {filteredPayments.length > 0 && (
-          <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+          <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">
             {filteredPayments.length} pago
             {filteredPayments.length !== 1 ? "s" : ""} encontrado
             {filteredPayments.length !== 1 ? "s" : ""}
@@ -604,9 +604,9 @@ export default function ClientPayments() {
       {filteredPayments.length === 0 ? (
         <Card>
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Receipt className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">No hay registros</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <Receipt className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-4" />
+            <h3 className="text-lg font-medium text-slate-900 dark:text-white">No hay registros</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               {filter !== 'all' || monthFilter !== new Date().toISOString().slice(0, 7)
                 ? 'No se encontraron resultados con los filtros aplicados' 
                 : 'No tienes pagos registrados aún'}
@@ -619,14 +619,14 @@ export default function ClientPayments() {
             <Card key={payment.id} className="hover:shadow-md transition-shadow">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
-                  <div className="p-2.5 bg-gray-100 dark:bg-slate-800 rounded-lg">
+                  <div className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
                     {getMethodIcon(payment.method)}
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-gray-200">
+                    <div className="font-medium text-slate-900 dark:text-slate-200">
                       {getMethodLabel(payment.method)}
                     </div>
-                    <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {formatDate(payment.date)}
@@ -639,7 +639,7 @@ export default function ClientPayments() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <div className="font-bold text-lg text-gray-900 dark:text-secondary">
+                    <div className="font-bold text-lg text-slate-900 dark:text-secondary">
                       {formatCurrency(payment.amount, payment.currency)}
                     </div>
                     <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}>
@@ -655,8 +655,8 @@ export default function ClientPayments() {
                 </div>
               </div>
               {payment.notes && (
-                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     <span className="font-medium">Nota:</span> {payment.notes}
                   </p>
                 </div>

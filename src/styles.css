@@ -48,7 +48,7 @@ height: 100%;
 body {
 font-family: var(--font-sans);
 -webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
+-moz-osx-font-smoothing: slatescale;
 background-color: var(--bg);
 color: var(--text);
 }

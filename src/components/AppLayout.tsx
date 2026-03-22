@@ -108,7 +108,7 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
   }, [role])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col md:flex-row font-sans transition-colors duration-300 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col md:flex-row font-sans transition-colors duration-300 overflow-x-hidden">
       <Header
         role={role}
         user={user}
@@ -119,7 +119,7 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
       />
 
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-gray-900/50 z-40 md:hidden backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
       )}
 
       <Sidebar
@@ -138,7 +138,7 @@ export default function AppLayout({ children }: { children?: React.ReactNode }) 
 
       <main
         className={cn(
-          'flex-1 min-w-0 w-full min-h-[calc(100vh-4rem)] md:min-h-screen pt-16 md:pt-0 bg-gray-50 dark:bg-slate-900 transition-all duration-300',
+          'flex-1 min-w-0 w-full min-h-[calc(100vh-4rem)] md:min-h-screen pt-16 md:pt-0 bg-slate-50 dark:bg-slate-900 transition-all duration-300',
           collapsed ? 'md:pl-20' : 'md:pl-72'
         )}
       >

@@ -27,18 +27,18 @@ type Props = {
 
 export default function SubscriptionForm({ form, setForm, clients, onCancel, onSubmit, creating, editingId }: Props) {
   return (
-    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden transition-all duration-300 ease-in-out">
-      <div className="p-6 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-100 dark:border-slate-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{editingId ? "Editar Suscripción" : "Registrar Nueva Suscripción"}</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Configura los detalles del plan para el cliente seleccionado.</p>
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden transition-all duration-300 ease-in-out">
+      <div className="p-6 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{editingId ? "Editar Suscripción" : "Registrar Nueva Suscripción"}</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Configura los detalles del plan para el cliente seleccionado.</p>
       </div>
       <div className="p-6">
         <form onSubmit={onSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 block">Cliente</label>
+              <label className="mb-1 text-sm font-medium text-slate-700 dark:text-slate-300 block">Cliente</label>
               <select 
-                className="flex h-11 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
+                className="flex h-11 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
                 value={form.clientId} 
                 onChange={(e) => setForm({ ...form, clientId: e.target.value })} 
                 required
@@ -58,9 +58,9 @@ export default function SubscriptionForm({ form, setForm, clients, onCancel, onS
             </div>
 
             <div>
-              <label className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 block">Plan</label>
+              <label className="mb-1 text-sm font-medium text-slate-700 dark:text-slate-300 block">Plan</label>
               <select 
-                className="flex h-11 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
+                className="flex h-11 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
                 value={form.plan} 
                 onChange={(e) => setForm({ ...form, plan: e.target.value })} 
                 required
@@ -72,9 +72,9 @@ export default function SubscriptionForm({ form, setForm, clients, onCancel, onS
             </div>
 
             <div>
-              <label className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 block">País</label>
+              <label className="mb-1 text-sm font-medium text-slate-700 dark:text-slate-300 block">País</label>
               <select
-                className="flex h-11 w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
+                className="flex h-11 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
                 value={form.country || ''}
                 onChange={e => setForm({ ...form, country: e.target.value })}
                 required

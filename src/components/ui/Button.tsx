@@ -22,9 +22,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       primary:
         `bg-primary hover:bg-primary-600 text-white shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${focusOffsetLight} dark:bg-secondary dark:hover:bg-secondary/90 dark:focus-visible:ring-secondary ${focusOffsetDark}`,
       secondary:
-        `bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2 ${focusOffsetLight} shadow-sm`,
+        `bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-slate-200 focus-visible:ring-offset-2 ${focusOffsetLight} shadow-sm`,
       ghost:
-        `bg-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2 ${focusOffsetLight}`,
+        `bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white focus-visible:ring-2 focus-visible:ring-slate-200 focus-visible:ring-offset-2 ${focusOffsetLight}`,
       outline:
         `bg-transparent border border-primary text-primary hover:bg-primary/5 dark:hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${focusOffsetLight}`,
       danger:

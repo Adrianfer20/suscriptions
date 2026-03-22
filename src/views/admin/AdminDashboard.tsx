@@ -82,7 +82,7 @@ export default function AdminDashboard() {
           title="Suscripciones"
           className="h-full md:col-span-2 2xl:col-span-2 hover:shadow-lg transition-all duration-200"
         >
-          <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+          <p className="text-slate-600 dark:text-slate-400 mb-6 text-sm">
             Controla los planes activos, fechas de corte y facturación mensual.
           </p>
           {/* Próximas suscripciones a vencer */}
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
                           className="flex items-center gap-2 md:gap-4 p-3 rounded-xl border border-secondary dark:border-secondary bg-secondary/50 dark:bg-secondary/40 shadow-sm"
                         >
                           <div className="flex flex-col">
-                            <span className="font-bold text-gray dark:text-primary text-sm px-2 py-1 rounded bg-secondary dark:bg-secondary uppercase">
+                            <span className="font-bold text-slate dark:text-primary text-sm px-2 py-1 rounded bg-secondary dark:bg-secondary uppercase">
                               {client?.name || "Cliente desconocido"}
                             </span>
                           </div>
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
               >
                 <span>Ver Suscripciones</span>
                 <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:translate-x-1 transition-transform"
+                  className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:translate-x-1 transition-transform"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -215,23 +215,23 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
                   Clientes Totales
                 </span>
-                <span className="text-xl font-bold text-gray dark:text-white">
+                <span className="text-xl font-bold text-slate dark:text-white">
                   {stats.clients}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
                   Suscripciones
                 </span>
-                <span className="text-xl font-bold text-gray dark:text-white">
+                <span className="text-xl font-bold text-slate dark:text-white">
                   {stats.subscriptions}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
                   Ingresos Mensuales
                 </span>
                 <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
@@ -239,11 +239,11 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className="flex items-center justify-between border-t border-primary/10 dark:border-primary/20 pt-3 mt-2">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
                   Mensajes sin leer
                 </span>
                 <span
-                  className={`text-sm font-bold px-2 py-0.5 rounded-full ${stats.unread > 0 ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red dark:border-red-800" : "bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 border border-gray dark:border-slate-600"}`}
+                  className={`text-sm font-bold px-2 py-0.5 rounded-full ${stats.unread > 0 ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red dark:border-red-800" : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border border-slate dark:border-slate-600"}`}
                 >
                   {stats.unread}
                 </span>
@@ -256,7 +256,7 @@ export default function AdminDashboard() {
           title="Gestión de Clientes"
           className="h-full hover:shadow-lg transition-all duration-200"
         >
-          <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+          <p className="text-slate-600 dark:text-slate-400 mb-6 text-sm">
             Administra la base de datos de usuarios, sus datos de contacto y
             estado.
           </p>

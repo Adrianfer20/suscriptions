@@ -19,7 +19,7 @@ export default function Header({
   setCollapsed: (v: boolean) => void
 }) {
   return (
-    <header className="fixed top-0 inset-x-0 h-16 bg-primary dark:bg-slate-900/90 dark:border-b dark:border-slate-800 border-b border-gray-200 z-30 flex items-center justify-between px-4 md:hidden shadow-sm backdrop-blur-md">
+    <header className="fixed top-0 inset-x-0 h-16 bg-primary dark:bg-slate-900/90 dark:border-b dark:border-slate-800 border-b border-slate-200 z-30 flex items-center justify-between px-4 md:hidden shadow-sm backdrop-blur-md">
       <div className="flex items-center gap-3">
         <Button
           onClick={onOpenSidebar}
@@ -66,7 +66,7 @@ export default function Header({
           to={role === 'admin' ? '/admin/me' : role === 'client' ? '/client/profile' : '/'}
           className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
         >
-          <div className="h-8 w-8 rounded-full bg-white text-primary border border-gray-200 flex items-center justify-center text-xs font-bold shadow-sm">
+          <div className="h-8 w-8 rounded-full bg-white text-primary border border-slate-200 flex items-center justify-center text-xs font-bold shadow-sm">
             {(user?.displayName || user?.email || 'U').charAt(0).toUpperCase()}
           </div>
         </NavLink>

@@ -84,14 +84,14 @@ export default function AdminClientEdit() {
     }
   }
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Cargando datos...</div>
+  if (loading) return <div className="p-8 text-center text-slate-500">Cargando datos...</div>
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Editar Cliente</h2>
-          <p className="text-sm text-gray-500">Actualiza la información de contacto</p>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Editar Cliente</h2>
+          <p className="text-sm text-slate-500">Actualiza la información de contacto</p>
         </div>
         <Button variant="ghost" onClick={() => navigate('/admin/clients')}>
           &larr; Volver
@@ -110,14 +110,14 @@ export default function AdminClientEdit() {
             label="ID Cliente"
             value={clientId || ''}
             disabled
-            className="bg-gray-50 text-gray-500"
+            className="bg-slate-50 text-slate-500"
           />
 
           <Input
             label="Email (Asociado)"
             value={email || 'No disponible'}
             disabled
-            className="bg-gray-50 text-gray-500"
+            className="bg-slate-50 text-slate-500"
           />
 
           <Input

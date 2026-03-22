@@ -30,7 +30,7 @@ const getDaysUntilCutDate = (cutDate: string): number | null => {
 // Obtener configuración visual según estado de la fecha de corte
 const getCutDateStatus = (cutDate: string) => {
   const days = getDaysUntilCutDate(cutDate);
-  if (days === null) return { label: 'Sin fecha', color: 'text-gray-400', bg: 'bg-gray-100', icon: null };
+  if (days === null) return { label: 'Sin fecha', color: 'text-slate-400', bg: 'bg-slate-100', icon: null };
   if (days < 0) return { label: 'Vencida', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30', icon: AlertCircle };
   if (days <= 7) return { label: `${days}d por vencer`, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-900/30', icon: Clock };
   return { label: `${days}d restantes`, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30', icon: CheckCircle };
@@ -116,7 +116,7 @@ export default function SubscriptionItem({
 
   return (
     <>
-      <div className="group bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-3 sm:p-4 hover:shadow-xl hover:border-secondary/20 transition-all duration-300 w-full overflow-hidden">
+      <div className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 sm:p-4 hover:shadow-xl hover:border-secondary/20 transition-all duration-300 w-full overflow-hidden">
         {/* Mobile-First: layout vertical en móvil, horizontal en pantallas más grandes */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           {/* Avatar + Info del cliente */}
@@ -126,7 +126,7 @@ export default function SubscriptionItem({
               {client?.name?.charAt(0) || "U"}
             </div>
             <div className="flex flex-col min-w-0">
-              <h3 className="font-bold text-gray-900 dark:text-white truncate text-base sm:text-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white truncate text-base sm:text-sm">
                 {client?.name || "Cliente desconocido"}
               </h3>
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -154,7 +154,7 @@ export default function SubscriptionItem({
                   className={`appearance-none px-3 py-2.5 sm:py-1.5 rounded-full text-sm font-semibold cursor-pointer border-0 focus:ring-2 focus:ring-secondary w-full sm:w-auto text-left min-h-11 flex items-center ${statusConfig.bgColor} ${statusConfig.textColor}`}
                 >
                   {STATUS_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-center py-2">
+                    <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-center py-2">
                       {opt.label}
                     </option>
                   ))}
@@ -187,14 +187,14 @@ export default function SubscriptionItem({
 
         {/* Vista Expandida: Información organizada por prioridad */}
         {expanded && (
-          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700 animate-in slide-in-from-top-2 duration-200">
+          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 animate-in slide-in-from-top-2 duration-200">
             {/* Grid responsivo */}
             <div className="grid grid-cols-1 gap-3">
               {/* Credenciales - Información primaria */}
               <div className="space-y-2">
                 {sub.clientEmail && (
-                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-gray-100 dark:border-slate-700 min-h-11">
-                    <span className="text-sm text-gray-600 dark:text-slate-300 truncate mr-2">
+                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-slate-100 dark:border-slate-700 min-h-11">
+                    <span className="text-sm text-slate-600 dark:text-slate-300 truncate mr-2">
                       {sub.clientEmail}
                     </span>
                     <Button
@@ -207,7 +207,7 @@ export default function SubscriptionItem({
                           toast.error("Error");
                         }
                       }}
-                      className="text-gray-400 hover:text-secondary shrink-0 h-9 w-9"
+                      className="text-slate-400 hover:text-secondary shrink-0 h-9 w-9"
                       variant="ghost"
                       size="icon"
                       aria-label="Copiar email"
@@ -217,8 +217,8 @@ export default function SubscriptionItem({
                   </div>
                 )}
                 {sub.passwordSub && (
-                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-gray-100 dark:border-slate-700 min-h-11">
-                    <span className="text-sm font-mono text-gray-500">••••••••</span>
+                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-slate-100 dark:border-slate-700 min-h-11">
+                    <span className="text-sm font-mono text-slate-500">••••••••</span>
                     <Button
                       onClick={async () => {
                         try {
@@ -229,7 +229,7 @@ export default function SubscriptionItem({
                           toast.error("Error");
                         }
                       }}
-                      className="text-gray-400 hover:text-secondary shrink-0 h-9 w-9"
+                      className="text-slate-400 hover:text-secondary shrink-0 h-9 w-9"
                       variant="ghost"
                       size="icon"
                       aria-label="Copiar contraseña"
@@ -239,8 +239,8 @@ export default function SubscriptionItem({
                   </div>
                 )}
                 {sub.kitNumber && (
-                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-gray-100 dark:border-slate-700 min-h-11">
-                    <span className="text-sm text-gray-600 dark:text-slate-300">
+                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-slate-100 dark:border-slate-700 min-h-11">
+                    <span className="text-sm text-slate-600 dark:text-slate-300">
                       KIT: <span className="font-mono font-semibold">{sub.kitNumber}</span>
                     </span>
                     <Button
@@ -253,7 +253,7 @@ export default function SubscriptionItem({
                           toast.error("Error");
                         }
                       }}
-                      className="text-gray-400 hover:text-secondary shrink-0 h-9 w-9"
+                      className="text-slate-400 hover:text-secondary shrink-0 h-9 w-9"
                       variant="ghost"
                       size="icon"
                       aria-label="Copiar kit"
@@ -263,7 +263,7 @@ export default function SubscriptionItem({
                   </div>
                 )}
                 {sub.country && (
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
+                  <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                     <span className="px-2 py-0.5 rounded bg-secondary/10 text-secondary font-medium text-xs">
                       {sub.country}
                     </span>
@@ -272,10 +272,10 @@ export default function SubscriptionItem({
               </div>
 
               {/* Info Financiera y Fecha de Corte */}
-              <div className="flex gap-2 p-3 bg-slate-50/50 dark:bg-slate-900/20 rounded-lg border border-gray-100 dark:border-slate-700">
-                <div className="flex-1 flex flex-col items-center border-r border-gray-200 dark:border-slate-600">
-                  <span className="text-xs uppercase text-gray-400 font-medium mb-0.5">Monto</span>
-                  <span className="text-base font-bold text-gray-700 dark:text-gray-200">{sub.amount}</span>
+              <div className="flex gap-2 p-3 bg-slate-50/50 dark:bg-slate-900/20 rounded-lg border border-slate-100 dark:border-slate-700">
+                <div className="flex-1 flex flex-col items-center border-r border-slate-200 dark:border-slate-600">
+                  <span className="text-xs uppercase text-slate-400 font-medium mb-0.5">Monto</span>
+                  <span className="text-base font-bold text-slate-700 dark:text-slate-200">{sub.amount}</span>
                 </div>
                 <div className={`flex-1 flex flex-col items-center rounded-lg p-1 ${cutDateStatus.bg}`}>
                   <span className={`text-xs uppercase font-medium mb-0.5 flex items-center gap-1 ${cutDateStatus.color}`}>
@@ -288,7 +288,7 @@ export default function SubscriptionItem({
             </div>
 
             {/* Acciones - Botones más sutiles */}
-            <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100 dark:border-slate-700">
+            <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
               <Button
                 onClick={() => onEdit(sub)}
                 className="flex-1 h-11"
@@ -303,7 +303,7 @@ export default function SubscriptionItem({
                 variant="ghost"
               >
                 <Trash2 size={16} />
-                <span className="ml-1.5 text-sm font-medium text-gray-500 dark:text-gray-400">Eliminar</span>
+                <span className="ml-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">Eliminar</span>
               </Button>
             </div>
           </div>
@@ -321,21 +321,21 @@ export default function SubscriptionItem({
           />
           {/* Mobile: Bottom Sheet, Desktop: Modal centrado */}
           <div className="fixed z-50 bottom-0 left-0 right-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-w-sm w-full sm:w-auto animate-in slide-in-from-bottom-10 sm:slide-in-from-top-10 duration-300">
-            <div className="bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl border-t sm:border border-gray-100 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl border-t sm:border border-slate-100 dark:border-slate-700">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
                   <Trash2 size={20} className="text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
                     Confirmar cambio
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     Status: {STATUS_CONFIG[pendingStatus]?.label || pendingStatus}
                   </p>
                 </div>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+              <p className="text-slate-600 dark:text-slate-400 mb-4 text-sm">
                 ¿Cambiar el status de esta suscripción?
               </p>
               {/* Botones con spacing adecuado */}

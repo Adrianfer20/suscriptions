@@ -11,7 +11,7 @@ export function ThemeToggle() {
       variant="ghost" 
       size="sm" 
       onClick={toggleTheme}
-      className="rounded-full w-9 h-9 p-0 flex items-center justify-center text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
+      className="rounded-full w-9 h-9 p-0 flex items-center justify-center text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors"
       title={theme === 'light' ? "Cambiar a modo oscuro" : "Cambiar a modo claro"}
     >
       {theme === 'light' ? (

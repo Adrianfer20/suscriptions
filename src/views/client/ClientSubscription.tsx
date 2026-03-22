@@ -107,7 +107,7 @@ export default function ClientSubscription() {
       case 'cancelled':
         return 'text-red-600 bg-red-50 dark:bg-red-900/20'
       default:
-        return 'text-gray-600 bg-gray-50 dark:bg-gray-900/20'
+        return 'text-slate-600 bg-slate-50 dark:bg-slate-900/20'
     }
   }
 
@@ -145,8 +145,8 @@ export default function ClientSubscription() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary tracking-tight">Mi Suscripción</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-300">Gestiona tu plan de suscripción</p>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-secondary tracking-tight">Mi Suscripción</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-300">Gestiona tu plan de suscripción</p>
       </div>
 
       {/* Errors are shown via toast notifications */}
@@ -154,9 +154,9 @@ export default function ClientSubscription() {
       {!subscription && !error && (
         <Card>
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <CreditCard className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">No tienes suscripción activa</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-4">Contacta con nosotros para contratar un plan</p>
+            <CreditCard className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-4" />
+            <h3 className="text-lg font-medium text-slate-900 dark:text-white">No tienes suscripción activa</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 mb-4">Contacta con nosotros para contratar un plan</p>
             <Button>
               Contactar soporte
             </Button>
@@ -175,31 +175,31 @@ export default function ClientSubscription() {
             ) : (
               <Clock className="w-4 h-4" />
             )}
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-200">{getStatusLabel(subscription.status || '')}</span>
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-200">{getStatusLabel(subscription.status || '')}</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Plan Actual */}
             <Card className="border-l-4 border-l-primary/70">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Plan</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Plan</h3>
               <div className="flex items-center justify-between py-2">
                 <div>
-                  <div className="font-bold text-xl text-gray-900 dark:text-gray-200">{subscription.plan}</div>
-                  <div className="text-3xl font-bold text-primary dark:text-secondary mt-2">{subscription.amount}<span className="text-sm font-normal text-gray-500 dark:text-gray-300">/mes</span></div>
+                  <div className="font-bold text-xl text-slate-900 dark:text-slate-200">{subscription.plan}</div>
+                  <div className="text-3xl font-bold text-primary dark:text-secondary mt-2">{subscription.amount}<span className="text-sm font-normal text-slate-500 dark:text-slate-300">/mes</span></div>
                   {subscription.country && (
                     <div className="mt-2 text-sm text-blue-600 dark:text-blue-300 font-semibold">País: {subscription.country}</div>
                   )}
                 </div>
-                <CreditCard className="w-12 h-12 text-gray-300 dark:text-gray-600" />
+                <CreditCard className="w-12 h-12 text-slate-300 dark:text-slate-600" />
               </div>
               {/* Contraseña del servicio */}
               {subscription.passwordSub && (
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                  <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-2">
                     <KeyRound className="w-4 h-4" />
                     Contraseña del servicio
                   </div>
-                  <div className="font-mono text-sm bg-gray-100 dark:bg-slate-800 px-3 py-2 rounded-lg text-gray-900 dark:text-gray-200">
+                  <div className="font-mono text-sm bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg text-slate-900 dark:text-slate-200">
                     {subscription.passwordSub}
                   </div>
                 </div>
@@ -208,21 +208,21 @@ export default function ClientSubscription() {
 
             {/* Fechas */}
             <Card>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Información de Facturación</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Información de Facturación</h3>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900/50 rounded-lg">
-                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <Calendar className="w-4 h-4" />
                     <span className="text-sm">Fecha de inicio</span>
                   </div>
-                  <span className="font-medium text-gray-900 dark:text-gray-200">{formatDate(subscription.startDate)}</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-200">{formatDate(subscription.startDate)}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900/50 rounded-lg">
-                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <Calendar className="w-4 h-4" />
                     <span className="text-sm">Próximo corte</span>
                   </div>
-                  <span className="font-medium text-gray-900 dark:text-gray-200">{formatDate(subscription.cutDate)}</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-200">{formatDate(subscription.cutDate)}</span>
                 </div>
               </div>
             </Card>
@@ -230,7 +230,7 @@ export default function ClientSubscription() {
 
           {/* Acciones */}
           <Card>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Opciones</h3>
+            <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Opciones</h3>
             <div className="flex flex-col sm:flex-row gap-3">
               <Button 
                 variant="primary"
@@ -260,13 +260,13 @@ export default function ClientSubscription() {
       {/* Historial de suscripciones */}
       {allSubscriptions.length > 1 && (
         <Card>
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Historial de Planes</h3>
+          <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Historial de Planes</h3>
           <div className="space-y-3">
             {allSubscriptions.map((sub) => (
-              <div key={sub.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900/50 rounded-lg">
+              <div key={sub.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
                 <div>
-                  <div className="font-medium text-gray-900 dark:text-gray-200">{sub.plan}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                  <div className="font-medium text-slate-900 dark:text-slate-200">{sub.plan}</div>
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
                     {formatDate(sub.startDate)} - {sub.status === 'active' ? 'Actual' : formatDate(sub.cutDate)}
                   </div>
                 </div>

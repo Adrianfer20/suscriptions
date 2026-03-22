@@ -8,7 +8,7 @@ export default function QuickAccessGrid() {
 
   return (
     <div>
-      <h3 className="font-semibold text-gray-900 dark:text-secondary mb-4">Accesos rápidos</h3>
+      <h3 className="font-semibold text-slate-900 dark:text-secondary mb-4">Accesos rápidos</h3>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Button
           variant="outline"

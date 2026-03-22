@@ -51,7 +51,7 @@ export default function AdminProfile() {
     }, 1000)
   }
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Cargando perfil...</div>
+  if (loading) return <div className="p-8 text-center text-slate-500">Cargando perfil...</div>
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -62,7 +62,7 @@ export default function AdminProfile() {
         <div>
             {/* @ts-ignore: Check for 'name' too */}
             <h2 className="text-2xl font-bold text-primary dark:text-white">{user?.displayName || user?.name || 'Usuario'}</h2>
-            <p className="text-gray-500">{user?.email}</p>
+            <p className="text-slate-500">{user?.email}</p>
         </div>
       </div>
 

@@ -100,36 +100,36 @@ export default function ClientProfile() {
       <div className="space-y-6">
         {/* Cintillo header */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary tracking-tight">Mi Perfil</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-300">Gestiona tu información personal</p>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-secondary tracking-tight">Mi Perfil</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-300">Gestiona tu información personal</p>
         </div>
         <div className="flex flex-col md:flex-row gap-6">
           {/* Card de información de perfil */}
-          <Card className="flex-1 p-6 shadow-md border border-gray-200 dark:border-slate-800">
+          <Card className="flex-1 p-6 shadow-md border border-slate-200 dark:border-slate-800">
             <h2 className="text-xl font-bold text-primary dark:text-secondary mb-4 flex items-center gap-2">
               <User className="w-6 h-6" /> Mi Perfil
             </h2>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                <span className="font-medium text-gray-900 dark:text-gray-200">{user?.email || '-'}</span>
+               <Mail className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+               <span className="font-medium text-slate-900 dark:text-slate-200">{user?.email || '-'}</span>
               </div>
               <div className="flex items-center gap-3">
-                <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                <span className="font-medium text-gray-900 dark:text-gray-200">{profile?.name || '-'}</span>
+               <User className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+               <span className="font-medium text-slate-900 dark:text-slate-200">{profile?.name || '-'}</span>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                <span className="font-medium text-gray-900 dark:text-gray-200">{profile?.phone || '-'}</span>
+               <Phone className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+               <span className="font-medium text-slate-900 dark:text-slate-200">{profile?.phone || '-'}</span>
               </div>
               <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                <span className="font-medium text-gray-900 dark:text-gray-200">{profile?.address || '-'}</span>
+               <MapPin className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+               <span className="font-medium text-slate-900 dark:text-slate-200">{profile?.address || '-'}</span>
               </div>
             </div>
           </Card>
           {/* Card de edición */}
-          <Card className="flex-1 p-6 shadow-md border border-gray-200 dark:border-slate-800">
+          <Card className="flex-1 p-6 shadow-md border border-slate-200 dark:border-slate-800">
             <h3 className="font-semibold text-primary dark:text-secondary mb-4 flex items-center gap-2">
               <Edit className="w-5 h-5" /> Editar información personal
             </h3>

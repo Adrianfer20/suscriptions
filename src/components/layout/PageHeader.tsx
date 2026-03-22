@@ -14,9 +14,9 @@ export default function PageHeader({
   return (
     <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${className}`}>
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">{title}</h2>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{title}</h2>
         {subtitle && (
-          <p className="text-sm text-gray-500 dark:text-gray-400">{subtitle}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{subtitle}</p>
         )}
       </div>
 

@@ -183,12 +183,12 @@ export default function AdminClients() {
 
       {/* Formulario Collapsible - Mobile-First */}
       {isFormOpen && (
-        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden transition-all duration-300">
-          <div className="p-4 sm:p-5 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-100 dark:border-slate-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden transition-all duration-300">
+          <div className="p-4 sm:p-5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               Registrar Nuevo Cliente
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               Ingresa los datos para crear un nuevo perfil.
             </p>
           </div>
@@ -271,14 +271,14 @@ export default function AdminClients() {
 
       {/* Barra de búsqueda - Mobile-First */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
         <input
           type="text"
           inputMode="search"
           placeholder="Buscar clientes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary text-base"
+          className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary text-base"
         />
         {searchQuery && (
           <Button
@@ -296,7 +296,7 @@ export default function AdminClients() {
       {/* Lista */}
       <Card className="h-full min-h-[50vh] sm:min-h-0">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg sm:text-base font-bold text-gray-900 dark:text-white">
+          <h2 className="text-lg sm:text-base font-bold text-slate-900 dark:text-white">
             Clientes ({filteredClients.length}{searchQuery ? ` / ${clients.length}` : ''})
           </h2>
         </div>
@@ -307,13 +307,13 @@ export default function AdminClients() {
           </div>
         ) : filteredClients.length === 0 ? (
           <div className="text-center py-12 sm:py-8 px-4">
-            <div className="bg-gray-100 dark:bg-slate-700/50 rounded-full h-20 w-20 sm:h-16 sm:w-16 flex items-center justify-center mx-auto mb-4">
-              <UserPlus size={36} className="text-gray-400 dark:text-gray-500" />
+            <div className="bg-slate-100 dark:bg-slate-700/50 rounded-full h-20 w-20 sm:h-16 sm:w-16 flex items-center justify-center mx-auto mb-4">
+              <UserPlus size={36} className="text-slate-400 dark:text-slate-500" />
             </div>
-            <h3 className="text-xl sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-xl sm:text-lg font-semibold text-slate-900 dark:text-white mb-2">
               {searchQuery ? "No se encontraron clientes" : "No hay clientes registrados"}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6 text-base sm:text-sm">
+            <p className="text-slate-500 dark:text-slate-400 mb-6 text-base sm:text-sm">
               {searchQuery ? "Intenta con otros filtros" : "Comienza agregando tu primer cliente."}
             </p>
             {!searchQuery && (
@@ -331,7 +331,7 @@ export default function AdminClients() {
                 <Link
                   key={c.uid || c.id}
                   to={`/admin/client/${c.id}`}
-                  className="block bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-3 mb-2 hover:shadow-xl hover:border-secondary/20 transition-all"
+                  className="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 mb-2 hover:shadow-xl hover:border-secondary/20 transition-all"
                 >
                   <div className="flex items-center gap-3">
                     {/* Avatar - mismo estilo que SubscriptionItem */}
@@ -341,10 +341,10 @@ export default function AdminClients() {
                     
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="font-bold text-gray-900 dark:text-white truncate text-base">
+                      <div className="font-bold text-slate-900 dark:text-white truncate text-base">
                         {c.name}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 truncate flex items-center gap-1">
+                      <div className="text-sm text-slate-500 dark:text-slate-400 truncate flex items-center gap-1">
                         <Mail size={12} />
                         {c.email || "Sin email"}
                       </div>
@@ -357,7 +357,7 @@ export default function AdminClients() {
                           <Phone size={16} className="text-green-600 dark:text-green-400" />
                         </div>
                       )}
-                      <ChevronDown size={22} className="text-gray-400 -rotate-90" />
+                      <ChevronDown size={22} className="text-slate-400 -rotate-90" />
                     </div>
                   </div>
                 </Link>
@@ -365,41 +365,41 @@ export default function AdminClients() {
             </div>
 
             {/* Desktop View (Table) - Diseño limpio y consistente */}
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700 hidden sm:table">
-              <thead className="bg-gray-50/50 dark:bg-slate-900/50">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 hidden sm:table">
+              <thead className="bg-slate-50/50 dark:bg-slate-900/50">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">
                     Cliente
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">
                     Contacto
                   </th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">
                     Acción
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+              <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {filteredClients.map((c: any) => (
-                  <tr key={c.uid || c.id} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                  <tr key={c.uid || c.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-full bg-secondary/10 text-secondary border-2 border-secondary/30 flex items-center justify-center font-bold text-sm shrink-0">
                           {c.name?.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-bold text-gray-900 dark:text-white text-sm">
+                          <div className="font-bold text-slate-900 dark:text-white text-sm">
                             {c.name}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                          <div className="text-xs text-slate-500 dark:text-slate-400">
                             {c.address || "Sin dirección"}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-sm text-gray-700 dark:text-gray-300">
+                      <div className="text-sm text-slate-700 dark:text-slate-300">
                         {c.email}
                       </div>
                       <div className="text-xs text-green-600 dark:text-green-400 mt-0.5">
@@ -417,7 +417,7 @@ export default function AdminClients() {
                         <Button
                           onClick={() => handleDelete(c.uid || c.id)}
                           variant="ghost"
-                          className="h-9 px-3 text-gray-500 hover:text-red-600"
+                          className="h-9 px-3 text-slate-500 hover:text-red-600"
                         >
                           <Trash2 size={16} />
                         </Button>
