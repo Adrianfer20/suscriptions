@@ -27,7 +27,8 @@ export default function AdminClients() {
   const [form, setForm] = useState<ClientForm>({
     name: "",
     email: "",
-    phone: "",
+    phoneCode: "+58",
+    phoneLocal: "",
     address: "",
     password: "",
   });
@@ -116,11 +117,12 @@ export default function AdminClients() {
         throw new Error("No uid retornado al crear usuario de auth");
       }
 
-      // 2) create client record using uid
+      // 2) create client record using uid; compose full phone from code + local part
+      const phoneFull = (form as any).phoneCode && (form as any).phoneLocal ? `${(form as any).phoneCode}${(form as any).phoneLocal}` : '';
       const clientPayload = {
         uid,
         name: form.name,
-        phone: form.phone || "",
+        phone: phoneFull || '',
         address: form.address || "",
       };
       const res = await clientsApi.create(clientPayload);
@@ -229,15 +231,30 @@ export default function AdminClients() {
                   placeholder="••••••••"
                 />
 
-                <Input
-                  label="Teléfono"
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, phone: e.target.value }))
-                  }
-                  placeholder="+56 9 1234 5678"
-                />
+                <div>
+                  <label className="mb-1 text-sm font-medium text-slate-700 dark:text-slate-300 block">Teléfono</label>
+                  <div className="flex gap-2">
+                    <select
+                      className="h-11 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      value={form.phoneCode}
+                      onChange={(e) => setForm((prev) => ({ ...prev, phoneCode: e.target.value }))}
+                    >
+                      <option value="+58">+58 (VE)</option>
+                      <option value="+54">+54 (AR)</option>
+                      <option value="+55">+55 (BR)</option>
+                      <option value="+57">+57 (CO)</option>
+                    </select>
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="Ej: 4141234567 (sin 0 ni espacios)"
+                      value={form.phoneLocal}
+                      onChange={(e) => setForm((prev) => ({ ...prev, phoneLocal: e.target.value.replace(/\D/g, '') }))}
+                      className="flex-1 h-11 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Ingresa solo la parte local del número. El código por defecto es +58 (Venezuela).</p>
+                </div>
 
                 <Input
                   label="Dirección"
