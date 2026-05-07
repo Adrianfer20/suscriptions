@@ -54,7 +54,7 @@ export default function AdminSubscriptions() {
               if (isFormOpen && editingId) handleCancelEdit();
               else setIsFormOpen(!isFormOpen);
             }}
-            className="flex items-center gap-2"
+            className=" flex items-center gap-2"
             variant={isFormOpen ? "outline" : theme === 'dark' ? 'secondary' : 'primary'}
           >
             {isFormOpen ? <ChevronUp size={18} /> : <Plus size={18} />}

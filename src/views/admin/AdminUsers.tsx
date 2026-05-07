@@ -316,17 +316,17 @@ export default function AdminUsers() {
                           {editingId === u.uid && (
                              <div className="flex justify-end gap-2 pt-2 border-t border-slate-50 dark:border-slate-700">
                                 <Button 
-                                    size="sm" 
-                                    variant="outline" 
-                                    onClick={cancelEdit}
-                                    className="text-xs h-8"
+                                  size="sm" 
+                                  variant="outline" 
+                                  onClick={cancelEdit}
+                                  className="text-xs"
                                 >
                                     Cancelar
                                 </Button>
                                 <Button 
-                                    size="sm" 
-                                    onClick={() => saveEdit(u.uid)}
-                                    className="text-xs h-8 bg-green-600 hover:bg-green-700 text-white"
+                                  size="sm" 
+                                  onClick={() => saveEdit(u.uid)}
+                                  className="text-xs bg-green-600 hover:bg-green-700 text-white"
                                 >
                                     Guardar Cambios
                                 </Button>
@@ -417,10 +417,10 @@ export default function AdminUsers() {
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     {editingId === u.uid ? (
                                         <div className="flex justify-end gap-2">
-                                            <Button onClick={() => saveEdit(u.uid)} className="text-green-600 hover:text-green-900 bg-green-50 p-1.5 rounded-md hover:bg-green-100 transition-colors" title="Guardar" variant="ghost" size="icon">
+                                                    <Button onClick={() => saveEdit(u.uid)} title="Guardar" variant="ghost" size="icon" className="text-green-600 hover:text-green-900 bg-green-50 rounded-md hover:bg-green-100 transition-colors">
                                               <Check size={16} />
                                             </Button>
-                                            <Button onClick={cancelEdit} className="text-red-600 hover:text-red-900 bg-red-50 p-1.5 rounded-md hover:bg-red-100 transition-colors" title="Cancelar" variant="ghost" size="icon">
+                                                    <Button onClick={cancelEdit} title="Cancelar" variant="ghost" size="icon" className="text-red-600 hover:text-red-900 bg-red-50 rounded-md hover:bg-red-100 transition-colors">
                                               <X size={16} />
                                             </Button>
                                         </div>

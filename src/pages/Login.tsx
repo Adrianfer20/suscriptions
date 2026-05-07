@@ -42,12 +42,9 @@ export default function Login() {
                   Correo Electrónico
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <Mail className="h-5 w-5" />
-                  </div>
-                  <input
-                    type="email" 
-                    className="block w-full pl-10 h-12 rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                  <Input
+                    type="email"
+                    startContent={<Mail className="h-5 w-5" />}
                     placeholder="ejemplo@empresa.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -67,33 +64,26 @@ export default function Login() {
                    </a>
                 </div>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <Lock className="h-5 w-5" />
-                  </div>
-                  <input
+                  <Input
                     type={showPassword ? 'text' : 'password'}
-                    className="block w-full pl-10 pr-10 h-12 rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    startContent={<Lock className="h-5 w-5" />}
+                    endContent={(
+                      <Button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="focus:outline-none text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                        variant="ghost"
+                        size="icon"
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </Button>
+                    )}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="current-password"
                   />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <Button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="focus:outline-none text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-                      variant="ghost"
-                      size="icon"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -101,7 +91,8 @@ export default function Login() {
             <Button 
               type="submit" 
               variant="primary"
-              className="w-full h-12 text-base font-semibold shadow-lg transition-all active:scale-[0.98] rounded-lg border-0" 
+              size="lg"
+              className="w-full text-base font-semibold shadow-lg transition-all active:scale-[0.98] rounded-lg border-0" 
               disabled={loading}
             >
               {loading ? (

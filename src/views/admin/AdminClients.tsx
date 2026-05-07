@@ -244,13 +244,13 @@ export default function AdminClients() {
                       <option value="+55">+55 (BR)</option>
                       <option value="+57">+57 (CO)</option>
                     </select>
-                    <input
+                    <Input
                       type="tel"
                       inputMode="tel"
                       placeholder="Ej: 4141234567 (sin 0 ni espacios)"
                       value={form.phoneLocal}
                       onChange={(e) => setForm((prev) => ({ ...prev, phoneLocal: e.target.value.replace(/\D/g, '') }))}
-                      className="flex-1 h-11 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 h-11"
                     />
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Ingresa solo la parte local del número. El código por defecto es +58 (Venezuela).</p>
@@ -273,11 +273,12 @@ export default function AdminClients() {
                   variant="outline"
                   onClick={() => setIsFormOpen(false)}
                   disabled={creating}
-                  className="w-full sm:w-auto h-11"
+                  size="md"
+                  className="w-full sm:w-auto"
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={creating} className="w-full sm:w-auto h-11">
+                <Button type="submit" disabled={creating} size="md" className="w-full sm:w-auto">
                   {creating ? "Guardando..." : "Crear Cliente"}
                 </Button>
               </div>
@@ -287,31 +288,31 @@ export default function AdminClients() {
       )}
 
       {/* Barra de búsqueda - Mobile-First */}
-      <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-        <input
+      <div>
+        <Input
           type="text"
           inputMode="search"
           placeholder="Buscar clientes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary text-base"
+          variant="search"
+          startContent={<Search size={18} />}
+          endContent={searchQuery ? (
+            <Button
+              onClick={() => setSearchQuery("")}
+              className="text-slate-400 hover:text-slate-600"
+              variant="ghost"
+              size="icon"
+              aria-label="Limpiar búsqueda"
+            >
+              <X size={16} />
+            </Button>
+          ) : undefined}
         />
-        {searchQuery && (
-          <Button
-            onClick={() => setSearchQuery("")}
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10"
-            variant="ghost"
-            size="icon"
-            aria-label="Limpiar búsqueda"
-          >
-            <X size={18} />
-          </Button>
-        )}
       </div>
 
       {/* Lista */}
-      <Card className="h-full min-h-[50vh] sm:min-h-0">
+      <Card className="mt-4 h-full min-h-[50vh] sm:min-h-0">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg sm:text-base font-bold text-slate-900 dark:text-white">
             Clientes ({filteredClients.length}{searchQuery ? ` / ${clients.length}` : ''})
@@ -334,7 +335,7 @@ export default function AdminClients() {
               {searchQuery ? "Intenta con otros filtros" : "Comienza agregando tu primer cliente."}
             </p>
             {!searchQuery && (
-              <Button onClick={() => setIsFormOpen(true)} className="w-full sm:w-auto h-11">
+              <Button onClick={() => setIsFormOpen(true)} size="md" className="w-full sm:w-auto">
                 Crear primer cliente
               </Button>
             )}
@@ -342,13 +343,13 @@ export default function AdminClients() {
         ) : (
           <div className="overflow-x-auto -mx-4 sm:mx-0">
             {/* Mobile View (Cards) - Consistente con SubscriptionItem */}
-            <div className="sm:hidden -mx-2 px-2">
+            <div className="sm:hidden px-2 space-y-2">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {filteredClients.map((c: any) => (
                 <Link
                   key={c.uid || c.id}
                   to={`/admin/client/${c.id}`}
-                  className="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 mb-2 hover:shadow-xl hover:border-secondary/20 transition-all"
+                  className="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 hover:shadow-xl hover:border-secondary/20 transition-all"
                 >
                   <div className="flex items-center gap-3">
                     {/* Avatar - mismo estilo que SubscriptionItem */}

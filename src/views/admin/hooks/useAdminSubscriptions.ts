@@ -116,43 +116,58 @@ export function useAdminSubscriptions() {
   const filteredItems = useMemo(() => {
     let result = [...items];
     
-    // Función para calcular días hasta la fecha de corte (formato YYYY-MM-DD)
-    const getDaysUntilCutDate = (cutDate: string): number | null => {
-      if (!cutDate) return null;
-      
-      const parts = cutDate.split('-');
-      if (parts.length === 3) {
-        const year = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10);
-        const day = parseInt(parts[2], 10);
-        
-        if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
-        
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const cutDateObj = new Date(year, month - 1, day);
-        const diffTime = cutDateObj.getTime() - today.getTime();
-        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // Helper: parse various cutDate formats (YYYY-MM-DD, ISO string, Firestore timestamp)
+    const parseDateValue = (v: any): Date | null => {
+      if (!v) return null;
+      // Firestore timestamp object
+      if (typeof v === 'object' && v._seconds != null) {
+        return new Date(v._seconds * 1000);
       }
-      
+      if (typeof v === 'string') {
+        // YYYY-MM-DD straightforward
+        if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return new Date(v);
+        // Try Date parse for ISO or other formats
+        const parsed = new Date(v);
+        if (!isNaN(parsed.getTime())) return parsed;
+      }
       return null;
+    };
+
+    // Función para calcular días hasta la fecha de corte (relative to local today)
+    const getDaysUntilCutDate = (cutDate: any): number | null => {
+      const cutDateObj = parseDateValue(cutDate);
+      if (!cutDateObj) return null;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      cutDateObj.setHours(0, 0, 0, 0);
+      const diffTime = cutDateObj.getTime() - today.getTime();
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     };
     
     // Search by cutDate, client name, or plan
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter((sub) => {
-        // Search by cutDate (YYYY-MM-DD format)
-        const cutDateMatch = sub.cutDate?.toLowerCase().includes(q);
-        // Search by client name
+        // Normalize cutDate to string
+        const cutDateVal = (() => {
+          const d = parseDateValue(sub.cutDate);
+          if (d) return d.toISOString().slice(0, 10).toLowerCase();
+          if (typeof sub.cutDate === 'string') return sub.cutDate.toLowerCase();
+          return '';
+        })();
+
+        const cutDateMatch = cutDateVal.includes(q);
+        // Search by client name or email
         const client = clients.find((c) => c.uid === sub.clientId || c.id === sub.clientId);
-        const clientName = client?.name?.toLowerCase() || "";
+        const clientName = (client?.name || client?.email || sub.clientEmail || '').toLowerCase();
         const clientMatch = clientName.includes(q);
         // Search by plan
-        const planMatch = sub.plan?.toLowerCase().includes(q);
-        // Search by amount
-        const amountMatch = sub.amount?.toLowerCase().includes(q);
-        return cutDateMatch || clientMatch || planMatch || amountMatch;
+        const planMatch = (sub.plan || '').toLowerCase().includes(q);
+        // Search by amount (normalize removing $)
+        const amountMatch = (sub.amount || '').toLowerCase().replace(/\$/g, '').includes(q.replace(/\$/g, ''));
+        // Also allow searching by subscription id
+        const idMatch = (sub.id || '').toLowerCase().includes(q);
+        return cutDateMatch || clientMatch || planMatch || amountMatch || idMatch;
       });
     }
     
@@ -167,13 +182,17 @@ export function useAdminSubscriptions() {
     });
     
     if (statusFilter) {
-      result = result.filter((sub) => sub.status === statusFilter);
+      const sf = statusFilter.toLowerCase().trim();
+      result = result.filter((sub) => {
+        const s = (sub.status || '').toLowerCase().trim();
+        return s === sf;
+      });
     }
     
     // Filtrar por fecha de corte
     if (cutDateFilter) {
       result = result.filter((sub) => {
-        const days = getDaysUntilCutDate(sub.cutDate || "");
+        const days = getDaysUntilCutDate(sub.cutDate);
         if (cutDateFilter === "overdue") return days !== null && days < 0;
         if (cutDateFilter === "soon") return days !== null && days >= 0 && days <= 7;
         if (cutDateFilter === "ok") return days === null || days > 7;
@@ -184,13 +203,21 @@ export function useAdminSubscriptions() {
     // If no manual sort is selected, sort by cutDate (oldest to newest)
     if (!cutDateSort) {
       result.sort((a, b) => {
-        const dateA = a.cutDate || '';
-        const dateB = b.cutDate || '';
-        if (!dateA && !dateB) return 0;
-        if (!dateA) return 1;
-        if (!dateB) return -1;
-        // Sort oldest to newest (ascending)
-        return dateA.localeCompare(dateB);
+        const da = parseDateValue(a.cutDate);
+        const db = parseDateValue(b.cutDate);
+        if (!da && !db) return 0;
+        if (!da) return 1;
+        if (!db) return -1;
+        return da.getTime() - db.getTime();
+      });
+    } else {
+      // If user explicitly set sort direction, apply it
+      result.sort((a, b) => {
+        const da = parseDateValue(a.cutDate);
+        const db = parseDateValue(b.cutDate);
+        const ta = da ? da.getTime() : 0;
+        const tb = db ? db.getTime() : 0;
+        return cutDateSort === 'asc' ? ta - tb : tb - ta;
       });
     }
     return result;

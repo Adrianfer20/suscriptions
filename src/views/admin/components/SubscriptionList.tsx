@@ -46,7 +46,7 @@ export default function SubscriptionList({
   onStatusChange,
 }: Props) {
   return (
-    <Card className="h-full min-h-[50vh] sm:min-h-0">
+    <Card className="mt-4 h-full min-h-[50vh] sm:min-h-0">
       {/* Mobile-First: Título más legible en móvil */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg sm:text-base font-bold text-slate-900 dark:text-white">
@@ -72,12 +72,12 @@ export default function SubscriptionList({
               : "Crea una nueva suscripción para comenzar."}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            {(searchQuery || statusFilter) ? (
-              <Button onClick={onClearFilters} variant="outline" className="w-full sm:w-auto h-12">
+              {(searchQuery || statusFilter) ? (
+              <Button onClick={onClearFilters} variant="outline" size="md" className="w-full sm:w-auto">
                 Limpiar filtros
               </Button>
             ) : (
-              <Button onClick={onToggleCutDateSort ?? onCreateFirst} variant="primary" className="w-full sm:w-auto h-12">
+              <Button onClick={onToggleCutDateSort ?? onCreateFirst} variant="primary" size="md" className="w-full sm:w-auto">
                 {cutDateSort === "asc" 
                   ? "Ordenar: Inicio → Fin" 
                   : cutDateSort === "desc" 
@@ -88,25 +88,50 @@ export default function SubscriptionList({
           </div>
         </div>
       ) : (
-        /* Mobile-First: Gap más comfortable en móvil */
-        <div className="flex flex-col gap-3 sm:gap-2 -mx-2 sm:mx-0 px-2 sm:px-0">
-          {filteredItems.map((sub) => {
-            const client = clients.find((c) => c.uid === sub.clientId || c.id === sub.clientId);
-            return (
-              <SubscriptionItem
-                key={sub.id ?? sub.clientId}
-                sub={sub}
-                client={client}
-                onEdit={() => onEdit(sub)}
-                onDelete={onDelete}
-                onCopy={onCopy}
-                onRenew={onRenew}
-                PLAN_LABELS={PLAN_LABELS}
-                isAdmin={isAdmin}
-                onStatusChange={onStatusChange}
-              />
-            );
-          })}
+        <div className="overflow-x-auto sm:-mx-4">
+          {/* Mobile stacked cards */}
+          <div className="sm:hidden px-2 space-y-2">
+            {filteredItems.map((sub) => {
+              const client = clients.find((c) => c.uid === sub.clientId || c.id === sub.clientId);
+              return (
+                <SubscriptionItem
+                  key={sub.id ?? sub.clientId}
+                  sub={sub}
+                  client={client}
+                  onEdit={() => onEdit(sub)}
+                  onDelete={onDelete}
+                  onCopy={onCopy}
+                  onRenew={onRenew}
+                  PLAN_LABELS={PLAN_LABELS}
+                  isAdmin={isAdmin}
+                  onStatusChange={onStatusChange}
+                />
+              );
+            })}
+          </div>
+
+          {/* Desktop list (cards) */}
+          <div className="hidden sm:block sm:px-4">
+            <div className="flex flex-col gap-2">
+              {filteredItems.map((sub) => {
+                const client = clients.find((c) => c.uid === sub.clientId || c.id === sub.clientId);
+                return (
+                  <SubscriptionItem
+                    key={sub.id ?? sub.clientId}
+                    sub={sub}
+                    client={client}
+                    onEdit={() => onEdit(sub)}
+                    onDelete={onDelete}
+                    onCopy={onCopy}
+                    onRenew={onRenew}
+                    PLAN_LABELS={PLAN_LABELS}
+                    isAdmin={isAdmin}
+                    onStatusChange={onStatusChange}
+                  />
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
     </Card>

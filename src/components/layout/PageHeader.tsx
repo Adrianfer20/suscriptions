@@ -20,7 +20,15 @@ export default function PageHeader({
         )}
       </div>
 
-      {action && <div className="flex items-center">{action}</div>}
+      {action && (
+        <div className="w-full sm:w-auto flex sm:justify-end">
+          {React.isValidElement(action)
+            ? React.cloneElement(action as React.ReactElement, {
+                className: `${(action as any).props?.className ?? ''} w-full sm:w-auto`.trim(),
+              })
+            : action}
+        </div>
+      )}
     </div>
   )
 }

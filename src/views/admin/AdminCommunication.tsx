@@ -468,15 +468,15 @@ export default function AdminCommunication() {
                     ))}
                 </div>
                 {/* Compact search */}
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                    <input 
-                        type="text"
-                        placeholder="Buscar chat..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-600 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-white"
-                    />
+                <div>
+                  <Input
+                    variant="compact"
+                    startContent={<Search size={14} />}
+                    placeholder="Buscar chat..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-600 rounded-md text-sm"
+                  />
                 </div>
            </div>
 

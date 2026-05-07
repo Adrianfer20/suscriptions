@@ -1,62 +1,77 @@
 import React, { useState, useMemo } from "react";
-import { Copy, Pencil, Trash2, CheckCircle, ChevronDown, ChevronUp, Loader2, AlertCircle, Clock, RefreshCw } from "lucide-react";
+import { Copy, Pencil, Trash2, CheckCircle, ChevronDown, ChevronUp, Loader2, AlertCircle, Clock, RefreshCw, Calendar, DollarSign, MapPin, Hash, Key, User } from "lucide-react";
 import { subscriptionsApi } from "../../../services/api";
 import toast from "react-hot-toast";
 import { Button } from '../../../components/ui/Button'
 
-// Función para calcular días hasta la fecha de corte
 const getDaysUntilCutDate = (cutDate: string): number | null => {
   if (!cutDate) return null;
-  
-  // Manejar formato YYYY-MM-DD
   const parts = cutDate.split('-');
   if (parts.length === 3) {
     const year = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10);
     const day = parseInt(parts[2], 10);
-    
     if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
-    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const cutDateObj = new Date(year, month - 1, day);
     const diffTime = cutDateObj.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
-  
   return null;
 };
 
-// Obtener configuración visual según estado de la fecha de corte
 const getCutDateStatus = (cutDate: string) => {
   const days = getDaysUntilCutDate(cutDate);
-  if (days === null) return { label: 'Sin fecha', color: 'text-slate-400', bg: 'bg-slate-100', icon: null };
-  if (days < 0) return { label: 'Vencida', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30', icon: AlertCircle };
-  if (days <= 7) return { label: `${days}d por vencer`, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-900/30', icon: Clock };
-  return { label: `${days}d restantes`, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30', icon: CheckCircle };
+  if (days === null) return { label: 'Sin fecha', color: 'text-slate-400', bg: 'bg-slate-100 dark:bg-slate-700', border: 'border-slate-200 dark:border-slate-600', icon: null, accent: '#94a3b8' };
+  if (days < 0) return { label: `Vencida hace ${Math.abs(days)}d`, color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-200 dark:border-red-800', icon: AlertCircle, accent: '#dc2626' };
+  if (days <= 3) return { label: `${days}d restantes`, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-900/20', border: 'border-orange-200 dark:border-orange-800', icon: Clock, accent: '#ea580c' };
+  if (days <= 7) return { label: `${days}d por vencer`, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800', icon: Clock, accent: '#d97706' };
+  return { label: `${days}d restantes`, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-200 dark:border-emerald-800', icon: CheckCircle, accent: '#059669' };
 };
 
-const STATUS_CONFIG: Record<string, { label: string; bgColor: string; textColor: string }> = {
-  active: { label: "Activa", bgColor: "bg-green-100 dark:bg-green-900/30", textColor: "text-green-700 dark:text-green-400" },
-  about_to_expire: { label: "Por Vencer", bgColor: "bg-yellow-100 dark:bg-yellow-900/30", textColor: "text-yellow-700 dark:text-yellow-400" },
-  suspended: { label: "Suspendida", bgColor: "bg-orange-100 dark:bg-orange-900/30", textColor: "text-orange-700 dark:text-orange-400" },
-  paused: { label: "Pausada", bgColor: "bg-blue-100 dark:bg-blue-900/30", textColor: "text-blue-700 dark:text-blue-400" },
-  cancelled: { label: "Cancelada", bgColor: "bg-red-100 dark:bg-red-900/30", textColor: "text-red-700 dark:text-red-400" },
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; dot: string; gradient: string }> = {
+  active: { label: "Activa", color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-900/30", border: "border-emerald-200 dark:border-emerald-700", dot: "bg-emerald-500", gradient: "from-emerald-400 to-emerald-600" },
+  about_to_expire: { label: "Por Vencer", color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-900/30", border: "border-amber-200 dark:border-amber-700", dot: "bg-amber-500", gradient: "from-amber-400 to-orange-500" },
+  suspended: { label: "Suspendida", color: "text-orange-700 dark:text-orange-400", bg: "bg-orange-50 dark:bg-orange-900/30", border: "border-orange-200 dark:border-orange-700", dot: "bg-orange-500", gradient: "from-orange-400 to-orange-600" },
+  paused: { label: "Pausada", color: "text-blue-700 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-900/30", border: "border-blue-200 dark:border-blue-700", dot: "bg-blue-500", gradient: "from-blue-400 to-blue-600" },
+  cancelled: { label: "Cancelada", color: "text-red-700 dark:text-red-400", bg: "bg-red-50 dark:bg-red-900/30", border: "border-red-200 dark:border-red-700", dot: "bg-red-500", gradient: "from-red-400 to-red-600" },
 };
 
 const STATUS_OPTIONS = [
-  { value: "active", label: "Active" },
-  { value: "about_to_expire", label: "About to Expire" },
-  { value: "suspended", label: "Suspended" },
-  { value: "paused", label: "Paused" },
-  { value: "cancelled", label: "Cancelled" },
+  { value: "active", label: "Activa" },
+  { value: "about_to_expire", label: "Por Vencer" },
+  { value: "suspended", label: "Suspendida" },
+  { value: "paused", label: "Pausada" },
+  { value: "cancelled", label: "Cancelada" },
 ];
 
-export default function SubscriptionItem({ 
-  sub, 
-  client, 
-  onEdit, 
-  onDelete, 
+const AVATAR_COLORS = [
+  "from-violet-500 to-purple-600",
+  "from-blue-500 to-cyan-600",
+  "from-emerald-500 to-teal-600",
+  "from-orange-500 to-amber-600",
+  "from-pink-500 to-rose-600",
+  "from-indigo-500 to-blue-600",
+];
+
+const getAvatarGradient = (name: string) => {
+  const idx = (name || "U").charCodeAt(0) % AVATAR_COLORS.length;
+  return AVATAR_COLORS[idx];
+};
+
+const formatDate = (dateStr?: string) => {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr + "T00:00:00");
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" });
+};
+
+export default function SubscriptionItem({
+  sub,
+  client,
+  onEdit,
+  onDelete,
   onCopy,
   onRenew,
   PLAN_LABELS,
@@ -77,7 +92,10 @@ export default function SubscriptionItem({
   const [changingStatus, setChangingStatus] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<string>("");
-  const [renewing, setRenewing] = useState(false);
+
+  const clientName = client?.name || "Cliente desconocido";
+  const initial = clientName.charAt(0).toUpperCase();
+  const avatarGradient = getAvatarGradient(clientName);
 
   const handleStatusChangeRequest = (newStatus: string) => {
     setPendingStatus(newStatus);
@@ -86,23 +104,14 @@ export default function SubscriptionItem({
 
   const handleStatusChange = async () => {
     if (!sub.id || !pendingStatus) return;
-    
     const previousStatus = sub.status;
     setChangingStatus(true);
     setShowConfirmModal(false);
-
-    // Optimistic update
-    if (onStatusChange) {
-      onStatusChange(sub.id, pendingStatus);
-    }
-
+    if (onStatusChange) onStatusChange(sub.id, pendingStatus);
     try {
       await subscriptionsApi.updateStatus(sub.id, pendingStatus as 'active' | 'about_to_expire' | 'suspended' | 'paused' | 'cancelled');
     } catch (error: any) {
-      // Rollback on error
-      if (onStatusChange) {
-        onStatusChange(sub.id, previousStatus);
-      }
+      if (onStatusChange) onStatusChange(sub.id, previousStatus);
       const errorMessage = error?.response?.data?.message || error?.response?.data?.error || "Error al cambiar el status";
       toast.error(errorMessage);
     } finally {
@@ -111,252 +120,255 @@ export default function SubscriptionItem({
     }
   };
 
-  const currentStatus = sub.status || "inactive";
-  const statusConfig = STATUS_CONFIG[currentStatus] || STATUS_CONFIG.inactive;
-  
-  // Calcular estado de la fecha de corte
+  const currentStatus = sub.status || "active";
+  const statusConfig = STATUS_CONFIG[currentStatus] || STATUS_CONFIG.active;
   const cutDateStatus = getCutDateStatus(sub.cutDate);
+  const daysUntilCut = getDaysUntilCutDate(sub.cutDate);
+  const CutIcon = cutDateStatus.icon;
+
+  const planLabel = PLAN_LABELS[sub.plan] || sub.plan || "Sin plan";
 
   return (
     <>
-      <div className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 sm:p-4 hover:shadow-xl hover:border-secondary/20 transition-all duration-300 w-full overflow-hidden">
-        {/* Mobile-First: layout vertical en móvil, horizontal en pantallas más grandes */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-          {/* Avatar + Info del cliente */}
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            {/* Touch target mínimo 44px para avatar */}
-            <div className="w-12 h-12 sm:w-10 sm:h-10 rounded-full bg-secondary/10 dark:bg-secondary/20 flex items-center justify-center text-secondary font-bold text-lg border-2 border-secondary/30 shrink-0">
-              {client?.name?.charAt(0) || "U"}
+      <div className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 w-full flex">
+        <div className="flex-1 min-w-0">
+          <div className="p-4 sm:p-5">
+          {/* Header row */}
+          <div className="flex items-start gap-3 sm:gap-4">
+            {/* Avatar */}
+            <div className={`w-12 h-12 rounded-xl bg-linear-to-br ${avatarGradient} flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0`}>
+              {initial}
             </div>
-            <div className="flex flex-col min-w-0">
-              <h3 className="font-bold text-slate-900 dark:text-white truncate text-base sm:text-sm">
-                {client?.name || "Cliente desconocido"}
-              </h3>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                <span className="text-xs font-semibold text-secondary bg-secondary/10 px-2 py-0.5 rounded-md">{PLAN_LABELS[sub.plan] || sub.plan}</span>
-                {/* Badge de fecha de corte con estado visual */}
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-md flex items-center gap-1 ${cutDateStatus.bg} ${cutDateStatus.color}`}>
-                  {cutDateStatus.icon && <cutDateStatus.icon size={12} />}
-                  {sub.cutDate || "—"}
-                </span>
-              </div>
-            </div>
-          </div>
 
-          {/* Status + Acciones */}
-          <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-            {/* Status Badge o Select (solo admin) - Mobile: botón expandible */}
-            {isAdmin ? (
-              /* Mobile-First: Select más grande y fácil de tocar */
-              <div className="relative flex-1 sm:flex-none sm:w-auto">
-                <select
-                  value={currentStatus}
-                  onChange={(e) => handleStatusChangeRequest(e.target.value)}
-                  disabled={changingStatus}
-                  /* Touch target mínimo 44px height */
-                  className={`appearance-none px-3 py-2.5 sm:py-1.5 rounded-full text-sm font-semibold cursor-pointer border-0 focus:ring-2 focus:ring-secondary w-full sm:w-auto text-left min-h-11 flex items-center ${statusConfig.bgColor} ${statusConfig.textColor}`}
-                >
-                  {STATUS_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-center py-2">
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                {changingStatus && (
-                  <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2">
-                    <Loader2 size={18} className="animate-spin text-secondary" />
+            {/* Main info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-slate-900 dark:text-white truncate text-base">{clientName}</h3>
+                  {client?.email && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{client.email}</p>
+                  )}
+                </div>
+
+                {/* Status badge (non-admin) or select (admin) */}
+                {isAdmin ? (
+                  <div className="relative shrink-0">
+                    <select
+                      value={currentStatus}
+                      onChange={(e) => handleStatusChangeRequest(e.target.value)}
+                      disabled={changingStatus}
+                      className={`appearance-none pl-3 pr-8 py-1.5 rounded-lg text-xs font-semibold border ${statusConfig.border} ${statusConfig.bg} ${statusConfig.color} cursor-pointer focus:ring-2 focus:ring-primary focus:outline-none`}
+                    >
+                      {STATUS_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                    {changingStatus && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-slate-800/60 rounded-lg">
+                        <Loader2 size={14} className="animate-spin text-primary" />
+                      </div>
+                    )}
                   </div>
+                ) : (
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${statusConfig.border} ${statusConfig.bg} ${statusConfig.color} shrink-0`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot} animate-pulse`} />
+                    {statusConfig.label}
+                  </span>
                 )}
               </div>
-            ) : (
-              <span className={`px-3 py-2 sm:py-0.5 rounded-full text-sm font-semibold min-h-11 flex items-center ${statusConfig.bgColor} ${statusConfig.textColor}`}>
-                {statusConfig.label}
-              </span>
-            )}
 
-            {/* Botón expandir - Touch target 44x44px */}
+              {/* Plan + cut date badges */}
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-primary/10 dark:bg-primary/20 text-primary dark:text-secondary">
+                  {planLabel}
+                </span>
+
+                {sub.cutDate && (
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium border ${cutDateStatus.border} ${cutDateStatus.bg} ${cutDateStatus.color}`}>
+                    {CutIcon && <CutIcon size={11} />}
+                    {formatDate(sub.cutDate)}
+                  </span>
+                )}
+
+                {sub.amount && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                    <DollarSign size={11} />
+                    {sub.amount}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Expand button */}
             <Button
               onClick={() => setExpanded(!expanded)}
-              className="rounded-xl shrink-0"
-              aria-expanded={expanded}
-              aria-label={expanded ? "Contraer detalles" : "Expandir detalles"}
+              className="rounded-xl shrink-0 mt-1"
               variant="ghost"
               size="icon"
+              aria-expanded={expanded}
+              aria-label={expanded ? "Contraer detalles" : "Expandir detalles"}
             >
-              {expanded ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
+              {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </Button>
           </div>
         </div>
 
-        {/* Vista Expandida: Información organizada por prioridad */}
+        {/* Expanded details */}
         {expanded && (
-          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 animate-in slide-in-from-top-2 duration-200">
-            {/* Grid responsivo */}
-            <div className="grid grid-cols-1 gap-3">
-              {/* Credenciales - Información primaria */}
-              <div className="space-y-2">
-                {sub.clientEmail && (
-                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-slate-100 dark:border-slate-700 min-h-11">
-                    <span className="text-sm text-slate-600 dark:text-slate-300 truncate mr-2">
-                      {sub.clientEmail}
-                    </span>
-                    <Button
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(sub.clientEmail);
-                          toast.success("Copiado");
-                          if (onCopy) onCopy(sub.clientEmail);
-                        } catch {
-                          toast.error("Error");
-                        }
-                      }}
-                      className="text-slate-400 hover:text-secondary shrink-0 h-9 w-9"
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Copiar email"
-                    >
-                      <Copy size={16} />
-                    </Button>
+          <div className="border-t border-slate-100 dark:border-slate-700">
+            <div className="p-4 sm:p-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Start date */}
+                {sub.startDate && (
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                    <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+                      <Calendar size={16} className="text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Inicio</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">{formatDate(sub.startDate)}</p>
+                    </div>
                   </div>
                 )}
+
+                {/* Days until cut */}
+                {daysUntilCut !== null && (
+                  <div className={`flex items-center gap-3 p-3 rounded-xl ${cutDateStatus.bg}`}>
+                    <div className={`w-9 h-9 rounded-lg ${cutDateStatus.bg} border ${cutDateStatus.border} flex items-center justify-center shrink-0`}>
+                      {CutIcon ? (
+                        <CutIcon size={16} className={cutDateStatus.color} />
+                      ) : (
+                        <Clock size={16} className="text-slate-400" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Próximo corte</p>
+                      <p className={`text-sm font-medium ${cutDateStatus.color}`}>{cutDateStatus.label}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Country */}
+                {sub.country && (
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                    <div className="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+                      <MapPin size={16} className="text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">País</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">{sub.country}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Kit number */}
+                {sub.kitNumber && (
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                    <div className="w-9 h-9 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center shrink-0">
+                      <Hash size={16} className="text-violet-600 dark:text-violet-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Nº Kit</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">{sub.kitNumber}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Password */}
                 {sub.passwordSub && (
-                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-slate-100 dark:border-slate-700 min-h-11">
-                    <span className="text-sm font-mono text-slate-500">••••••••</span>
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 sm:col-span-2">
+                    <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                      <Key size={16} className="text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Contraseña del servicio</p>
+                      <p className="text-sm font-mono font-medium text-slate-900 dark:text-white truncate">{sub.passwordSub}</p>
+                    </div>
                     <Button
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(sub.passwordSub);
-                          toast.success("Copiado");
-                          if (onCopy) onCopy(sub.passwordSub);
-                        } catch {
-                          toast.error("Error");
-                        }
-                      }}
-                      className="text-slate-400 hover:text-secondary shrink-0 h-9 w-9"
+                      onClick={() => onCopy?.(sub.passwordSub)}
                       variant="ghost"
                       size="icon"
+                      className="shrink-0"
                       aria-label="Copiar contraseña"
                     >
                       <Copy size={16} />
                     </Button>
                   </div>
                 )}
-                {sub.kitNumber && (
-                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5 rounded-lg border border-slate-100 dark:border-slate-700 min-h-11">
-                    <span className="text-sm text-slate-600 dark:text-slate-300">
-                      KIT: <span className="font-mono font-semibold">{sub.kitNumber}</span>
-                    </span>
-                    <Button
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(sub.kitNumber);
-                          toast.success("Copiado");
-                          if (onCopy) onCopy(sub.kitNumber);
-                        } catch {
-                          toast.error("Error");
-                        }
-                      }}
-                      className="text-slate-400 hover:text-secondary shrink-0 h-9 w-9"
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Copiar kit"
-                    >
-                      <Copy size={16} />
-                    </Button>
-                  </div>
-                )}
-                {sub.country && (
-                  <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                    <span className="px-2 py-0.5 rounded bg-secondary/10 text-secondary font-medium text-xs">
-                      {sub.country}
-                    </span>
-                  </div>
-                )}
               </div>
 
-              {/* Info Financiera y Fecha de Corte */}
-              <div className="flex gap-2 p-3 bg-slate-50/50 dark:bg-slate-900/20 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="flex-1 flex flex-col items-center border-r border-slate-200 dark:border-slate-600">
-                  <span className="text-xs uppercase text-slate-400 font-medium mb-0.5">Monto</span>
-                  <span className="text-base font-bold text-slate-700 dark:text-slate-200">{sub.amount}</span>
-                </div>
-                <div className={`flex-1 flex flex-col items-center rounded-lg p-1 ${cutDateStatus.bg}`}>
-                  <span className={`text-xs uppercase font-medium mb-0.5 flex items-center gap-1 ${cutDateStatus.color}`}>
-                    {cutDateStatus.icon && <cutDateStatus.icon size={12} />}
-                    {cutDateStatus.label}
-                  </span>
-                  <span className={`text-base font-bold ${cutDateStatus.color}`}>{sub.cutDate}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Acciones - Botones más sutiles */}
-            <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
-              {onRenew && (
+              {/* Action buttons */}
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <Button
-                  onClick={() => onRenew(sub.id)}
-                  disabled={renewing}
-                  className="flex-1 h-11"
+                  onClick={() => onEdit(sub)}
                   variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-xs"
                 >
-                  {renewing ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
-                  <span className="ml-1.5 text-sm font-medium">Renovar</span>
+                  <Pencil size={14} />
+                  Editar
                 </Button>
-              )}
-              <Button
-                onClick={() => onEdit(sub)}
-                className="flex-1 h-11"
-                variant="secondary"
-              >
-                <Pencil size={16} />
-                <span className="ml-1.5 text-sm font-medium">Editar</span>
-              </Button>
-              <Button
-                onClick={() => onDelete(sub.id ?? sub.clientId)}
-                className="flex-1 h-11"
-                variant="ghost"
-              >
-                <Trash2 size={16} />
-                <span className="ml-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">Eliminar</span>
-              </Button>
+                {onRenew && (
+                  <Button
+                    onClick={() => onRenew(sub.id)}
+                    variant="secondary"
+                    size="sm"
+                    className="gap-1.5 text-xs"
+                  >
+                    <RefreshCw size={14} />
+                    Renovar
+                  </Button>
+                )}
+                <div className="flex-1" />
+                <Button
+                  onClick={() => onDelete(sub.id)}
+                  variant="danger"
+                  size="sm"
+                  className="gap-1.5 text-xs"
+                >
+                  <Trash2 size={14} />
+                  Eliminar
+                </Button>
+              </div>
             </div>
           </div>
         )}
+        </div>
+
+        {/* Status gradient bar on the right side */}
+        <div className={`w-1.5 self-stretch bg-linear-to-b ${statusConfig.gradient} opacity-80 shrink-0`} />
       </div>
 
-      {/* Modal de confirmación - Mobile-First: Bottom Sheet en móvil */}
+      {/* Confirmation modal */}
       {showConfirmModal && (
         <>
-          {/* Overlay */}
-          <div 
+          <div
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
             onClick={() => setShowConfirmModal(false)}
             aria-hidden="true"
           />
-          {/* Mobile: Bottom Sheet, Desktop: Modal centrado */}
           <div className="fixed z-50 bottom-0 left-0 right-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-w-sm w-full sm:w-auto animate-in slide-in-from-bottom-10 sm:slide-in-from-top-10 duration-300">
             <div className="bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl border-t sm:border border-slate-100 dark:border-slate-700">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
-                  <Trash2 size={20} className="text-red-600 dark:text-red-400" />
+                <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                  <AlertCircle size={20} className="text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                    Confirmar cambio
-                  </h3>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Confirmar cambio</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Status: {STATUS_CONFIG[pendingStatus]?.label || pendingStatus}
+                    Nuevo estado: <span className={`font-semibold ${STATUS_CONFIG[pendingStatus]?.color || ''}`}>{STATUS_CONFIG[pendingStatus]?.label || pendingStatus}</span>
                   </p>
                 </div>
               </div>
               <p className="text-slate-600 dark:text-slate-400 mb-4 text-sm">
-                ¿Cambiar el status de esta suscripción?
+                ¿Cambiar el estado de esta suscripción?
               </p>
-              {/* Botones con spacing adecuado */}
               <div className="flex gap-2">
                 <Button
                   onClick={() => setShowConfirmModal(false)}
-                  className="flex-1 h-11 text-sm font-medium"
+                  className="flex-1 text-sm font-medium"
+                  size="md"
                   variant="outline"
                   disabled={changingStatus}
                 >
@@ -365,7 +377,8 @@ export default function SubscriptionItem({
                 <Button
                   onClick={handleStatusChange}
                   disabled={changingStatus}
-                  className="flex-1 h-11 text-sm font-medium flex items-center justify-center gap-1.5"
+                  className="flex-1 text-sm font-medium flex items-center justify-center gap-1.5"
+                  size="md"
                   variant="primary"
                 >
                   {changingStatus && <Loader2 size={16} className="animate-spin" />}

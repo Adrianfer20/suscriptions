@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Search, Filter, X, ChevronUp, ChevronDown, AlertCircle, Clock, CheckCircle } from "lucide-react";
 import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
 
 // Opciones de filtro por estado de fecha de corte
 const CUT_DATE_FILTERS = [
@@ -47,35 +48,35 @@ export default function SubscriptionsToolbar({
   return (
     <div className="flex flex-col md:flex-row gap-3 mb-4 sm:mb-6">
       {/* Mobile-First: Search bar siempre visible y grande */}
-      <div className="relative md:flex-1">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-        <input
+      <div className="md:flex-1">
+        <Input
           type="text"
           inputMode="search"
           aria-label="Buscar suscripciones"
           placeholder="Buscar por cliente..."
           value={localSearch}
           onChange={(e) => setLocalSearch(e.target.value)}
-          className="h-11 pl-12 pr-12 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-full"
+          variant="search"
+          startContent={<Search size={18} />}
+          endContent={localSearch ? (
+            <Button
+              onClick={() => {
+                setLocalSearch("");
+                setSearchQuery("");
+              }}
+              className="text-slate-400 hover:text-slate-600 h-8 w-8"
+              aria-label="Limpiar búsqueda"
+              variant="ghost"
+              size="icon"
+            >
+              <X size={16} />
+            </Button>
+          ) : undefined}
         />
-        {localSearch && (
-          <Button
-            onClick={() => {
-              setLocalSearch("");
-              setSearchQuery("");
-            }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 h-10 w-10"
-            aria-label="Limpiar búsqueda"
-            variant="ghost"
-            size="icon"
-          >
-            <X size={18} />
-          </Button>
-        )}
       </div>
 
       {/* Filtros - Mobile: scroll horizontal */}
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 overflow-x-auto sm:overflow-visible">
         {/* Select de estado */}
         <div className="relative flex-none">
           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -84,7 +85,7 @@ export default function SubscriptionsToolbar({
             id="status-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 pl-10 pr-5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none min-w-40"
+            className="h-11 pl-10 pr-5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none w-full sm:w-auto max-w-xs"
           >
             <option value="">Todos los status</option>
             <option value="active">Activa</option>
@@ -103,7 +104,7 @@ export default function SubscriptionsToolbar({
               id="cutdate-filter"
               value={cutDateFilter}
               onChange={(e) => setCutDateFilter(e.target.value)}
-              className="h-11 pl-4 pr-10 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none min-w-40"
+              className="h-11 pl-4 pr-10 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none w-full sm:w-auto max-w-xs"
             >
               {CUT_DATE_FILTERS.map((opt) => (
                 <option key={opt.value} value={opt.value} className="py-2">
@@ -125,7 +126,7 @@ export default function SubscriptionsToolbar({
             aria-pressed={Boolean(cutDateSort)}
           >
             {cutDateSort === "asc" ? <ChevronUp size={18} /> : cutDateSort === "desc" ? <ChevronDown size={18} /> : <ChevronUp size={18}  />}
-            <span className="inline text-sm font-medium">Fecha corte</span>
+            <span className="hidden sm:inline text-sm font-medium">Fecha corte</span>
           </Button>
         )}
       </div>
