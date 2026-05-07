@@ -23,9 +23,10 @@ type Props = {
   onSubmit: (e: React.FormEvent) => void
   creating: boolean
   editingId: string | null
+  plans?: string[]
 }
 
-export default function SubscriptionForm({ form, setForm, clients, onCancel, onSubmit, creating, editingId }: Props) {
+export default function SubscriptionForm({ form, setForm, clients, onCancel, onSubmit, creating, editingId, plans }: Props) {
   return (
     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden transition-all duration-300 ease-in-out">
       <div className="p-6 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
@@ -66,8 +67,16 @@ export default function SubscriptionForm({ form, setForm, clients, onCancel, onS
                 required
               >
                 <option value="">Selecciona un plan</option>
-                <option value="Itinerante Ilimitado">Itinerante Ilimitado</option>
-                <option value="Itinerante Limitado">Itinerante Limitado</option>
+                {plans && plans.length > 0 ? (
+                  plans.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))
+                ) : (
+                  <>
+                    <option value="Itinerante Ilimitado">Itinerante Ilimitado</option>
+                    <option value="Itinerante Limitado">Itinerante Limitado</option>
+                  </>
+                )}
               </select>
             </div>
 

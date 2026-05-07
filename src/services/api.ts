@@ -85,7 +85,7 @@ export interface User {
   uid: string
   email: string
   displayName?: string
-  role?: 'admin' | 'staff' | 'client'
+  role?: 'admin' | 'client'
   disabled?: boolean
 }
 
@@ -156,7 +156,7 @@ export interface Conversation {
 
 // 1. Auth
 export const authApi = {
-  create: async (data: { email: string; password: string; role: 'admin' | 'staff' | 'client'; displayName?: string }) => {
+  create: async (data: { email: string; password: string; role: 'admin' | 'client'; displayName?: string }) => {
     return api.post<ApiResponse<{ uid: string; role: string }>>('/auth/create', data)
   },
   me: async () => {
@@ -231,6 +231,10 @@ export const subscriptionsApi = {
   // Body: { status: 'active' | 'about_to_expire' | 'suspended' | 'paused' | 'cancelled' }
   updateStatus: async (id: string, status: 'active' | 'about_to_expire' | 'suspended' | 'paused' | 'cancelled') => {
     return api.patch<ApiResponse<Subscription>>(`/subscriptions/${id}/status`, { status })
+  }
+  ,
+  getPlans: async () => {
+    return api.get<ApiResponse<string[]>>('/subscriptions/plans')
   }
 }
 

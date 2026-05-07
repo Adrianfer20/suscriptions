@@ -119,7 +119,7 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
           h-10 w-10 rounded-full flex items-center justify-center font-semibold text-sm shrink-0 transition-colors
 
           ${selected
-            ? 'bg-primary text-secondary'
+            ? 'bg-primary text-secondary dark-text-on-secondary'
             : 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-secondary/50 group-hover:bg-indigo-200 group-hover:text-indigo-800'
           }
         `}
@@ -141,7 +141,7 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
               className={`
                 text-sm truncate transition-colors min-w-0
                 ${selected
-                  ? 'text-primary dark:text-secondary font-semibold'
+                  ? 'text-primary dark-text-on-secondary font-semibold'
                   : c.unreadCount 
                     ? 'text-slate-900 dark:text-slate-100 font-bold'
                     : 'text-slate-600 dark:text-slate-300 font-medium group-hover:text-primary'
@@ -158,7 +158,7 @@ export function ConversationItem({ conversation: c, selected, onClick }: Convers
               className={`
                 text-[11px] shrink-0 transition-colors
                 ${selected
-                  ? 'text-primary/60 dark:text-secondary/60'
+                  ? 'text-primary/60 dark:text-slate-500'
                   : 'text-slate-400 dark:text-slate-500'
                 }
               `}

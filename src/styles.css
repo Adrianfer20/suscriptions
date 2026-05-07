@@ -107,3 +107,32 @@ color: var(--text);
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(71, 85, 105, 0.7);
 }
+
+/* Utility to ensure readable text on elements using bg-secondary (multiple tones) */
+:root {
+  --on-secondary: #0f172a; /* slate-900 for light backgrounds */
+  --on-secondary-dark: #f8fafc; /* slate-100 for dark/tinted secondary backgrounds */
+}
+
+.text-on-secondary {
+  color: var(--on-secondary);
+}
+
+.dark .text-on-secondary {
+  color: var(--on-secondary-dark);
+}
+
+/* Dark-only utilities that don't affect light mode */
+.dark .dark-text-on-secondary {
+  color: var(--on-secondary-dark);
+}
+
+.dark .dark-hover-text-on-secondary:hover {
+  color: var(--on-secondary-dark);
+}
+
+/* Apply hover variant without affecting light mode */
+.dark-hover-text-on-secondary {
+  /* empty placeholder - actual rule lives under .dark */
+}
+

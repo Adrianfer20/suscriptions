@@ -22,10 +22,6 @@ export type SubscriptionForm = {
   country?: string;
 };
 
-const PLAN_LABELS: Record<string, string> = {
-  "Itinerante Ilimitado": "Itinerante Ilimitado",
-  "Itinerante Limitado": "Itinerante Limitado",
-};
 
 export function useAdminSubscriptions() {
   const [items, setItems] = useState<SubscriptionWithEmail[]>([]);
@@ -36,6 +32,12 @@ export function useAdminSubscriptions() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const today = new Date().toISOString().slice(0, 10);
   const [form, setForm] = useState<SubscriptionForm>({ clientId: "", startDate: today, cutDate: today, amount: "", plan: "", passwordSub: "", kitNumber: "", country: "" });
+  const [plans, setPlans] = useState<string[]>([]);
+  const PLAN_LABELS = useMemo(() => {
+    const map: Record<string, string> = {};
+    plans.forEach((p) => (map[p] = p));
+    return map;
+  }, [plans]);
   // copied feedback handled with react-hot-toast
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
@@ -75,6 +77,22 @@ export function useAdminSubscriptions() {
     return () => {
       mounted = false;
     };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchPlans = async () => {
+      try {
+        const res = await subscriptionsApi.getPlans();
+        if (!mounted) return;
+        const list = (Array.isArray(res.data) ? res.data : res.data?.data || []) as string[];
+        setPlans(list);
+      } catch (e) {
+        console.warn('No se pudieron obtener los planes desde la API:', e);
+      }
+    };
+    fetchPlans();
+    return () => { mounted = false };
   }, []);
 
   useEffect(() => {
@@ -345,6 +363,7 @@ export function useAdminSubscriptions() {
     handleRenew,
     cutDateSort,
     toggleCutDateSort,
+    plans,
   } as const;
 }
 

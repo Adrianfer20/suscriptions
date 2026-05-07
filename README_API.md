@@ -126,6 +126,16 @@ Gestionado por administradores.
   - **Body:** Campos a actualizar (`startDate`, `cutDate`, `plan`, `amount`).
   - **Uso:** Actualizar información de la suscripción.
 
+- **`GET /subscriptions/plans`**
+  - **Uso:** Devuelve un arreglo con los nombres de los planes que el usuario puede seleccionar al crear una suscripción.
+  - **Respuesta ejemplo:**
+    ```json
+    {
+      "ok": true,
+      "data": ["Itinerante Ilimitado", "Itinerante 100GB", "Residencial"]
+    }
+    ```
+
 ### Comunicaciones (`/communications`)
 - **`GET /communications/conversations`** (Admin/Staff)
   - **Uso:** Obtener lista de conversaciones (mezcla de Clientes y Desconocidos).

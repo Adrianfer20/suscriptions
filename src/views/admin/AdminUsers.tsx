@@ -14,15 +14,15 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
   
-  const [editForm, setEditForm] = useState<{ displayName: string, role: string, disabled: boolean }>({ 
+    const [editForm, setEditForm] = useState<{ displayName: string, role: string, disabled: boolean }>({ 
       displayName: '', 
-      role: 'staff', 
+      role: 'client', 
       disabled: false 
-  }) 
+    }) 
   
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [creating, setCreating] = useState(false)
-  const [newForm, setNewForm] = useState({ email: '', password: '', displayName: '', role: 'staff' })
+  const [newForm, setNewForm] = useState({ email: '', password: '', displayName: '', role: 'client' })
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function AdminUsers() {
 
   const cancelEdit = () => {
     setEditingId(null)
-    setEditForm({ displayName: '', role: 'staff', disabled: false })
+    setEditForm({ displayName: '', role: 'client', disabled: false })
   }
 
   const saveEdit = async (uid: string) => {
@@ -93,7 +93,7 @@ export default function AdminUsers() {
             // @ts-ignore
             role: newForm.role
         })
-        setNewForm({ email: '', password: '', displayName: '', role: 'staff' })
+        setNewForm({ email: '', password: '', displayName: '', role: 'client' })
         setIsFormOpen(false)
         fetchUsers()
     } catch (err: any) {
@@ -127,7 +127,7 @@ export default function AdminUsers() {
             <span>Gestión de Usuarios</span>
           </span>
         }
-        subtitle="Administra el staff y accesos administrativos"
+        subtitle="Administra usuarios y accesos administrativos"
         action={
           <Button
             onClick={() => setIsFormOpen(!isFormOpen)}
@@ -149,7 +149,7 @@ export default function AdminUsers() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Registrar Nuevo Usuario</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Crea una cuenta para un administrador o miembro del staff.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Crea una cuenta para un administrador o cliente.</p>
             </div>
           </div>
           <div className="p-6">
@@ -192,7 +192,6 @@ export default function AdminUsers() {
                           value={newForm.role}
                           onChange={(e) => setNewForm(prev => ({ ...prev, role: e.target.value }))}
                        >
-                          <option value="staff">Staff (Personal)</option>
                           <option value="admin">Administrador (Acceso Total)</option>
                           <option value="client">Cliente</option>
                        </select>
@@ -276,7 +275,6 @@ export default function AdminUsers() {
                                             value={editForm.role}
                                             onChange={(e) => setEditForm({...editForm, role: e.target.value})}
                                         >
-                                            <option value="staff">Staff</option>
                                             <option value="admin">Admin</option>
                                             <option value="client">Cliente</option>
                                             <option value="guest">Guest</option>
@@ -284,7 +282,6 @@ export default function AdminUsers() {
                                      ) : (
                                         <span className={`px-2.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full border 
                                             ${u.role === 'admin' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-100 dark:border-purple-800' : 
-                                              u.role === 'staff' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800' : 
                                               u.role === 'client' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-100 dark:border-green-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'}`}>
                                             {u.role || 'guest'}
                                         </span>
@@ -382,7 +379,6 @@ export default function AdminUsers() {
                                             value={editForm.role}
                                             onChange={(e) => setEditForm({...editForm, role: e.target.value})}
                                         >
-                                            <option value="staff">Staff</option>
                                             <option value="admin">Admin</option>
                                             <option value="client">Cliente</option>
                                             <option value="guest">Guest</option>
@@ -390,7 +386,6 @@ export default function AdminUsers() {
                                      ) : (
                                         <span className={`px-2.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full border 
                                             ${u.role === 'admin' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-100 dark:border-purple-800' : 
-                                              u.role === 'staff' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800' : 
                                               u.role === 'client' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-100 dark:border-green-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'}`}>
                                             {u.role || 'guest'}
                                         </span>

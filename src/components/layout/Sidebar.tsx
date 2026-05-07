@@ -53,11 +53,6 @@ const MENU_CONFIG: Record<
       to: "/admin/automation",
       icon: <Zap className="w-5 h-5" />,
     },
-    {
-      label: "Usuarios",
-      to: "/admin/users",
-      icon: <Users className="w-5 h-5" />,
-    },
   ],
   client: [
     {

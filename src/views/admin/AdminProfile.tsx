@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { authApi, User } from '../../services/api'
+import { useNavigate } from 'react-router-dom'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { UserCheck } from 'lucide-react'
 
 export default function AdminProfile() {
+  const navigate = useNavigate()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -56,12 +58,12 @@ export default function AdminProfile() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <div className="h-16 w-16 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-white dark:border-slate-600 flex items-center justify-center text-xl font-bold text-primary dark:text-white shadow-sm overflow-hidden">
+        <div className="h-16 w-16 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-white dark:border-slate-600 flex items-center justify-center text-xl font-bold text-slate-900 dark:text-white shadow-sm overflow-hidden">
             {user?.email?.charAt(0).toUpperCase()}
         </div>
         <div>
             {/* @ts-ignore: Check for 'name' too */}
-            <h2 className="text-2xl font-bold text-primary dark:text-white">{user?.displayName || user?.name || 'Usuario'}</h2>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{user?.displayName || user?.name || 'Usuario'}</h2>
             <p className="text-slate-500">{user?.email}</p>
         </div>
       </div>
@@ -96,6 +98,14 @@ export default function AdminProfile() {
                 </Button>
             </div>
         </form>
+      </Card>
+
+      <Card title="Accesos">
+        <div className="flex justify-end">
+          <Button variant="ghost" onClick={() => navigate('/admin/users')} className="text-sm text-slate-500">
+            Crear administrador
+          </Button>
+        </div>
       </Card>
 
       <Card title="Seguridad">

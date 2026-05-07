@@ -20,13 +20,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variants: Record<ButtonVariant, string> = {
       // primary: use primary in light mode, but switch to secondary-like background in dark for better contrast
       primary:
-        `bg-primary hover:bg-primary-600 text-white shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${focusOffsetLight} dark:bg-secondary dark:hover:bg-secondary/90 dark:text-primary dark:focus-visible:ring-secondary ${focusOffsetDark}`,
+        `bg-primary hover:bg-primary-600 text-white shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${focusOffsetLight} dark:bg-secondary dark:hover:bg-secondary/90 dark-text-on-secondary dark:focus-visible:ring-secondary ${focusOffsetDark}`,
       secondary:
         `bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-slate-200 focus-visible:ring-offset-2 ${focusOffsetLight} shadow-sm`,
       ghost:
         `bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white focus-visible:ring-2 focus-visible:ring-slate-200 focus-visible:ring-offset-2 ${focusOffsetLight}`,
       outline:
-        `bg-transparent border border-primary text-primary hover:bg-primary/5 dark:hover:bg-primary/20 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${focusOffsetLight}`,
+        `bg-transparent border border-primary text-primary hover:bg-primary/5 dark:border-secondary dark-text-on-secondary dark:hover:bg-secondary/10 dark-hover-text-on-secondary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${focusOffsetLight}`,
       danger:
         `bg-red-600 text-white hover:bg-red-700 focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 ${focusOffsetLight} shadow-sm`,
       destructive:

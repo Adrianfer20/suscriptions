@@ -30,6 +30,7 @@ export default function AdminSubscriptions() {
     filteredItems,
     items,
     PLAN_LABELS,
+    plans,
     handleEdit,
     handleCancelEdit,
     handleCreate,
@@ -68,6 +69,7 @@ export default function AdminSubscriptions() {
             form={form}
             setForm={setForm}
             clients={clients}
+            plans={plans}
             onCancel={handleCancelEdit}
             onSubmit={handleCreate}
             creating={creating}

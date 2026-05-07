@@ -335,7 +335,7 @@ export default function AdminClients() {
                 >
                   <div className="flex items-center gap-3">
                     {/* Avatar - mismo estilo que SubscriptionItem */}
-                    <div className="w-12 h-12 rounded-full bg-secondary/10 dark:bg-secondary/20 flex items-center justify-center text-secondary font-bold text-lg border-2 border-secondary/30 shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-secondary/10 dark:bg-secondary/20 flex items-center justify-center text-secondary dark-text-on-secondary font-bold text-lg border-2 border-secondary/30 shrink-0">
                       {c.name?.charAt(0).toUpperCase()}
                     </div>
                     
@@ -385,7 +385,7 @@ export default function AdminClients() {
                   <tr key={c.uid || c.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-secondary/10 text-secondary border-2 border-secondary/30 flex items-center justify-center font-bold text-sm shrink-0">
+                        <div className="h-10 w-10 rounded-full bg-secondary/10 text-secondary dark:text-slate-900 border-2 border-secondary/30 flex items-center justify-center font-bold text-sm shrink-0">
                           {c.name?.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -410,7 +410,7 @@ export default function AdminClients() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/admin/client/${c.id}`}
-                          className="h-9 px-3 flex items-center justify-center text-sm font-medium text-secondary bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
+                          className="h-9 px-3 flex items-center justify-center text-sm font-medium text-secondary dark-text-on-secondary bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
                         >
                           Ver
                         </Link>
