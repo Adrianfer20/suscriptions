@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Search, Filter, X, ChevronUp, ChevronDown, AlertCircle, Clock, CheckCircle } from "lucide-react";
-import { Button } from '../../../components/ui/Button'
-import { Input } from '../../../components/ui/Input'
+import { Button } from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
 
-// Opciones de filtro por estado de fecha de corte
 const CUT_DATE_FILTERS = [
   { value: "", label: "Todas las fechas" },
   { value: "overdue", label: "Vencidas", icon: AlertCircle, color: "text-red-500" },
@@ -16,7 +15,7 @@ type Props = {
   setSearchQuery: (v: string) => void;
   statusFilter: string;
   setStatusFilter: (v: string) => void;
-  setIsFormOpen?: (v: boolean) => void; // For creating new subscription from toolbar
+  setIsFormOpen?: (v: boolean) => void;
   cutDateSort?: "asc" | "desc" | null;
   onToggleCutDateSort?: () => void;
   cutDateFilter?: string;
@@ -35,59 +34,59 @@ export default function SubscriptionsToolbar({
 }: Props) {
   const [localSearch, setLocalSearch] = useState(searchQuery);
 
-  // Sincroniza cambios externos en `searchQuery`
   useEffect(() => {
     setLocalSearch(searchQuery);
   }, [searchQuery]);
 
-  // Debounce: notifica cambios al padre tras 300ms de inactividad
   useEffect(() => {
     const id = setTimeout(() => setSearchQuery(localSearch), 300);
     return () => clearTimeout(id);
   }, [localSearch, setSearchQuery]);
+
+  // Clase base para los selects para evitar repetición
+  const selectClasses = `
+    h-11 w-full text-sm rounded-xl border appearance-none transition-all
+    bg-white dark:bg-slate-800 
+    border-slate-200 dark:border-slate-700
+    text-slate-900 dark:text-slate-100
+    focus:outline-none focus:ring-2 
+    focus:ring-blue-500 dark:focus:ring-blue-400 
+    focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900
+  `;
+
   return (
-    <div className="flex flex-col md:flex-row gap-3 mb-4 sm:mb-6">
-      {/* Mobile-First: Search bar siempre visible y grande */}
-      <div className="md:flex-1">
+    <div className="flex flex-col gap-4 mb-6">
+      {/* 1. Buscador - Full width siempre */}
+      <div className="w-full">
         <Input
           type="text"
           inputMode="search"
-          aria-label="Buscar suscripciones"
-          placeholder="Buscar por cliente..."
+          placeholder="Buscar cliente..."
           value={localSearch}
           onChange={(e) => setLocalSearch(e.target.value)}
           variant="search"
-          startContent={<Search size={18} />}
+          className="w-full"
+          startContent={<Search size={18} className="text-slate-400" />}
           endContent={localSearch ? (
-            <Button
-              onClick={() => {
-                setLocalSearch("");
-                setSearchQuery("");
-              }}
-              className="text-slate-400 hover:text-slate-600 h-8 w-8"
-              aria-label="Limpiar búsqueda"
-              variant="ghost"
-              size="icon"
-            >
-              <X size={16} />
-            </Button>
+            <button onClick={() => { setLocalSearch(""); setSearchQuery(""); }}>
+              <X size={16} className="text-slate-400 hover:text-slate-600" />
+            </button>
           ) : undefined}
         />
       </div>
 
-      {/* Filtros - Mobile: scroll horizontal */}
-      <div className="flex items-center justify-between gap-2 overflow-x-auto sm:overflow-visible">
-        {/* Select de estado */}
-        <div className="relative flex-none">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <label className="sr-only" htmlFor="status-filter">Filtrar por estado</label>
+      {/* 2. Contenedor de Filtros - Grid 2 columnas en mobile */}
+      <div className="grid grid-cols-2 md:flex md:flex-row items-center gap-3">
+        
+        {/* Filtro Status */}
+        <div className="relative group">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-blue-500 transition-colors" size={16} />
           <select
-            id="status-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 pl-10 pr-5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none w-full sm:w-auto max-w-xs"
+            className={`${selectClasses} pl-10 pr-4`}
           >
-            <option value="">Todos los status</option>
+            <option value="">Status: Todos</option>
             <option value="active">Activa</option>
             <option value="about_to_expire">Por Vencer</option>
             <option value="suspended">Suspendida</option>
@@ -96,18 +95,16 @@ export default function SubscriptionsToolbar({
           </select>
         </div>
 
-        {/* Filtro por fecha de corte */}
+        {/* Filtro Fecha de Corte */}
         {setCutDateFilter && (
-          <div className="relative flex-none">
-            <label className="sr-only" htmlFor="cutdate-filter">Filtrar por fecha de corte</label>
+          <div className="relative">
             <select
-              id="cutdate-filter"
               value={cutDateFilter}
               onChange={(e) => setCutDateFilter(e.target.value)}
-              className="h-11 pl-4 pr-10 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none w-full sm:w-auto max-w-xs"
+              className={`${selectClasses} px-4`}
             >
               {CUT_DATE_FILTERS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="py-2">
+                <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>
               ))}
@@ -115,18 +112,17 @@ export default function SubscriptionsToolbar({
           </div>
         )}
 
+        {/* Botón Orden - Ocupa 2 columnas en pantallas muy pequeñas si quieres, o sigue el flujo */}
         {onToggleCutDateSort && (
           <Button
             onClick={onToggleCutDateSort}
-            title={cutDateSort === "asc" ? "Orden: Corte Inicio → Fin" : cutDateSort === "desc" ? "Orden: Corte Fin → Inicio" : "Ordenar por fecha de corte"}
             variant="secondary"
-            size="md"
-            className="flex-none flex items-center gap-2 rounded-xl"
-            aria-label="Alternar orden por fecha de corte"
-            aria-pressed={Boolean(cutDateSort)}
+            className="col-span-2 md:col-span-1 h-11 flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
           >
-            {cutDateSort === "asc" ? <ChevronUp size={18} /> : cutDateSort === "desc" ? <ChevronDown size={18} /> : <ChevronUp size={18}  />}
-            <span className="hidden sm:inline text-sm font-medium">Fecha corte</span>
+            {cutDateSort === "asc" ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            <span className="text-sm font-semibold">
+                {cutDateSort ? (cutDateSort === 'asc' ? 'Antiguos' : 'Recientes') : 'Ordenar'}
+            </span>
           </Button>
         )}
       </div>
