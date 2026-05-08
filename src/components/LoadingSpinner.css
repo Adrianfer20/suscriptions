@@ -5,25 +5,120 @@
   justify-content: center;
   min-height: 60vh;
   width: 100%;
+  gap: 16px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.loading-spinner-container.variant-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  min-height: 100vh;
+  background: rgba(248, 250, 252, 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.dark .loading-spinner-container.variant-overlay {
+  background: rgba(15, 23, 42, 0.85);
+}
+
+/* Spinner sizes */
+.loading-spinner.size-sm svg {
+  width: 32px;
+  height: 32px;
+}
+
+.loading-spinner.size-md svg {
+  width: 56px;
+  height: 56px;
+}
+
+.loading-spinner.size-lg svg {
+  width: 80px;
+  height: 80px;
 }
 
 .loading-spinner {
-  border: 6px solid #e0e0e0;
-  border-top: 6px solid #007bff;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.loading-spinner svg {
+  animation: rotate 1.4s linear infinite;
+}
+
+.loading-spinner-track {
+  stroke: rgba(34, 50, 92, 0.15);
+  stroke-width: 4;
+}
+
+.dark .loading-spinner-track {
+  stroke: rgba(241, 208, 10, 0.15);
+}
+
+.loading-spinner-indicator {
+  stroke: var(--app-primary, #22325C);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 75;
+  animation: dash 1.4s ease-in-out infinite;
+}
+
+.dark .loading-spinner-indicator {
+  stroke: var(--app-secondary, #F1D00A);
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  50% {
+    stroke-dashoffset: 30;
+  }
+  100% {
+    stroke-dashoffset: 100;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .loading-message {
-  font-size: 1.2rem;
-  color: #333;
+  font-size: 1rem;
   font-weight: 500;
+  color: var(--text, #1e293b);
+  letter-spacing: 0.01em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.dark .loading-message {
+  color: #f8fafc;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }

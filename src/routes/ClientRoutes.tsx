@@ -1,10 +1,18 @@
+import { Suspense } from 'react'
 import { Route } from 'react-router-dom'
 import { ProtectedRoute } from '../components/ProtectedRoute'
-import AppLayout from '../components/AppLayout'
-import ClientDashboard from '../views/client/ClientDashboard'
-import ClientSubscription from '../views/client/ClientSubscription'
-import ClientPayments from '../views/client/ClientPayments'
-import ClientProfile from '../views/client/ClientProfile'
+import LoadingSpinner from '../components/LoadingSpinner'
+import React from 'react'
+
+const AppLayout = React.lazy(() => import('../components/AppLayout'))
+const ClientDashboard = React.lazy(() => import('../views/client/ClientDashboard'))
+const ClientSubscription = React.lazy(() => import('../views/client/ClientSubscription'))
+const ClientPayments = React.lazy(() => import('../views/client/ClientPayments'))
+const ClientProfile = React.lazy(() => import('../views/client/ClientProfile'))
+
+const Lazy = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
+)
 
 export default function ClientRoutes() {
   return (
@@ -13,14 +21,14 @@ export default function ClientRoutes() {
         path="/client/*"
         element={
           <ProtectedRoute roles={["client"]}>
-            <AppLayout />
+            <Lazy><AppLayout /></Lazy>
           </ProtectedRoute>
         }
       >
-        <Route index element={<ClientDashboard />} />
-        <Route path="subscription" element={<ClientSubscription />} />
-        <Route path="payments" element={<ClientPayments />} />
-        <Route path="profile" element={<ClientProfile />} />
+        <Route index element={<Lazy><ClientDashboard /></Lazy>} />
+        <Route path="subscription" element={<Lazy><ClientSubscription /></Lazy>} />
+        <Route path="payments" element={<Lazy><ClientPayments /></Lazy>} />
+        <Route path="profile" element={<Lazy><ClientProfile /></Lazy>} />
       </Route>
     </>
   )

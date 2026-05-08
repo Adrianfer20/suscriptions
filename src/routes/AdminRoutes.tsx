@@ -1,33 +1,41 @@
+import { Suspense } from 'react'
 import { Route } from 'react-router-dom'
 import { ProtectedRoute } from '../components/ProtectedRoute'
-import AppLayout from '../components/AppLayout'
-import AdminDashboard from '../views/admin/AdminDashboard'
-import AdminClients from '../views/admin/AdminClients'
-import AdminSubscriptions from '../views/admin/AdminSubscriptions'
-import AdminClientEdit from '../views/admin/AdminClientEdit'
-import AdminCommunication from '../views/admin/AdminCommunication'
-import AdminAutomation from '../views/admin/AdminAutomation'
-import AdminProfile from '../views/admin/AdminProfile'
-import AdminUsers from '../views/admin/AdminUsers'
-import AdminPayments from '../views/admin/AdminPayments'
+import LoadingSpinner from '../components/LoadingSpinner'
+import React from 'react'
+
+const AppLayout = React.lazy(() => import('../components/AppLayout'))
+const AdminDashboard = React.lazy(() => import('../views/admin/AdminDashboard'))
+const AdminClients = React.lazy(() => import('../views/admin/AdminClients'))
+const AdminSubscriptions = React.lazy(() => import('../views/admin/AdminSubscriptions'))
+const AdminClientEdit = React.lazy(() => import('../views/admin/AdminClientEdit'))
+const AdminCommunication = React.lazy(() => import('../views/admin/AdminCommunication'))
+const AdminAutomation = React.lazy(() => import('../views/admin/AdminAutomation'))
+const AdminProfile = React.lazy(() => import('../views/admin/AdminProfile'))
+const AdminUsers = React.lazy(() => import('../views/admin/AdminUsers'))
+const AdminPayments = React.lazy(() => import('../views/admin/AdminPayments'))
+
+const Lazy = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
+)
 
 export default function AdminRoutes() {
   return (
     <>
       <Route path="/admin" element={
         <ProtectedRoute roles={["admin"]}>
-          <AppLayout />
+          <Lazy><AppLayout /></Lazy>
         </ProtectedRoute>
       }>
-        <Route index element={<AdminDashboard />} />
-        <Route path="clients" element={<AdminClients />} />
-        <Route path="client/:uid" element={<AdminClientEdit />} />
-        <Route path="subscriptions" element={<AdminSubscriptions />} />
-        <Route path="communication" element={<AdminCommunication />} />
-        <Route path="automation" element={<AdminAutomation />} />
-        <Route path="users" element={<AdminUsers />} />
-        <Route path="payments" element={<AdminPayments />} />
-        <Route path="me" element={<AdminProfile />} />
+        <Route index element={<Lazy><AdminDashboard /></Lazy>} />
+        <Route path="clients" element={<Lazy><AdminClients /></Lazy>} />
+        <Route path="client/:uid" element={<Lazy><AdminClientEdit /></Lazy>} />
+        <Route path="subscriptions" element={<Lazy><AdminSubscriptions /></Lazy>} />
+        <Route path="communication" element={<Lazy><AdminCommunication /></Lazy>} />
+        <Route path="automation" element={<Lazy><AdminAutomation /></Lazy>} />
+        <Route path="users" element={<Lazy><AdminUsers /></Lazy>} />
+        <Route path="payments" element={<Lazy><AdminPayments /></Lazy>} />
+        <Route path="me" element={<Lazy><AdminProfile /></Lazy>} />
       </Route>
     </>
   )

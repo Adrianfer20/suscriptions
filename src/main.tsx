@@ -9,7 +9,13 @@ import './styles.css'
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter basename="/suscriptions">
+    <BrowserRouter
+      basename="/suscriptions"
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <AuthProvider>
         <ThemeProvider>
           <Toaster position="top-right" />

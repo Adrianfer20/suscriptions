@@ -293,7 +293,26 @@ export const automationApi = {
 
 
 
-// 6. Health
+// 8. Admins (perfiles de admin en Firestore)
+export const adminsApi = {
+  create: async (data: { uid: string; name: string; phone?: string; address?: string; email?: string; notes?: string }) => {
+    return api.post<ApiResponse<any>>('/admins', data)
+  },
+  get: async (id: string) => {
+    return api.get<ApiResponse<any>>(`/admins/${id}`)
+  },
+  update: async (id: string, data: { name?: string; phone?: string; address?: string; email?: string; notes?: string; active?: boolean }) => {
+    return api.patch<ApiResponse<any>>(`/admins/${id}`, data)
+  },
+  list: async (params?: { limit?: number; startAfter?: string }) => {
+    return api.get<ApiResponse<any[]>>('/admins', { params })
+  },
+  delete: async (id: string) => {
+    return api.delete<ApiResponse<any>>(`/admins/${id}`)
+  }
+}
+
+// 9. Health
 export const healthApi = {
   check: async () => {
     return api.get<{ status: string; firebaseClient: string; firebaseAdmin: string; twilio: string }>('/')

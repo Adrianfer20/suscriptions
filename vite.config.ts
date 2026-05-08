@@ -9,8 +9,50 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'notification.mp3', 'firebase-messaging-sw.js'],
+      registerType: 'prompt',
+      injectRegister: 'auto',
+      workbox: {
+        globPatterns: ['**/*.{html,js,css,svg,png,ico}'],
+        globIgnores: ['**/sw.js', '**/workbox-*.js'],
+        maximumFileSizeToCacheInBytes: 3_000_000,
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: { maxEntries: 5, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gstatic-fonts-cache',
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          {
+            urlPattern: /\/api\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 15 },
+              networkTimeoutSeconds: 5
+            }
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|mp3)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'static-assets-cache',
+              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 7 }
+            }
+          }
+        ]
+      },
       manifest: {
         name: 'A|R System - Gestión de Suscripciones',
         short_name: 'A|R System',
@@ -37,83 +79,30 @@ export default defineConfig({
             purpose: 'maskable'
           }
         ]
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'gstatic-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /\/api\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24
-              },
-              networkTimeoutSeconds: 10
-            }
-          }
-        ]
       }
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom', 'react-hot-toast'],
+          'firebase-auth': ['firebase/app', 'firebase/auth'],
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600,
+    minify: 'esbuild',
+    cssCodeSplit: true,
+  },
   server: {
     host: true,
     proxy: {
-      // Proxy API requests to backend to avoid CORS in development
-      '/clients': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false
-      },
-      '/auth': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false
-      },
-      '/subscriptions': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false
-      },
-      '/communications': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false
-      },
-      '/automation': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false
-      }
+      '/clients': { target: 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/auth': { target: 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/subscriptions': { target: 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/communications': { target: 'http://localhost:3000', changeOrigin: true, secure: false },
+      '/automation': { target: 'http://localhost:3000', changeOrigin: true, secure: false }
     }
   }
 })

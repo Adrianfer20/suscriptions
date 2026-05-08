@@ -11,6 +11,7 @@ type AuthContextType = {
   token: string | null
   login: (email: string, password: string) => Promise<void>
   logout: () => void
+  updateUser: (data: Partial<User>) => Promise<void>
   loading: boolean
 }
 
@@ -124,8 +125,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     navigate('/login')
   }
 
+  async function updateUser(data: Partial<User>) {
+    if (!user?.id) throw new Error('No user logged in')
+    setUser(prev => prev ? { ...prev, ...data } : null)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   )
