@@ -50,11 +50,11 @@ export default function AdminUsers() {
     }
   }
 
-  const handleEdit = (user: any) => {
+    const handleEdit = (user: any) => {
     setEditingId(user.uid)
     setEditForm({ 
       displayName: user.displayName || user.name || '', 
-      role: user.role || 'guest',
+      role: user.role || 'client',
       disabled: user.disabled || false
     })
   }
@@ -277,7 +277,6 @@ export default function AdminUsers() {
                                         >
                                             <option value="admin">Admin</option>
                                             <option value="client">Cliente</option>
-                                            <option value="guest">Guest</option>
                                         </select>
                                      ) : (
                                         <span className={`px-2.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full border 
@@ -381,7 +380,6 @@ export default function AdminUsers() {
                                         >
                                             <option value="admin">Admin</option>
                                             <option value="client">Cliente</option>
-                                            <option value="guest">Guest</option>
                                         </select>
                                      ) : (
                                         <span className={`px-2.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full border 
