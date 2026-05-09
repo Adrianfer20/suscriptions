@@ -1,10 +1,9 @@
 import { initializeApp, getApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import { getMessaging, isSupported } from 'firebase/messaging'
 
 let app: ReturnType<typeof initializeApp> | null = null
 let authInstance: ReturnType<typeof getAuth> | null = null
-let messagingInstance: ReturnType<typeof getMessaging> | null = null
+let messagingInstance: ReturnType<typeof import('firebase/messaging').getMessaging> | null = null
 
 export function initFirebase() {
   const apiKey = import.meta.env.VITE_FIREBASE_API_KEY
@@ -21,7 +20,6 @@ export function initFirebase() {
     app = initializeApp(config)
     authInstance = getAuth(app)
   } catch (e) {
-    // already initialized or missing config
     try {
       authInstance = getAuth()
     } catch (err) {
@@ -39,11 +37,12 @@ export function getAuthInstance() {
   }
 }
 
-// Inicializar Messaging (solo si está soportado y configurado)
-export async function initMessaging(): Promise<ReturnType<typeof getMessaging> | null> {
+export async function initMessaging(): Promise<ReturnType<typeof import('firebase/messaging').getMessaging> | null> {
   if (messagingInstance) return messagingInstance
   
   try {
+    const { getMessaging, isSupported } = await import('firebase/messaging')
+    
     const supported = await isSupported()
     if (!supported) {
       console.warn('Firebase Messaging no es soportado en este navegador')

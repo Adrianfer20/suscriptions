@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
-import { getAuthInstance } from '../services/firebase'
+import { getAuthInstance, initFirebase } from '../services/firebase'
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth'
 
 type User = { id?: string; email?: string; role?: string; displayName?: string; photoURL?: string } | null
@@ -24,6 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
 
   useEffect(() => {
+    initFirebase()
     const auth = getAuthInstance()
     if (!auth) {
       setLoading(false)

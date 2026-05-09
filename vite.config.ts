@@ -14,7 +14,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{html,js,css,svg,png,ico}'],
         globIgnores: ['**/sw.js', '**/workbox-*.js'],
-        maximumFileSizeToCacheInBytes: 3_000_000,
+        maximumFileSizeToCacheInBytes: 2_000_000,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -30,7 +30,7 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'gstatic-fonts-cache',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 30 },
               cacheableResponse: { statuses: [0, 200] }
             }
           },
@@ -41,14 +41,6 @@ export default defineConfig({
               cacheName: 'api-cache',
               expiration: { maxEntries: 50, maxAgeSeconds: 60 * 15 },
               networkTimeoutSeconds: 5
-            }
-          },
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|mp3)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'static-assets-cache',
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 7 }
             }
           }
         ]
@@ -87,13 +79,17 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom', 'react-hot-toast'],
-          'firebase-auth': ['firebase/app', 'firebase/auth'],
+          'firebase-core': ['firebase/app'],
+          'firebase-auth': ['firebase/auth'],
+          'firebase-messaging': ['firebase/messaging'],
+          'lucide-icons': ['lucide-react'],
         }
       }
     },
     chunkSizeWarningLimit: 600,
     minify: 'esbuild',
     cssCodeSplit: true,
+    sourcemap: false,
   },
   server: {
     host: true,
@@ -104,5 +100,8 @@ export default defineConfig({
       '/communications': { target: 'http://localhost:3000', changeOrigin: true, secure: false },
       '/automation': { target: 'http://localhost:3000', changeOrigin: true, secure: false }
     }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'react-hot-toast'],
   }
 })

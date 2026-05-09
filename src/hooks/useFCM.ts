@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react'
-import { getToken, onMessage, Messaging } from 'firebase/messaging'
 import { initMessaging, getMessagingInstance } from '../services/firebase'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
@@ -34,7 +33,6 @@ export function useFCM(): UseFCMReturn {
   const [error, setError] = useState<string | null>(null)
   const [lastMessage, setLastMessage] = useState<FCMMessage | null>(null)
 
-  // Verificar soporte al inicio
   useEffect(() => {
     const checkSupport = async () => {
       try {
@@ -56,23 +54,21 @@ export function useFCM(): UseFCMReturn {
     checkSupport()
   }, [])
 
-  // Escuchar mensajes cuando la app está en foreground
   useEffect(() => {
     if (!isSupported) return
 
-    let messaging: Messaging | null = null
+    let messaging: ReturnType<typeof import('firebase/messaging').getMessaging> | null = null
 
     const setupMessaging = async () => {
       try {
+        const { onMessage } = await import('firebase/messaging')
         messaging = await initMessaging()
         if (!messaging) return
 
-        // Escuchar mensajes en foreground
         const unsubscribe = onMessage(messaging, (payload) => {
           console.log('[useFCM] Mensaje recibido en foreground:', payload)
           setLastMessage(payload as FCMMessage)
           
-          // Mostrar toast notification
           if (payload.notification) {
             toast.success(payload.notification.body || 'Nuevo mensaje', {
               id: payload.messageId,
@@ -122,7 +118,6 @@ export function useFCM(): UseFCMReturn {
     }
 
     try {
-      // Verificar permiso de notificaciones del navegador
       let permission: NotificationPermission = 'default'
       if ('Notification' in window) {
         permission = await Notification.requestPermission()
@@ -134,14 +129,13 @@ export function useFCM(): UseFCMReturn {
         }
       }
 
-      // Inicializar messaging
+      const { getToken } = await import('firebase/messaging')
       const messaging = await initMessaging()
       if (!messaging) {
         setError('No se pudo inicializar Firebase Messaging')
         return null
       }
 
-      // Obtener token FCM
       const token = await getToken(messaging, {
         vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
       })
@@ -151,7 +145,6 @@ export function useFCM(): UseFCMReturn {
       
       console.log('[useFCM] Token FCM obtenido:', token.substring(0, 20) + '...')
       
-      // Registrar token en el backend
       await registerTokenOnBackend(token)
       
       return token

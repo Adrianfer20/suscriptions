@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
-import Calendar from 'react-calendar'
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import { Calendar as CalendarIcon, X } from 'lucide-react'
 import { Button } from './Button'
-import 'react-calendar/dist/Calendar.css'
+
+const Calendar = lazy(() => import('react-calendar'))
 
 interface MonthPickerProps {
   value: string
@@ -70,15 +70,17 @@ export function MonthPicker({ value, onChange, placeholder = 'Seleccionar mes' }
       {isOpen && (
         <div className="absolute z-50 mt-1 top-full left-0">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-2">
-            <Calendar
-              onChange={handleDateChange as any}
-              value={currentDate}
-              locale="es-VE"
-              minDetail="decade"
-              maxDetail="year"
-              showNeighboringMonth={false}
-              className="border-0"
-            />
+            <Suspense fallback={<div className="p-4 text-sm text-slate-500">Cargando...</div>}>
+              <Calendar
+                onChange={handleDateChange as any}
+                value={currentDate}
+                locale="es-VE"
+                minDetail="decade"
+                maxDetail="year"
+                showNeighboringMonth={false}
+                className="border-0"
+              />
+            </Suspense>
           </div>
         </div>
       )}
