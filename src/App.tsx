@@ -11,7 +11,7 @@ import LoadingSpinner from './components/LoadingSpinner'
 export default function App() {
   const { user, loading } = useAuth()
 
-  if (loading) return <LoadingSpinner message="Cargando autenticación..." />
+  if (loading) return <LoadingSpinner />
 
   return (
     <Routes>

@@ -31,11 +31,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
+    const MIN_LOADING_TIME = 800
+    const startTime = Date.now()
+
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       if (!fbUser) {
         setUser(null)
         setToken(null)
-        setLoading(false)
+        const elapsed = Date.now() - startTime
+        const remaining = Math.max(0, MIN_LOADING_TIME - elapsed)
+        setTimeout(() => setLoading(false), remaining)
         return
       }
 
@@ -43,20 +48,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const idToken = await fbUser.getIdToken()
         setToken(idToken)
 
-        // Prefer custom claims first
         try {
           const tokenRes = await fbUser.getIdTokenResult()
           const roleFromClaims = (tokenRes.claims as any)?.role
           if (roleFromClaims) {
             setUser({ id: fbUser.uid, email: fbUser.email ?? undefined, role: roleFromClaims, displayName: fbUser.displayName ?? undefined, photoURL: fbUser.photoURL ?? undefined })
-            setLoading(false)
+            const elapsed = Date.now() - startTime
+            const remaining = Math.max(0, MIN_LOADING_TIME - elapsed)
+            setTimeout(() => setLoading(false), remaining)
             return
           }
-        } catch (e) {
-          // ignore
-        }
+        } catch (e) {}
 
-        // Fallback to /auth/me on backend
         try {
           const res = await api.get('/auth/me')
           const me = res.data || {}
@@ -67,7 +70,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (e) {
         setUser({ id: fbUser.uid, email: fbUser.email ?? undefined, displayName: fbUser.displayName ?? undefined, photoURL: fbUser.photoURL ?? undefined })
       } finally {
-        setLoading(false)
+        const elapsed = Date.now() - startTime
+        const remaining = Math.max(0, MIN_LOADING_TIME - elapsed)
+        setTimeout(() => setLoading(false), remaining)
       }
     })
 

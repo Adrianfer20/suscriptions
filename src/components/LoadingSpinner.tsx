@@ -12,7 +12,6 @@ export default function LoadingSpinner({
   const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {
-    // Check if dark mode is already applied
     const checkTheme = () => {
       const isDarkMode = document.documentElement.classList.contains('dark') || 
         localStorage.getItem('theme') === 'dark' ||
@@ -22,7 +21,6 @@ export default function LoadingSpinner({
     
     checkTheme()
     
-    // Listen for theme changes
     const observer = new MutationObserver(checkTheme)
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
     
@@ -68,14 +66,12 @@ export default function LoadingSpinner({
           />
         </svg>
       </div>
-      {message && (
-        <p
-          className="mt-6 text-lg font-medium animate-pulse"
-          style={{ color: textColor }}
-        >
-          {message}
-        </p>
-      )}
+      <p
+        className="mt-6 text-lg font-medium"
+        style={{ color: textColor }}
+      >
+        {message}
+      </p>
       <style>{`
         @keyframes loading-dash {
           0% { stroke-dashoffset: 100; }
