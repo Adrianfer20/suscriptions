@@ -11,7 +11,7 @@ const FCMInitializer = lazy(() => import('./FCMInitializer'))
 export default function AppLayout({ children }: { children?: React.ReactNode }) {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
-  const role = user?.role ?? 'guest'
+  const role = user?.role ?? 'client'
 
   const COLLAPSE_MIN = 768
   const EXPAND_MIN = 1024
