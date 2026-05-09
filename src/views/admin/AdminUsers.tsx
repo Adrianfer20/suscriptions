@@ -279,6 +279,10 @@ export default function AdminUsers() {
                                             <option value="client">Cliente</option>
                                         </select>
                                      ) : (
+                                        <span className={`px-2.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full border 
+                                            ${u.role === 'admin' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-100 dark:border-purple-800' : 
+                                              u.role === 'client' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-100 dark:border-green-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'}`}>
+                                                                                        {u.role || 'client'}
                                         </span>
                                      )}
                               </div>
@@ -381,7 +385,11 @@ export default function AdminUsers() {
                                         <span className={`px-2.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full border 
                                             ${u.role === 'admin' ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-100 dark:border-purple-800' : 
                                               u.role === 'client' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-100 dark:border-green-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'}`}>
-                                            {u.role || 'guest'}
+                                                                                        {u.role || 'client'}
+                                        </span>
+                                     )}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
                                     {editingId === u.uid ? (
                                          <div className="flex items-center gap-2">
                                             <input 
