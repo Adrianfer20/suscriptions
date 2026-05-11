@@ -3,10 +3,8 @@ import { NavLink } from "react-router-dom";
 import {
   MessageSquare,
   Zap,
-  Users,
   LogOut,
   User,
-  ChevronRight,
   LayoutDashboard,
   Briefcase,
   CreditCard,
@@ -14,12 +12,36 @@ import {
   Sun,
   Receipt,
   DollarSign,
+  LucidePanelRightOpen,
 } from "lucide-react";
+
 import { cn } from "../../lib/cn";
 import { Button } from "../ui/Button";
 
+type Role = "admin" | "client";
+
+interface UserData {
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+}
+
+interface SidebarProps {
+  role: Role;
+  user: UserData;
+  unreadCount: number;
+  collapsed: boolean;
+  setCollapsed: (v: boolean) => void;
+  sidebarOpen: boolean;
+  setSidebarOpen: (v: boolean) => void;
+  logout: () => void;
+  theme: string;
+  toggleTheme: () => void;
+  isDesktop: boolean;
+}
+
 const MENU_CONFIG: Record<
-  string,
+  Role,
   { label: string; to: string; icon: React.ReactNode }[]
 > = {
   admin: [
@@ -54,6 +76,7 @@ const MENU_CONFIG: Record<
       icon: <Zap className="w-5 h-5" />,
     },
   ],
+
   client: [
     {
       label: "Dashboard",
@@ -81,7 +104,6 @@ const MENU_CONFIG: Record<
 export default function Sidebar({
   role,
   user,
-  unreadCount,
   collapsed,
   setCollapsed,
   sidebarOpen,
@@ -90,222 +112,265 @@ export default function Sidebar({
   theme,
   toggleTheme,
   isDesktop,
-}: {
-  role: string;
-  user: any;
-  unreadCount: number;
-  collapsed: boolean;
-  setCollapsed: (v: boolean) => void;
-  sidebarOpen: boolean;
-  setSidebarOpen: (v: boolean) => void;
-  logout: () => void;
-  theme: string;
-  toggleTheme: () => void;
-  isDesktop: boolean;
-}) {
+}: SidebarProps) {
   const menu = MENU_CONFIG[role] ?? [];
+
   const effectiveCollapsed = collapsed && isDesktop;
 
   return (
-    <aside
-      className={cn(
-        "fixed inset-y-0 left-0 bg-white dark:bg-slate-950/50 border-r border-slate-200/50 dark:border-slate-800 z-50 transform transition-all duration-300 ease-in-out flex flex-col shadow-2xl md:shadow-none md:translate-x-0 md:fixed md:top-0 md:left-0 md:h-screen backdrop-blur-xl",
-        sidebarOpen
-          ? "translate-x-0 w-72"
-          : "-translate-x-full md:translate-x-0",
-        effectiveCollapsed ? "md:w-20" : "md:w-72",
-        "w-72",
+    <>
+      {/* Mobile Overlay */}
+      {sidebarOpen && !isDesktop && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
-    >
-      {/* Header */}
-      <div
+
+      <aside
         className={cn(
-          "h-20 flex items-center bg-primary border-b  dark:border-slate-800 shrink-0 transition-all duration-300",
-          collapsed ? "justify-center px-6" : "px-6 justify-between",
+          "fixed inset-y-0 left-0 z-50 flex flex-col",
+          "bg-white dark:bg-slate-950",
+          "border-r border-slate-200 dark:border-slate-800",
+          "transition-all duration-300 ease-out",
+          "md:translate-x-0",
+          sidebarOpen
+            ? "translate-x-0 w-64"
+            : "-translate-x-full md:translate-x-0",
+          effectiveCollapsed ? "md:w-18" : "md:w-64",
         )}
       >
+        {/* Header */}
         <div
           className={cn(
-            "flex items-center gap-3",
-            collapsed ? "justify-center" : "",
-          )}
-        >
-            <span className="text-white font-extrabold text-xl">
-              A<span className="text-secondary">|</span>R
-            </span>
-
-          {!effectiveCollapsed && (
-            <div className="flex flex-col whitespace-nowrap overflow-hidden transition-all duration-300">
-              <span className="font-bold text-xl text-white">
-                SYSTEM
-              </span>
-            </div>
-          )}
-        </div>
-
-        {!collapsed && (
-          <Button
-            onClick={() => setCollapsed(true)}
-            className="hidden md:flex p-1"
-            variant="ghost"
-            size="icon"
-          >
-            <ChevronRight className="w-4 h-4 rotate-180" />
-          </Button>
-        )}
-      </div>
-
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto py-8 px-3 scrollbar-hide">
-        {!effectiveCollapsed && (
-          <div className="mb-2 px-3">
-            <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4">
-              Menu Principal
-            </p>
-          </div>
-        )}
-
-        <nav className="space-y-2">
-          {menu.map((m) => (
-            <NavLink
-              key={m.to}
-              to={m.to}
-              end={m.to === "/admin" || m.to === "/client"}
-              onClick={() => setSidebarOpen(false)}
-              title={effectiveCollapsed ? m.label : undefined}
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 group relative",
-                  isActive
-                    ? "bg-primary text-white shadow-md shadow-primary/25"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white",
-                  collapsed ? "justify-center" : "",
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <span
-                    className={cn(
-                      "transition-colors",
-                      isActive
-                        ? "text-white"
-                        : "text-slate-400 dark:text-slate-500 group-hover:text-primary dark:group-hover:text-white",
-                    )}
-                  >
-                    {m.icon}
-                  </span>
-                  {!effectiveCollapsed && (
-                    <>
-                      <span className="flex-1 whitespace-nowrap overflow-hidden transition-all duration-300">
-                        {m.label}
-                      </span>
-                      {isActive && (
-                        <ChevronRight className="w-4 h-4 text-white/50" />
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-            </NavLink>
-          ))}
-        </nav>
-      </div>
-
-      {/* Account / Footer */}
-      <div
-        className={cn(
-          "border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/50 backdrop-blur-sm shrink-0 transition-all duration-300",
-          collapsed ? "p-2" : "p-4",
-        )}
-      >
-        {!effectiveCollapsed && (
-          <div className="mb-2 px-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              Cuenta
-            </span>
-          </div>
-        )}
-
-        <div
-          className={cn(
-            "bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden",
-            collapsed ? "p-1" : "p-3",
+            "h-16 shrink-0 border-b  bg-primary  border-slate-200 dark:border-slate-800",
+            "flex items-center justify-center",
+            effectiveCollapsed ? "justify-center px-2" : "px-4",
           )}
         >
           <div
             className={cn(
-              "bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 overflow-hidden",
-              effectiveCollapsed ? "p-1" : "p-3",
+              "flex items-center min-w-0",
+              effectiveCollapsed ? "justify-center" : "gap-3",
             )}
           >
+            {
+              effectiveCollapsed ? (
+                <div className="h-9 w-9 rounded-md flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold text-sm">
+                    A
+                    <span className="text-secondary">|</span>
+                    R
+                  </span>
+                </div>
+              ) : (
+                <div className="flex flex-col leading-tight min-w-0">
+                  <span className="font-semibold uppercase text-white dark:text-white truncate">
+                    A<span className="text-secondary">|</span>R  System
+                  </span>
+                </div>
+              )
+            }
+
+
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto py-5 px-2">
+          {!effectiveCollapsed && (
+            <div className="px-3 mb-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Menu
+              </p>
+            </div>
+          )}
+
+
+
+          <nav className="space-y-1">
+            {/* Collapse Toggle */}
+            {isDesktop && (
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className={cn(
+                  "group flex items-center w-full h-11 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer",
+                  "text-slate-600 dark:text-slate-400",
+                  "hover:bg-slate-100 dark:hover:bg-slate-800/60",
+                  "hover:text-slate-900 dark:hover:text-white",
+                  effectiveCollapsed
+                    ? "justify-center px-0 mb-2"
+                    : "px-3 gap-3 mb-3",
+                )}
+              >
+                <span className="shrink-0 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors">
+                  <LucidePanelRightOpen
+                    className={cn(
+                      "w-5 h-5 transition-transform duration-300",
+                      effectiveCollapsed && "rotate-180",
+                    )}
+                  />
+                </span>
+
+                {!effectiveCollapsed && (
+                  <span className="truncate">
+                    Ocultar Menu
+                  </span>
+                )}
+              </button>
+            )}
+            {menu.map((m) => (
+              <NavLink
+                key={m.to}
+                to={m.to}
+                end={m.to === "/admin" || m.to === "/client"}
+                title={effectiveCollapsed ? m.label : undefined}
+                onClick={() => {
+                  if (!isDesktop) {
+                    setSidebarOpen(false);
+                  }
+                }}
+                className={({ isActive }) =>
+                  cn(
+                    "group relative flex items-center gap-3",
+                    "h-11 rounded-xl text-sm font-medium",
+                    "transition-all duration-200",
+                    isActive
+                      ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-secondary"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white",
+                    effectiveCollapsed
+                      ? "justify-center px-0"
+                      : "px-3",
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {/* Active indicator */}
+                    {isActive && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-primary dark:bg-secondary" />
+                    )}
+
+                    {/* Icon */}
+                    <span
+                      className={cn(
+                        "shrink-0 transition-colors",
+                        isActive
+                          ? "text-primary dark:text-secondary"
+                          : "text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200",
+                      )}
+                    >
+                      {m.icon}
+                    </span>
+
+                    {/* Label */}
+                    {!effectiveCollapsed && (
+                      <span className="flex-1 truncate">
+                        {m.label}
+                      </span>
+                    )}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-slate-200 dark:border-slate-800 p-3">
+          <div
+            className={cn(
+              "flex items-center",
+              effectiveCollapsed
+                ? "flex-col gap-3"
+                : "justify-between gap-3",
+            )}
+          >
+            {/* User */}
             <NavLink
               to={
                 role === "admin"
                   ? "/admin/me"
-                  : role === "client"
-                    ? "/client/profile"
-                    : "/"
+                  : "/client/profile"
               }
-              onClick={() => setSidebarOpen(false)}
-              title={collapsed ? "Perfil" : undefined}
+              onClick={() => {
+                if (!isDesktop) {
+                  setSidebarOpen(false);
+                }
+              }}
               className={cn(
-                "flex items-center gap-3 -mx-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-xl transition-colors cursor-pointer group",
-                collapsed ? "justify-center mx-0 p-1 mb-0" : "p-2",
+                "flex items-center transition-all duration-200",
+                effectiveCollapsed
+                  ? "justify-center"
+                  : "flex-1 gap-3 min-w-0",
               )}
             >
-              <div className="h-10 w-10 min-w-10 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-white dark:border-slate-600 flex items-center justify-center text-sm font-bold text-primary dark:text-white shadow-sm overflow-hidden shrink-0">
-                {user?.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt="Avatar"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  (user?.displayName || user?.email || "?")
-                    .charAt(0)
-                    .toUpperCase()
-                )}
+              {/* Avatar */}
+              <div className="relative shrink-0">
+                <div className="h-10 w-10 rounded-full overflow-hidden bg-linear-to-br from-primary to-primary/80 flex items-center justify-center text-white text-sm font-semibold">
+                  {user?.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    (user?.displayName || user?.email || "?")
+                      .charAt(0)
+                      .toUpperCase()
+                  )}
+                </div>
+
+                <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950" />
               </div>
-              {!collapsed && (
-                <div className="flex-1 min-w-0 transition-all duration-300">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-white/70 transition-colors">
+
+              {!effectiveCollapsed && (
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
                     {user?.displayName || "Usuario"}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate font-medium">
+
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                     {user?.email}
                   </p>
                 </div>
               )}
             </NavLink>
 
-            {!effectiveCollapsed && (
-              <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
-                <Button
-                  onClick={logout}
-                  className="flex flex-col items-center justify-center gap-1 p-2"
-                  variant="ghost"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Salir</span>
-                </Button>
-                <Button
-                  onClick={toggleTheme}
-                  className="flex flex-col items-center justify-center gap-1 p-2"
-                  variant="ghost"
-                >
-                  {theme === "light" ? (
-                    <Moon className="w-4 h-4" />
-                  ) : (
-                    <Sun className="w-4 h-4" />
-                  )}
-                  <span>{theme === "light" ? "Oscuro" : "Claro"}</span>
-                </Button>
-              </div>
-            )}
+            {/* Actions */}
+            <div
+              className={cn(
+                "flex items-center",
+                effectiveCollapsed
+                  ? "flex-col gap-2"
+                  : "gap-1",
+              )}
+            >
+              <Button
+                onClick={toggleTheme}
+                variant="ghost"
+                size="icon"
+                className="text-slate-500 hover:text-amber-500"
+              >
+                {theme === "light" ? (
+                  <Moon className="w-4 h-4" />
+                ) : (
+                  <Sun className="w-4 h-4" />
+                )}
+              </Button>
+
+              <Button
+                onClick={logout}
+                variant="ghost"
+                size="icon"
+                className="text-slate-500 hover:text-red-500"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
